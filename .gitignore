@@ -17,3 +17,5 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+/composeApp/src/commonMain/kotlin/com/patorika/app/BuildProps.kt
+/composeApp/src/commonMain/kotlin/com/patorika/app/Secrets.kt

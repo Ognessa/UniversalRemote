@@ -1,11 +1,15 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import tasks.GenerateBuildPropsTask
+import tasks.GenerateSecretsTask
+import tasks.UpdatePlistVersionTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
 }
 
 kotlin {
@@ -14,17 +18,17 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -54,8 +58,8 @@ android {
         applicationId = "com.patorika.universalremote"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = libs.versions.app.version.get().toInt()
+        versionName = libs.versions.app.name.get()
     }
     packaging {
         resources {
@@ -77,3 +81,40 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+tasks.named("generateComposeResClass") {
+    dependsOn("generateSecretsClass")
+    dependsOn("generateBuildPropsClass")
+    dependsOn("updatePlistVersion")
+}
+
+tasks.register<GenerateSecretsTask>("generateSecretsClass") {
+    secretsFile.set(
+        layout.projectDirectory.file("../secrets.properties")
+    )
+
+    outputFile.set(
+        layout.projectDirectory.file(
+            "src/commonMain/kotlin/com/patorika/app/Secrets.kt"
+        )
+    )
+}
+
+tasks.register<GenerateBuildPropsTask>("generateBuildPropsClass") {
+    versionCode.set(libs.versions.app.version.map { it.toInt() })
+    versionName.set(libs.versions.app.name)
+
+    outputFile.set(
+        layout.projectDirectory.file(
+            "src/commonMain/kotlin/com/patorika/app/BuildProps.kt"
+        )
+    )
+}
+
+tasks.register<UpdatePlistVersionTask>("updatePlistVersion") {
+    versionName.set(libs.versions.app.name)
+    versionCode.set(libs.versions.app.version)
+
+    plistFile.set(
+        layout.projectDirectory.file("../iosApp/iosApp/Info.plist")
+    )
+}
