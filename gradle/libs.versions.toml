@@ -28,6 +28,7 @@ detekt = "1.23.8"
 firebase-bom = "34.8.0"
 firebase-analytics = "23.0.0"
 firebase-appdistribution = "5.2.0"
+firebase-crashlytics = "3.0.6"
 google-services = "4.4.4"
 
 [libraries]
@@ -47,6 +48,7 @@ androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebase-analytics" }
 firebase-appdistribution = { group = "com.google.firebase", name = "firebase-appdistribution-gradle", version.ref = "firebase-appdistribution" }
+firebase-crashlytic = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebase-crashlytics" }
 
 
 [plugins]
@@ -63,4 +65,5 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 #Firebase
 firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebase-appdistribution" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }

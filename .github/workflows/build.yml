@@ -85,17 +85,24 @@ jobs:
       - name: Build iOS app (Xcode drives Gradle)
         run: |
           xcodebuild \
-          -project iosApp/iosApp.xcodeproj \
-          -scheme iosApp \
-          -configuration Debug \
-          -archivePath build/iosApp.xcarchive \
-          archive
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            build
+
+      #          xcodebuild \
+      #          -project iosApp/iosApp.xcodeproj \
+      #          -scheme iosApp \
+      #          -configuration Debug \
+      #          -archivePath build/iosApp.xcarchive \
+      #          archive
       
-#          xcodebuild \
-#          -exportArchive \
-#          -archivePath build/iosApp.xcarchive \
-#          -exportOptionsPlist iosApp/iosApp/ExportOptions.plist \
-#          -exportPath build/ipa
+      #          xcodebuild \
+      #          -exportArchive \
+      #          -archivePath build/iosApp.xcarchive \
+      #          -exportOptionsPlist iosApp/iosApp/ExportOptions.plist \
+      #          -exportPath build/ipa
 
       - name: Upload iOS artifact
         uses: actions/upload-artifact@v4
