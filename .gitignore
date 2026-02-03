@@ -17,3 +17,9 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+secrets.properties
+/composeApp/src/commonMain/kotlin/com/patorika/app/BuildProps.kt
+/composeApp/src/commonMain/kotlin/com/patorika/app/Secrets.kt
+/composeApp/src/google-services.json
+/iosApp/iosApp/GoogleService-Info.plist
+/iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
