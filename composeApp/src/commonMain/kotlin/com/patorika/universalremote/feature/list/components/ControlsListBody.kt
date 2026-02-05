@@ -1,0 +1,35 @@
+package com.patorika.universalremote.feature.list.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.patorika.universalremote.core.ui.CoreDimens
+
+@Composable
+internal fun ControlsListBody(
+    modifier: Modifier = Modifier,
+    list: List<String>,
+) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(CoreDimens.current.standardContentInterval),
+        contentPadding = PaddingValues(CoreDimens.current.standardContentPadding),
+    ) {
+        if (list.isNotEmpty()) {
+            items(items = list) { item ->
+                ControlsListItemUi(
+                    modifier = Modifier.fillMaxWidth(),
+                    name = item,
+                )
+            }
+        } else {
+            item {
+                ControlsListEmptyBox()
+            }
+        }
+    }
+}

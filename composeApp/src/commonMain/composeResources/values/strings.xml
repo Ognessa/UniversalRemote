@@ -1,0 +1,4 @@
+<resources>
+    <string name="controls_list_screen_title">Controllers</string>
+    <string name="controls_list_empty_label">You don’t  have any controllers right now</string>
+</resources>
