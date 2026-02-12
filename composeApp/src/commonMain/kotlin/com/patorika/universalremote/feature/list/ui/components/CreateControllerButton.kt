@@ -1,4 +1,4 @@
-package com.patorika.universalremote.feature.list.components
+package com.patorika.universalremote.feature.list.ui.components
 
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon

@@ -1,4 +1,4 @@
-package com.patorika.universalremote.feature.list.components
+package com.patorika.universalremote.feature.list.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

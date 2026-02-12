@@ -1,4 +1,4 @@
-package com.patorika.universalremote.feature.list
+package com.patorika.universalremote.feature.list.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,15 +10,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patorika.universalremote.core.ui.CoreDimens
-import com.patorika.universalremote.feature.list.components.ControlsListBody
-import com.patorika.universalremote.feature.list.components.ControlsListTopBar
-import com.patorika.universalremote.feature.list.components.CreateControllerButton
+import com.patorika.universalremote.core.ui.theme.CoreDimens
 import com.patorika.universalremote.feature.list.model.ControlsListEvents
+import com.patorika.universalremote.feature.list.model.ControlsListNavigation
+import com.patorika.universalremote.feature.list.ui.components.ControlsListBody
+import com.patorika.universalremote.feature.list.ui.components.ControlsListTopBar
+import com.patorika.universalremote.feature.list.ui.components.CreateControllerButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ControlsListScreen(viewModel: ControlsListViewModel) {
+internal fun ControlsListScreen(
+    viewModel: ControlsListViewModel,
+    navigate: (ControlsListNavigation) -> Unit,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -40,7 +44,7 @@ internal fun ControlsListScreen(viewModel: ControlsListViewModel) {
                     Modifier
                         .align(Alignment.BottomEnd)
                         .padding(CoreDimens.current.standardContentPadding),
-                onClick = { viewModel.onEvent(ControlsListEvents.CreateNewControl) },
+                onClick = { navigate(ControlsListNavigation.OpenEditor) },
             )
         }
     }
