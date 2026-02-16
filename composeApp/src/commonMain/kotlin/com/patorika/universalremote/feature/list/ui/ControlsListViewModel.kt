@@ -1,4 +1,4 @@
-package com.patorika.universalremote.feature.list
+package com.patorika.universalremote.feature.list.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

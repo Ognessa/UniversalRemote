@@ -2,7 +2,6 @@ package com.patorika.universalremote
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -19,13 +18,12 @@ fun App() {
     val firstScreen: ScreenBuilder = getKoin().get<ControlsListScreenBuilder>()
 
     MaterialTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            NavHost(
-                navController = navController,
-                startDestination = firstScreen.routeName,
-            ) {
-                screensList.forEach { it.build(this, navController) }
-            }
+        NavHost(
+            modifier = Modifier.fillMaxSize(),
+            navController = navController,
+            startDestination = firstScreen.routeName,
+        ) {
+            screensList.forEach { it.build(this, navController) }
         }
     }
 }
