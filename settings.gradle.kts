@@ -29,3 +29,22 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":core")
+
+include(":feature-list-api")
+project(":feature-list-api").projectDir = file("feature/list/api")
+
+include(":feature-list-presentation")
+project(":feature-list-presentation").projectDir = file("feature/list/presentation")
+
+include(":feature-editor-api")
+project(":feature-editor-api").projectDir = file("feature/editor/api")
+
+include(":feature-editor-presentation")
+project(":feature-editor-presentation").projectDir = file("feature/editor/presentation")
+
+include(":feature-library-api")
+project(":feature-library-api").projectDir = file("feature/library/api")
+
+include(":feature-library-presentation")
+project(":feature-library-presentation").projectDir = file("feature/library/presentation")

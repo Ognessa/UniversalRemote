@@ -59,6 +59,17 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+
+            implementation(project(":core"))
+
+            implementation(project(":feature-list-api"))
+            implementation(project(":feature-list-presentation"))
+
+            implementation(project(":feature-editor-api"))
+            implementation(project(":feature-editor-presentation"))
+
+            implementation(project(":feature-library-api"))
+            implementation(project(":feature-library-presentation"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

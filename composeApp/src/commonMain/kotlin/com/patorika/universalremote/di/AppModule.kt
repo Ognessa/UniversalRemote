@@ -1,15 +1,12 @@
 package com.patorika.universalremote.di
 
-import com.patorika.universalremote.feature.editor.api.di.editorApiModule
-import com.patorika.universalremote.feature.editor.main.di.controllerEditorModule
-import com.patorika.universalremote.feature.library.di.editorLibraryModule
-import com.patorika.universalremote.feature.list.di.controlsListModule
+import com.patorika.feature_editor_presentation.di.controllerEditorModule
+import com.patorika.feature_library_presentation.di.editorLibraryModule
+import com.patorika.feature_list_presentation.di.controlsListModule
 import org.koin.dsl.module
 
 val appModule =
     module {
-        includes(editorApiModule)
-
         includes(
             controlsListModule,
             controllerEditorModule,
