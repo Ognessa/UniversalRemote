@@ -1,0 +1,21 @@
+package com.patorika.feature_list_presentation.di
+
+import com.patorika.core.navigation.ScreenBuilder
+import com.patorika.feature_editor_api.navigation.ControllerEditorScreenBuilder
+import com.patorika.feature_list_api.ControlsListScreenBuilder
+import com.patorika.feature_list_presentation.api.ControlsListScreenBuilderImpl
+import com.patorika.feature_list_presentation.ui.ControlsListViewModel
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.bind
+import org.koin.dsl.module
+
+val controlsListModule =
+    module {
+        viewModel { ControlsListViewModel() }
+
+        factory<ControlsListScreenBuilder> {
+            ControlsListScreenBuilderImpl(
+                editorScreenBuilder = get<ControllerEditorScreenBuilder>(),
+            )
+        } bind ScreenBuilder::class
+    }

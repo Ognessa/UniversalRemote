@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.patorika.universalremote.di.ScreenBuilder
-import com.patorika.universalremote.feature.list.di.ControlsListScreenBuilder
+import com.patorika.core.navigation.ScreenBuilder
+import com.patorika.feature_list_api.ControlsListScreenBuilder
 import org.koin.compose.getKoin
 
 @Composable
