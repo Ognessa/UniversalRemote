@@ -2,7 +2,7 @@ package com.patorika.feature_editor_presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patorika.core.model.controller.ControllerType
+import com.patorika.core.model.controller.ControllerModel
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_editor_presentation.model.ControllerEditorScreenState
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
@@ -59,7 +59,7 @@ class ControllerEditorViewModel(
 
     private fun handleElementModified(
         index: Int,
-        element: ControllerType,
+        element: ControllerModel,
     ) {
         _state.update { current ->
             val newList = current.elements.toMutableList().apply { this[index] = element }
