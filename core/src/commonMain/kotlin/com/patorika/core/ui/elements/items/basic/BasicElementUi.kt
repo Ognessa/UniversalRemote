@@ -28,6 +28,7 @@ import com.patorika.core.model.controller.NormalizedDisplay
 import com.patorika.core.ui.ext.dpToPx
 import com.patorika.core.ui.ext.pxToDp
 
+// use onDraw or onComposable depending on existing of a needed element
 @Composable
 fun BasicElementUi(
     modifier: Modifier = Modifier,
@@ -36,7 +37,8 @@ fun BasicElementUi(
     renderMode: ControllerRenderMode,
     onClick: () -> Unit = {},
     onParametersModified: (NormalizedDisplay) -> Unit = {},
-    onDraw: DrawScope.() -> Unit,
+    onDraw: DrawScope.(sizePx: Float) -> Unit = {},
+    onComposable: @Composable BoxScope.(sizePx: Float) -> Unit = {},
 ) {
     BoxWithConstraints(
         modifier = modifier,
@@ -69,157 +71,169 @@ fun BasicElementUi(
                             currentOffsetPx.x.toInt(),
                             currentOffsetPx.y.toInt(),
                         )
-                    }.pointerInput(Unit) {
-                        if (renderMode == ControllerRenderMode.Editor) {
-                            detectDragGestures { change, dragAmount ->
-                                change.consume()
-
-                                val newOffset = currentOffsetPx + dragAmount
-                                currentOffsetPx = newOffset
-
-                                val normalizedX =
-                                    (newOffset.x / containerWidthPx)
-                                        .coerceIn(0f, 1f)
-                                val normalizedY =
-                                    (newOffset.y / containerHeightPx)
-                                        .coerceIn(0f, 1f)
-
-                                val updated =
-                                    parameters.copy(offset = Offset(normalizedX, normalizedY))
-
-                                onParametersModified(updated)
-                            }
-                        }
-                    }.clickable { onClick() },
+                    },
         ) {
             Canvas(
                 modifier = Modifier.matchParentSize(),
             ) {
-                onDraw()
+                onDraw(currentSizePx)
             }
 
-            if (isSelected) {
+            onComposable(currentSizePx)
+
+            if (renderMode != ControllerRenderMode.Action) {
                 Box(
                     Modifier
                         .matchParentSize()
-                        .border(2.dp, Color.Cyan),
-                )
+                        .apply {
+                            if (isSelected) {
+                                border(2.dp, Color.Cyan)
+                            }
+                        }.pointerInput(Unit) {
+                            if (renderMode == ControllerRenderMode.Editor) {
+                                detectDragGestures { change, dragAmount ->
+                                    change.consume()
 
-                ResizeHandle(
-                    alignment = Alignment.BottomEnd,
-                    onResize = { dragAmount ->
-                        currentSizePx =
-                            (currentSizePx + dragAmount.x)
-                                .coerceAtLeast(minSizePx)
-                    },
-                    onResizeEnd = {
-                        val newScale = currentSizePx / defaultSizePx
-                        onParametersModified(
-                            parameters.copy(scale = newScale),
+                                    val newOffset = currentOffsetPx + dragAmount
+                                    currentOffsetPx = newOffset
+
+                                    val normalizedX =
+                                        (newOffset.x / containerWidthPx)
+                                            .coerceIn(0f, 1f)
+                                    val normalizedY =
+                                        (newOffset.y / containerHeightPx)
+                                            .coerceIn(0f, 1f)
+
+                                    val updated =
+                                        parameters.copy(offset = Offset(normalizedX, normalizedY))
+
+                                    onParametersModified(updated)
+                                }
+                            }
+                        }.clickable { onClick() },
+                ) {
+                    if (isSelected) {
+                        ResizeHandle(
+                            alignment = Alignment.BottomEnd,
+                            isResizeAllowed = renderMode == ControllerRenderMode.Editor,
+                            onResize = { dragAmount ->
+                                currentSizePx =
+                                    (currentSizePx + dragAmount.x)
+                                        .coerceAtLeast(minSizePx)
+                            },
+                            onResizeEnd = {
+                                val newScale = currentSizePx / defaultSizePx
+                                onParametersModified(
+                                    parameters.copy(scale = newScale),
+                                )
+                            },
                         )
-                    },
-                )
 
-                ResizeHandle(
-                    alignment = Alignment.TopStart,
-                    onResize = { dragAmount ->
+                        ResizeHandle(
+                            alignment = Alignment.TopStart,
+                            isResizeAllowed = renderMode == ControllerRenderMode.Editor,
+                            onResize = { dragAmount ->
 
-                        val newSize =
-                            (currentSizePx - dragAmount.x)
-                                .coerceAtLeast(minSizePx)
+                                val newSize =
+                                    (currentSizePx - dragAmount.x)
+                                        .coerceAtLeast(minSizePx)
 
-                        val sizeDelta = newSize - currentSizePx
+                                val sizeDelta = newSize - currentSizePx
 
-                        currentOffsetPx -= Offset(sizeDelta, sizeDelta)
-                        currentSizePx = newSize
-                    },
-                    onResizeEnd = {
-                        val normalizedX =
-                            (currentOffsetPx.x / containerWidthPx)
-                                .coerceIn(0f, 1f)
+                                currentOffsetPx -= Offset(sizeDelta, sizeDelta)
+                                currentSizePx = newSize
+                            },
+                            onResizeEnd = {
+                                val normalizedX =
+                                    (currentOffsetPx.x / containerWidthPx)
+                                        .coerceIn(0f, 1f)
 
-                        val normalizedY =
-                            (currentOffsetPx.y / containerHeightPx)
-                                .coerceIn(0f, 1f)
+                                val normalizedY =
+                                    (currentOffsetPx.y / containerHeightPx)
+                                        .coerceIn(0f, 1f)
 
-                        val newScale = currentSizePx / defaultSizePx
+                                val newScale = currentSizePx / defaultSizePx
 
-                        onParametersModified(
-                            parameters.copy(
-                                scale = newScale,
-                                offset = Offset(normalizedX, normalizedY),
-                            ),
+                                onParametersModified(
+                                    parameters.copy(
+                                        scale = newScale,
+                                        offset = Offset(normalizedX, normalizedY),
+                                    ),
+                                )
+                            },
                         )
-                    },
-                )
 
-                ResizeHandle(
-                    alignment = Alignment.TopEnd,
-                    onResize = { dragAmount ->
+                        ResizeHandle(
+                            alignment = Alignment.TopEnd,
+                            isResizeAllowed = renderMode == ControllerRenderMode.Editor,
+                            onResize = { dragAmount ->
 
-                        val newSize =
-                            (currentSizePx + dragAmount.x)
-                                .coerceIn(minSizePx, maxSizePx)
+                                val newSize =
+                                    (currentSizePx + dragAmount.x)
+                                        .coerceIn(minSizePx, maxSizePx)
 
-                        val sizeDelta = newSize - currentSizePx
+                                val sizeDelta = newSize - currentSizePx
 
-                        currentOffsetPx -= Offset(0f, sizeDelta)
+                                currentOffsetPx -= Offset(0f, sizeDelta)
 
-                        currentSizePx = newSize
-                    },
-                    onResizeEnd = {
-                        val normalizedX =
-                            (currentOffsetPx.x / containerWidthPx)
-                                .coerceIn(0f, 1f)
+                                currentSizePx = newSize
+                            },
+                            onResizeEnd = {
+                                val normalizedX =
+                                    (currentOffsetPx.x / containerWidthPx)
+                                        .coerceIn(0f, 1f)
 
-                        val normalizedY =
-                            (currentOffsetPx.y / containerHeightPx)
-                                .coerceIn(0f, 1f)
+                                val normalizedY =
+                                    (currentOffsetPx.y / containerHeightPx)
+                                        .coerceIn(0f, 1f)
 
-                        val newScale = currentSizePx / defaultSizePx
+                                val newScale = currentSizePx / defaultSizePx
 
-                        onParametersModified(
-                            parameters.copy(
-                                scale = newScale,
-                                offset = Offset(normalizedX, normalizedY),
-                            ),
+                                onParametersModified(
+                                    parameters.copy(
+                                        scale = newScale,
+                                        offset = Offset(normalizedX, normalizedY),
+                                    ),
+                                )
+                            },
                         )
-                    },
-                )
 
-                ResizeHandle(
-                    alignment = Alignment.BottomStart,
-                    onResize = { dragAmount ->
+                        ResizeHandle(
+                            alignment = Alignment.BottomStart,
+                            isResizeAllowed = renderMode == ControllerRenderMode.Editor,
+                            onResize = { dragAmount ->
 
-                        val newSize =
-                            (currentSizePx - dragAmount.x)
-                                .coerceIn(minSizePx, maxSizePx)
+                                val newSize =
+                                    (currentSizePx - dragAmount.x)
+                                        .coerceIn(minSizePx, maxSizePx)
 
-                        val sizeDelta = newSize - currentSizePx
+                                val sizeDelta = newSize - currentSizePx
 
-                        currentOffsetPx -= Offset(sizeDelta, 0f)
+                                currentOffsetPx -= Offset(sizeDelta, 0f)
 
-                        currentSizePx = newSize
-                    },
-                    onResizeEnd = {
-                        val normalizedX =
-                            (currentOffsetPx.x / containerWidthPx)
-                                .coerceIn(0f, 1f)
+                                currentSizePx = newSize
+                            },
+                            onResizeEnd = {
+                                val normalizedX =
+                                    (currentOffsetPx.x / containerWidthPx)
+                                        .coerceIn(0f, 1f)
 
-                        val normalizedY =
-                            (currentOffsetPx.y / containerHeightPx)
-                                .coerceIn(0f, 1f)
+                                val normalizedY =
+                                    (currentOffsetPx.y / containerHeightPx)
+                                        .coerceIn(0f, 1f)
 
-                        val newScale = currentSizePx / defaultSizePx
+                                val newScale = currentSizePx / defaultSizePx
 
-                        onParametersModified(
-                            parameters.copy(
-                                scale = newScale,
-                                offset = Offset(normalizedX, normalizedY),
-                            ),
+                                onParametersModified(
+                                    parameters.copy(
+                                        scale = newScale,
+                                        offset = Offset(normalizedX, normalizedY),
+                                    ),
+                                )
+                            },
                         )
-                    },
-                )
+                    }
+                }
             }
         }
     }
@@ -228,6 +242,7 @@ fun BasicElementUi(
 @Composable
 fun BoxScope.ResizeHandle(
     alignment: Alignment,
+    isResizeAllowed: Boolean,
     onResize: (Offset) -> Unit,
     onResizeEnd: () -> Unit,
 ) {
@@ -238,11 +253,13 @@ fun BoxScope.ResizeHandle(
                 .align(alignment)
                 .background(Color.Cyan)
                 .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragEnd = { onResizeEnd() },
-                    ) { change, dragAmount ->
-                        change.consume()
-                        onResize(dragAmount)
+                    if (isResizeAllowed) {
+                        detectDragGestures(
+                            onDragEnd = { onResizeEnd() },
+                        ) { change, dragAmount ->
+                            change.consume()
+                            onResize(dragAmount)
+                        }
                     }
                 },
     )
