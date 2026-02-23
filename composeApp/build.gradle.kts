@@ -70,6 +70,9 @@ kotlin {
 
             implementation(project(":feature-library-api"))
             implementation(project(":feature-library-presentation"))
+
+            implementation(project(":feature-signal-api"))
+            implementation(project(":feature-signal-presentation"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

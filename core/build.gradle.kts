@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -31,6 +32,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlin.serialization)
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)

@@ -1,1 +1,9 @@
-<resources></resources>
+<resources>
+
+    <!--Square button editor-->
+    <string name="square_button_edit_name_label">Name</string>
+
+    <string name="square_button_edit_on_press_label">Press event</string>
+    <string name="square_button_edit_on_hold_label">Hold event</string>
+    <string name="square_button_edit_on_release_label">Release event</string>
+</resources>

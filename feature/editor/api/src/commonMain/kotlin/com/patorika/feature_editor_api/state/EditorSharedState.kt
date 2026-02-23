@@ -1,6 +1,6 @@
 package com.patorika.feature_editor_api.state
 
-import com.patorika.core.model.controller.ControllerModel
+import com.patorika.core.controller.model.ControllerModel
 import kotlinx.coroutines.flow.SharedFlow
 
 interface EditorSharedState {

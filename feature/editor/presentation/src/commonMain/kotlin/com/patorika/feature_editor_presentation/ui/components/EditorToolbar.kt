@@ -14,14 +14,17 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.painterResource
 import universalremote.core.generated.resources.Res
 import universalremote.core.generated.resources.ic_check
+import universalremote.core.generated.resources.ic_edit
 import universalremote.core.generated.resources.ic_orientation
 import universalremote.core.generated.resources.ic_plus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditorToolbar(
+    isAnythingSelected: Boolean,
     onOrientationPressed: () -> Unit,
     onPlusPressed: () -> Unit,
+    onEditPressed: () -> Unit,
     onSavePressed: () -> Unit,
 ) {
     TopAppBar(
@@ -43,6 +46,15 @@ internal fun EditorToolbar(
                         painter = painterResource(Res.drawable.ic_plus),
                         contentDescription = null,
                     )
+                }
+
+                if (isAnythingSelected) {
+                    IconButton(onClick = onEditPressed) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_edit),
+                            contentDescription = null,
+                        )
+                    }
                 }
 
                 IconButton(onClick = onSavePressed) {
