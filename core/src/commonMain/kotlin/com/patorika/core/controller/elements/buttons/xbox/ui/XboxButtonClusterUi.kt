@@ -1,4 +1,4 @@
-package com.patorika.core.controller.elements.buttons.xbox
+package com.patorika.core.controller.elements.buttons.xbox.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.patorika.core.controller.elements.basic.BasicElementUi
+import com.patorika.core.controller.elements.buttons.xbox.model.XboxButtonClusterModel
 import com.patorika.core.controller.model.ControllerModel
 import com.patorika.core.controller.model.ControllerRenderMode
 import com.patorika.core.ui.components.buttons.HoldableButton

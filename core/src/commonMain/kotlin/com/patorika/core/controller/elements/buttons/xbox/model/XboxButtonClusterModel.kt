@@ -1,4 +1,4 @@
-package com.patorika.core.controller.elements.buttons.xbox
+package com.patorika.core.controller.elements.buttons.xbox.model
 
 import com.patorika.core.controller.elements.buttons.config.ButtonConfigModel
 import com.patorika.core.controller.model.ControllerModel
@@ -12,18 +12,18 @@ import kotlin.uuid.Uuid
 @Serializable
 @SerialName("XboxButtonCluster")
 data class XboxButtonClusterModel(
-    override val id: String = Uuid.random().toString(),
+    override val id: String = Uuid.Companion.random().toString(),
     override val displayParameters: NormalizedDisplay = NormalizedDisplay(),
     val nameA: String = "A",
     val nameB: String = "B",
     val nameX: String = "X",
     val nameY: String = "Y",
-    val interactionConfigA: ButtonConfigModel = ButtonConfigModel.initBasic("A"),
-    val interactionConfigB: ButtonConfigModel = ButtonConfigModel.initBasic("B"),
-    val interactionConfigX: ButtonConfigModel = ButtonConfigModel.initBasic("X"),
-    val interactionConfigY: ButtonConfigModel = ButtonConfigModel.initBasic("Y"),
+    val interactionConfigA: ButtonConfigModel = ButtonConfigModel.Companion.initBasic("A"),
+    val interactionConfigB: ButtonConfigModel = ButtonConfigModel.Companion.initBasic("B"),
+    val interactionConfigX: ButtonConfigModel = ButtonConfigModel.Companion.initBasic("X"),
+    val interactionConfigY: ButtonConfigModel = ButtonConfigModel.Companion.initBasic("Y"),
 ) : ControllerModel() {
-    override fun createElementWithNewId(): ControllerModel = this.copy(id = Uuid.random().toString())
+    override fun createElementWithNewId(): ControllerModel = this.copy(id = Uuid.Companion.random().toString())
 
     override fun getElementWithDefaultDisplayParameters(): ControllerModel = this.copy(displayParameters = NormalizedDisplay())
 }

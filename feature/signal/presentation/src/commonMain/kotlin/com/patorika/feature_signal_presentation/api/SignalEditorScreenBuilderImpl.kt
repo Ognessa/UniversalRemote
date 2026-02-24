@@ -10,6 +10,7 @@ import androidx.savedstate.read
 import com.patorika.core.controller.model.ControllerModel
 import com.patorika.core.controller.model.serialization.controllerModelFromNavArg
 import com.patorika.feature_signal_api.SignalEditorScreenBuilder
+import com.patorika.feature_signal_presentation.model.SignalEditorScreenNavigation
 import com.patorika.feature_signal_presentation.ui.SignalEditorScreen
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -27,6 +28,7 @@ class SignalEditorScreenBuilderImpl : SignalEditorScreenBuilder {
 
             SignalEditorScreen(
                 viewModel = koinViewModel { parametersOf(elementData) },
+                navigate = { type -> handleNavigation(type, navController) },
             )
         }
     }
@@ -47,6 +49,15 @@ class SignalEditorScreenBuilderImpl : SignalEditorScreenBuilder {
                 nullable = false
             },
         )
+
+    private fun handleNavigation(
+        type: SignalEditorScreenNavigation,
+        navController: NavController,
+    ) {
+        when (type) {
+            is SignalEditorScreenNavigation.Close -> navController.popBackStack()
+        }
+    }
 
     companion object {
         const val EDITED_ELEMENT_ARG = "EDITED_ELEMENT_ARG"

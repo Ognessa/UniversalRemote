@@ -1,9 +1,10 @@
-package com.patorika.core.controller.elements.slider
+package com.patorika.core.controller.elements.slider.ui
 
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patorika.core.controller.elements.basic.BasicElementUi
+import com.patorika.core.controller.elements.slider.model.SliderModel
 import com.patorika.core.controller.model.ControllerModel
 import com.patorika.core.controller.model.ControllerRenderMode
 import kotlin.math.roundToInt

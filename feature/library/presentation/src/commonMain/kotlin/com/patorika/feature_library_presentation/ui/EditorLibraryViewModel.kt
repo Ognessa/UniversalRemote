@@ -25,7 +25,7 @@ class EditorLibraryViewModel(
     }
 
     private suspend fun handleSelectedElement(element: ControllerModel) {
-        editorSharedState.emitNewElement(element.createElementWithNewId())
+        editorSharedState.emitElement(element.createElementWithNewId())
         _navigationEvent.emit(EditorLibraryNavigation.CloseLibrary)
     }
 }

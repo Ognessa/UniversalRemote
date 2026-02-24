@@ -48,6 +48,7 @@ kotlin {
 
                 implementation(project(":core"))
                 implementation(project(":feature-signal-api"))
+                implementation(project(":feature-editor-api"))
             }
         }
 
@@ -90,4 +91,8 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+compose.resources {
+    publicResClass = true
 }

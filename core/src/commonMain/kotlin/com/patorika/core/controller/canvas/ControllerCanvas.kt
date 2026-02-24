@@ -2,12 +2,12 @@ package com.patorika.core.controller.canvas
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.patorika.core.controller.elements.buttons.square.SquareButtonModel
-import com.patorika.core.controller.elements.buttons.square.SquareButtonUi
-import com.patorika.core.controller.elements.buttons.xbox.XboxButtonClusterModel
-import com.patorika.core.controller.elements.buttons.xbox.XboxButtonClusterUi
-import com.patorika.core.controller.elements.slider.SliderModel
-import com.patorika.core.controller.elements.slider.SliderUi
+import com.patorika.core.controller.elements.buttons.square.model.SquareButtonModel
+import com.patorika.core.controller.elements.buttons.square.ui.SquareButtonUi
+import com.patorika.core.controller.elements.buttons.xbox.model.XboxButtonClusterModel
+import com.patorika.core.controller.elements.buttons.xbox.ui.XboxButtonClusterUi
+import com.patorika.core.controller.elements.slider.model.SliderModel
+import com.patorika.core.controller.elements.slider.ui.SliderUi
 import com.patorika.core.controller.model.ControllerModel
 import com.patorika.core.controller.model.ControllerRenderMode
 

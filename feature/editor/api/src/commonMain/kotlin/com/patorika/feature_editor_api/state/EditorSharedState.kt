@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.SharedFlow
 interface EditorSharedState {
     val newElementsFlow: SharedFlow<List<ControllerModel>>
 
-    suspend fun emitNewElement(element: ControllerModel)
+    suspend fun emitElement(element: ControllerModel)
 
-    suspend fun emitNewElements(list: List<ControllerModel>)
+    suspend fun emitElements(list: List<ControllerModel>)
 }

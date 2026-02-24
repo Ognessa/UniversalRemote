@@ -1,9 +1,31 @@
 <resources>
 
+    <!--Button config editor-->
+    <string name="button_config_edit_on_press_label">Press event</string>
+    <string name="button_config_edit_on_hold_label">Hold event</string>
+    <string name="button_config_edit_on_release_label">Release event</string>
+
     <!--Square button editor-->
     <string name="square_button_edit_name_label">Name</string>
 
-    <string name="square_button_edit_on_press_label">Press event</string>
-    <string name="square_button_edit_on_hold_label">Hold event</string>
-    <string name="square_button_edit_on_release_label">Release event</string>
+    <!--Xbox button cluster editor-->
+    <string name="xbox_button_cluster_edit_a_block_name">Edit A button</string>
+    <string name="xbox_button_cluster_edit_b_block_name">Edit B button</string>
+    <string name="xbox_button_cluster_edit_x_block_name">Edit X button</string>
+    <string name="xbox_button_cluster_edit_y_block_name">Edit Y button</string>
+
+    <string name="xbox_button_cluster_edit_button_name">Button name</string>
+
+
+    <!--Slider config editor-->
+    <string name="slider_config_edit_prefix_label">Prefix</string>
+    <string name="slider_config_edit_min_value_label">Min value</string>
+    <string name="slider_config_edit_max_value_label">Max value</string>
+    <string name="slider_config_edit_step_value_label">Step value</string>
+    <string name="slider_config_edit_suffix_label">Suffix</string>
+
+    <string name="slider_config_edit_preview_label">Signal preview:</string>
+
+    <!--Slider editor-->
+    <string name="slider_edit_name_label">Name</string>
 </resources>

@@ -1,9 +1,10 @@
-package com.patorika.core.controller.elements.buttons.square
+package com.patorika.core.controller.elements.buttons.square.ui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patorika.core.controller.elements.basic.BasicElementUi
+import com.patorika.core.controller.elements.buttons.square.model.SquareButtonModel
 import com.patorika.core.controller.model.ControllerModel
 import com.patorika.core.controller.model.ControllerRenderMode
 import com.patorika.core.ui.components.buttons.HoldableButton

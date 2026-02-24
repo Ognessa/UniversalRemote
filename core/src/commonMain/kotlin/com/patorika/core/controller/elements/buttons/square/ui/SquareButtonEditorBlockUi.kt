@@ -1,4 +1,4 @@
-package com.patorika.core.controller.elements.buttons.square
+package com.patorika.core.controller.elements.buttons.square.ui
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +8,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patorika.core.controller.elements.buttons.config.ButtonConfigEditorBlockUi
+import com.patorika.core.controller.elements.buttons.square.model.SquareButtonModel
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.Res
 import universalremote.core.generated.resources.square_button_edit_name_label

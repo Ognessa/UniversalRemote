@@ -5,11 +5,16 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("Slider")
+@SerialName("SliderConfig")
 data class SliderConfigModel(
     val prefix: String = "slider",
     val suffix: String = ";",
     val min: Float = 0f,
     val max: Float = 1f,
     val step: Float = 0.1f,
-) : InteractionConfig
+) : InteractionConfig {
+    fun isValid(): Boolean {
+        val stepsCount = (max - min) / step
+        return stepsCount > stepsCount.toInt()
+    }
+}

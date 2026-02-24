@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.Res
-import universalremote.core.generated.resources.square_button_edit_on_hold_label
-import universalremote.core.generated.resources.square_button_edit_on_press_label
-import universalremote.core.generated.resources.square_button_edit_on_release_label
+import universalremote.core.generated.resources.button_config_edit_on_hold_label
+import universalremote.core.generated.resources.button_config_edit_on_press_label
+import universalremote.core.generated.resources.button_config_edit_on_release_label
 
 @Composable
 fun ColumnScope.ButtonConfigEditorBlockUi(
@@ -21,20 +21,20 @@ fun ColumnScope.ButtonConfigEditorBlockUi(
         modifier = Modifier.fillMaxWidth(),
         value = config.onPress,
         onValueChange = { new -> onModified(config.copy(onPress = new)) },
-        label = { Text(stringResource(Res.string.square_button_edit_on_press_label)) },
+        label = { Text(stringResource(Res.string.button_config_edit_on_press_label)) },
     )
 
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = config.onHold,
         onValueChange = { new -> onModified(config.copy(onHold = new)) },
-        label = { Text(stringResource(Res.string.square_button_edit_on_hold_label)) },
+        label = { Text(stringResource(Res.string.button_config_edit_on_hold_label)) },
     )
 
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = config.onRelease,
         onValueChange = { new -> onModified(config.copy(onRelease = new)) },
-        label = { Text(stringResource(Res.string.square_button_edit_on_release_label)) },
+        label = { Text(stringResource(Res.string.button_config_edit_on_release_label)) },
     )
 }

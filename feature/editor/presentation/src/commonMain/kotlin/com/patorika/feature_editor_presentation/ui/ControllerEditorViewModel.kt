@@ -24,10 +24,15 @@ class ControllerEditorViewModel(
 
     private fun observeNewElements() {
         viewModelScope.launch {
-            editorSharedState.newElementsFlow.collectLatest { list ->
+            editorSharedState.newElementsFlow.collectLatest { newElements ->
                 _state.update { currentState ->
-                    val newList = currentState.elements.toMutableList().apply { addAll(list) }
-                    currentState.copy(elements = newList)
+                    currentState.copy(
+                        elements =
+                            (currentState.elements + newElements)
+                                .associateBy { it.id }
+                                .values
+                                .toList(),
+                    )
                 }
             }
         }

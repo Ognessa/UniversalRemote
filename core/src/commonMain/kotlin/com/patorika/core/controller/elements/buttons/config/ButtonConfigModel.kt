@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("Button")
+@SerialName("ButtonConfig")
 data class ButtonConfigModel(
     val onPress: String = "",
     val onHold: String = "",

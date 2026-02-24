@@ -2,6 +2,7 @@ package com.patorika.feature_signal_presentation.di
 
 import com.patorika.core.controller.model.ControllerModel
 import com.patorika.core.navigation.ScreenBuilder
+import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_signal_api.SignalEditorScreenBuilder
 import com.patorika.feature_signal_presentation.api.SignalEditorScreenBuilderImpl
 import com.patorika.feature_signal_presentation.ui.SignalEditorViewModel
@@ -13,7 +14,8 @@ val signalEditorModule =
     module {
         viewModel { (controllerElement: ControllerModel) ->
             SignalEditorViewModel(
-                element = controllerElement,
+                elementData = controllerElement,
+                editorSharedState = get<EditorSharedState>(),
             )
         }
 

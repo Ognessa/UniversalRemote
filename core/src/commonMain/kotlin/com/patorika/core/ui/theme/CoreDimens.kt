@@ -14,4 +14,7 @@ class CoreDimensValues {
     val standardContentInterval: Dp = 12.dp
 
     val standardCornerSize: Dp = 16.dp
+
+    val standardIconBtnSize: Dp = 40.dp
+    val standardIconBtnPadding: Dp = 8.dp
 }
