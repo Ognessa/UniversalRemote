@@ -1,3 +1,5 @@
 package com.patorika.core.controller.model.config
 
-interface InteractionConfig
+interface InteractionConfig {
+    fun validate(): Boolean
+}

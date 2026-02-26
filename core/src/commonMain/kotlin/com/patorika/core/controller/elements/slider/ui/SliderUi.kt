@@ -7,7 +7,6 @@ import com.patorika.core.controller.elements.basic.BasicElementUi
 import com.patorika.core.controller.elements.slider.model.SliderModel
 import com.patorika.core.controller.model.ControllerModel
 import com.patorika.core.controller.model.ControllerRenderMode
-import kotlin.math.roundToInt
 
 @Composable
 fun SliderUi(
@@ -22,9 +21,9 @@ fun SliderUi(
     val prefix = data.interactionConfig.prefix
     val suffix = data.interactionConfig.suffix
 
-    val max = data.interactionConfig.max
-    val min = data.interactionConfig.min
-    val step = data.interactionConfig.step
+    val max = data.interactionConfig.maxValue
+    val min = data.interactionConfig.minValue
+    val steps = data.interactionConfig.stepsAmountValue
 
     BasicElementUi(
         modifier = modifier,
@@ -40,14 +39,10 @@ fun SliderUi(
                 modifier = Modifier.matchParentSize(),
                 enabled = renderMode == ControllerRenderMode.Action,
                 value = data.currentValue,
-                onValueChange = { newValue ->
-                    onModified(data.copy(currentValue = newValue))
-                },
-                onValueChangeFinished = {
-                    onAction("$prefix${data.currentValue}$suffix")
-                },
+                onValueChange = { newValue -> onModified(data.copy(currentValue = newValue)) },
+                onValueChangeFinished = { onAction("$prefix${data.currentValue}$suffix") },
                 valueRange = min..max,
-                steps = ((max - min) / step).roundToInt(),
+                steps = steps,
             )
         },
     )

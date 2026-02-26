@@ -12,4 +12,6 @@ abstract class ControllerModel {
     abstract fun createElementWithNewId(): ControllerModel
 
     abstract fun getElementWithDefaultDisplayParameters(): ControllerModel
+
+    abstract fun validate(): Boolean
 }

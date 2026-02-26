@@ -21,4 +21,6 @@ data class SliderModel(
     override fun createElementWithNewId(): ControllerModel = this.copy(id = Uuid.Companion.random().toString())
 
     override fun getElementWithDefaultDisplayParameters(): ControllerModel = this.copy(displayParameters = NormalizedDisplay())
+
+    override fun validate(): Boolean = interactionConfig.validate()
 }

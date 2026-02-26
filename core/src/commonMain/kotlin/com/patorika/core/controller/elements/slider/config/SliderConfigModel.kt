@@ -9,12 +9,19 @@ import kotlinx.serialization.Serializable
 data class SliderConfigModel(
     val prefix: String = "slider",
     val suffix: String = ";",
-    val min: Float = 0f,
-    val max: Float = 1f,
-    val step: Float = 0.1f,
+    val min: String = "0.0",
+    val max: String = "1.0",
+    val stepsAmount: String = "1",
 ) : InteractionConfig {
-    fun isValid(): Boolean {
-        val stepsCount = (max - min) / step
-        return stepsCount > stepsCount.toInt()
+    val minValue: Float = min.toFloatOrNull() ?: 0f
+    val maxValue: Float = max.toFloatOrNull() ?: 0f
+    val stepsAmountValue: Int = stepsAmount.toIntOrNull() ?: 0
+
+    override fun validate(): Boolean {
+        val isMaxBigger = maxValue > minValue
+        val isStepValid = stepsAmountValue >= 0 && stepsAmount.contains("[,.]".toRegex()).not()
+        val valuesAreNotEmpty = min.isNotEmpty() && max.isNotEmpty() && stepsAmount.isNotEmpty()
+
+        return isMaxBigger && isStepValid && valuesAreNotEmpty
     }
 }

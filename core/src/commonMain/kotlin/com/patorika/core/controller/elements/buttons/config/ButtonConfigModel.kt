@@ -11,6 +11,8 @@ data class ButtonConfigModel(
     val onHold: String = "",
     val onRelease: String = "",
 ) : InteractionConfig {
+    override fun validate(): Boolean = true
+
     companion object {
         fun initBasic(text: String): ButtonConfigModel =
             ButtonConfigModel(

@@ -46,6 +46,7 @@ fun SignalEditorScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             SignalEditorToolbar(
+                saveable = state.element.validate(),
                 onBackPressed = { navigate(SignalEditorScreenNavigation.Close) },
                 onSavePressed = { viewModel.onEvent(SignalEditorScreenEvent.SaveChanges) },
             )

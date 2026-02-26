@@ -21,10 +21,18 @@
     <string name="slider_config_edit_prefix_label">Prefix</string>
     <string name="slider_config_edit_min_value_label">Min value</string>
     <string name="slider_config_edit_max_value_label">Max value</string>
-    <string name="slider_config_edit_step_value_label">Step value</string>
+    <string name="slider_config_edit_step_value_label">Steps amount</string>
     <string name="slider_config_edit_suffix_label">Suffix</string>
 
     <string name="slider_config_edit_preview_label">Signal preview:</string>
+
+    <string name="slider_config_edit_steps_amount_hint">Steps amount must be equal or greater than 0.\nIf it's 0 - slider will allow to pick any value in a range</string>
+
+    <string name="slider_config_edit_preview_error">Slider settings are invalid</string>
+    <string name="slider_config_edit_value_empty_error">Value can't be empty</string>
+    <string name="slider_config_edit_max_value_must_be_bigger_error">Max value must be bigger than min</string>
+    <string name="slider_config_edit_steps_amount_error">Amount can't be less than 0</string>
+    <string name="slider_config_edit_steps_amount_integer_error">Amount number must be an integer</string>
 
     <!--Slider editor-->
     <string name="slider_edit_name_label">Name</string>
