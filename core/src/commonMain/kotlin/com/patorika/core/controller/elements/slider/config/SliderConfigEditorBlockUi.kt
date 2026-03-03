@@ -9,26 +9,30 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import com.patorika.core.provider.TextProvider
+import com.patorika.core.provider.getString
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.Res
 import universalremote.core.generated.resources.slider_config_edit_max_value_label
-import universalremote.core.generated.resources.slider_config_edit_max_value_must_be_bigger_error
 import universalremote.core.generated.resources.slider_config_edit_min_value_label
 import universalremote.core.generated.resources.slider_config_edit_prefix_label
 import universalremote.core.generated.resources.slider_config_edit_preview_error
 import universalremote.core.generated.resources.slider_config_edit_preview_label
 import universalremote.core.generated.resources.slider_config_edit_step_value_label
-import universalremote.core.generated.resources.slider_config_edit_steps_amount_error
 import universalremote.core.generated.resources.slider_config_edit_steps_amount_hint
-import universalremote.core.generated.resources.slider_config_edit_steps_amount_integer_error
 import universalremote.core.generated.resources.slider_config_edit_suffix_label
-import universalremote.core.generated.resources.slider_config_edit_value_empty_error
 
 @Composable
 fun SliderConfigEditorBlockUi(
     config: SliderConfigModel,
     onModified: (SliderConfigModel) -> Unit,
 ) {
+    val errors = config.getErrorMessages()
+
+    val minErrors = errors.filterIsInstance<SliderConfigErrorType.Min>().map { it.message }
+    val maxErrors = errors.filterIsInstance<SliderConfigErrorType.Max>().map { it.message }
+    val stepErrors = errors.filterIsInstance<SliderConfigErrorType.Step>().map { it.message }
+
     SliderConfigValidator(config)
 
     TextField(
@@ -43,13 +47,8 @@ fun SliderConfigEditorBlockUi(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         value = config.min,
         onValueChange = { new -> onModified(config.copy(min = new)) },
-        supportingText = {
-            if (config.min.isEmpty()) {
-                Text(
-                    text = stringResource(Res.string.slider_config_edit_value_empty_error),
-                )
-            }
-        },
+        supportingText = { ErrorBlock(errorsList = minErrors) },
+        isError = minErrors.isNotEmpty(),
         label = { Text(stringResource(Res.string.slider_config_edit_min_value_label)) },
     )
 
@@ -58,23 +57,8 @@ fun SliderConfigEditorBlockUi(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         value = config.max,
         onValueChange = { new -> onModified(config.copy(max = new)) },
-        supportingText = {
-            Column {
-                if (config.max.isEmpty()) {
-                    Text(
-                        text = stringResource(Res.string.slider_config_edit_value_empty_error),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-
-                if (config.maxValue <= config.minValue) {
-                    Text(
-                        text = stringResource(Res.string.slider_config_edit_max_value_must_be_bigger_error),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-            }
-        },
+        supportingText = { ErrorBlock(errorsList = maxErrors) },
+        isError = maxErrors.isNotEmpty(),
         label = { Text(stringResource(Res.string.slider_config_edit_max_value_label)) },
     )
 
@@ -84,31 +68,12 @@ fun SliderConfigEditorBlockUi(
         value = config.stepsAmount,
         onValueChange = { new -> onModified(config.copy(stepsAmount = new)) },
         supportingText = {
-            Column {
-                if (config.stepsAmount.isEmpty()) {
-                    Text(
-                        text = stringResource(Res.string.slider_config_edit_value_empty_error),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-
-                if (config.stepsAmountValue < 0) {
-                    Text(
-                        text = stringResource(Res.string.slider_config_edit_steps_amount_error),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-
-                if (config.stepsAmount.contains("[,.]".toRegex())) {
-                    Text(
-                        text = stringResource(Res.string.slider_config_edit_steps_amount_integer_error),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-
-                Text(stringResource(Res.string.slider_config_edit_steps_amount_hint))
-            }
+            ErrorBlock(
+                errorsList = stepErrors,
+                hint = stringResource(Res.string.slider_config_edit_steps_amount_hint),
+            )
         },
+        isError = stepErrors.isNotEmpty(),
         label = { Text(stringResource(Res.string.slider_config_edit_step_value_label)) },
     )
 
@@ -130,5 +95,24 @@ private fun SliderConfigValidator(config: SliderConfigModel) {
             text = stringResource(Res.string.slider_config_edit_preview_error),
             color = MaterialTheme.colorScheme.error,
         )
+    }
+}
+
+@Composable
+private fun ErrorBlock(
+    errorsList: List<TextProvider>,
+    hint: String? = null,
+) {
+    Column {
+        errorsList.forEach { error ->
+            Text(
+                text = error.getString(),
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+
+        if (hint != null) {
+            Text(hint)
+        }
     }
 }

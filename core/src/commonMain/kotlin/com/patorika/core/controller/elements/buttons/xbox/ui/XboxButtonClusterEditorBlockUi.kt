@@ -23,7 +23,7 @@ fun ColumnScope.XboxButtonClusterEditorBlockUi(
     data: XboxButtonClusterModel,
     onModified: (XboxButtonClusterModel) -> Unit,
 ) {
-    SingleButtonEditingBlock(
+    XboxButtonEditingBlockUi(
         title = stringResource(Res.string.xbox_button_cluster_edit_a_block_name),
         name = data.nameA,
         interactionConfig = data.interactionConfigA,
@@ -34,7 +34,7 @@ fun ColumnScope.XboxButtonClusterEditorBlockUi(
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
-    SingleButtonEditingBlock(
+    XboxButtonEditingBlockUi(
         title = stringResource(Res.string.xbox_button_cluster_edit_b_block_name),
         name = data.nameB,
         interactionConfig = data.interactionConfigB,
@@ -45,7 +45,7 @@ fun ColumnScope.XboxButtonClusterEditorBlockUi(
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
-    SingleButtonEditingBlock(
+    XboxButtonEditingBlockUi(
         title = stringResource(Res.string.xbox_button_cluster_edit_x_block_name),
         name = data.nameX,
         interactionConfig = data.interactionConfigX,
@@ -56,7 +56,7 @@ fun ColumnScope.XboxButtonClusterEditorBlockUi(
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
-    SingleButtonEditingBlock(
+    XboxButtonEditingBlockUi(
         title = stringResource(Res.string.xbox_button_cluster_edit_y_block_name),
         name = data.nameY,
         interactionConfig = data.interactionConfigY,
@@ -66,7 +66,7 @@ fun ColumnScope.XboxButtonClusterEditorBlockUi(
 }
 
 @Composable
-private fun ColumnScope.SingleButtonEditingBlock(
+private fun ColumnScope.XboxButtonEditingBlockUi(
     title: String,
     name: String,
     interactionConfig: ButtonConfigModel,
