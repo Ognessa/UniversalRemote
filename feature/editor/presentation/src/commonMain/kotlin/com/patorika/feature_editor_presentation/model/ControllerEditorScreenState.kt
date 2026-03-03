@@ -1,9 +1,9 @@
 package com.patorika.feature_editor_presentation.model
 
-import com.patorika.core.model.controller.ControllerModel
+import com.patorika.core.controller.model.ControllerModel
 
 data class ControllerEditorScreenState(
     val isLibraryOpened: Boolean = false,
     val elements: List<ControllerModel> = emptyList(),
-    val selectedElementIndex: Int? = null,
+    val selectedElementId: String? = null,
 )

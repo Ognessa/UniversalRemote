@@ -1,14 +1,13 @@
 package com.patorika.feature_editor_presentation.model
 
-import com.patorika.core.model.controller.ControllerModel
+import com.patorika.core.controller.model.ControllerModel
 
 sealed class ControllerEditorUserEvent {
     data class ElementClicked(
-        val index: Int,
+        val id: String,
     ) : ControllerEditorUserEvent()
 
     data class ElementModified(
-        val index: Int,
         val element: ControllerModel,
     ) : ControllerEditorUserEvent()
 

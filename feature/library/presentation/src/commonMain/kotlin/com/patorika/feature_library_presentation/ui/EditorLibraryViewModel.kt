@@ -2,7 +2,7 @@ package com.patorika.feature_library_presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patorika.core.model.controller.ControllerModel
+import com.patorika.core.controller.model.ControllerModel
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_library_presentation.model.EditorLibraryNavigation
 import com.patorika.feature_library_presentation.model.EditorLibraryUserEvents
@@ -25,7 +25,7 @@ class EditorLibraryViewModel(
     }
 
     private suspend fun handleSelectedElement(element: ControllerModel) {
-        editorSharedState.emitNewElement(element)
+        editorSharedState.emitElement(element.createElementWithNewId())
         _navigationEvent.emit(EditorLibraryNavigation.CloseLibrary)
     }
 }

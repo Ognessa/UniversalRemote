@@ -2,7 +2,7 @@ package com.patorika.feature_editor_presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patorika.core.model.controller.ControllerModel
+import com.patorika.core.controller.model.ControllerModel
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_editor_presentation.model.ControllerEditorScreenState
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
@@ -24,10 +24,15 @@ class ControllerEditorViewModel(
 
     private fun observeNewElements() {
         viewModelScope.launch {
-            editorSharedState.newElementsFlow.collectLatest { list ->
-                _state.update {
-                    val newList = it.elements.toMutableList().apply { addAll(list) }
-                    it.copy(elements = newList)
+            editorSharedState.newElementsFlow.collectLatest { newElements ->
+                _state.update { currentState ->
+                    currentState.copy(
+                        elements =
+                            (currentState.elements + newElements)
+                                .associateBy { it.id }
+                                .values
+                                .toList(),
+                    )
                 }
             }
         }
@@ -37,35 +42,36 @@ class ControllerEditorViewModel(
         viewModelScope.launch {
             when (event) {
                 is ControllerEditorUserEvent.ElementClicked -> {
-                    handleElementClicked(event.index)
+                    handleElementClicked(event.id)
                 }
 
                 is ControllerEditorUserEvent.ElementModified -> {
-                    handleElementModified(event.index, event.element)
+                    handleElementModified(event.element)
                 }
 
                 is ControllerEditorUserEvent.ClearSelection -> {
-                    _state.update { it.copy(selectedElementIndex = null) }
+                    _state.update { it.copy(selectedElementId = null) }
                 }
             }
         }
     }
 
-    private fun handleElementClicked(index: Int) {
+    private fun handleElementClicked(id: String) {
         _state.update { current ->
-            current.copy(selectedElementIndex = index)
+            current.copy(selectedElementId = id)
         }
     }
 
-    private fun handleElementModified(
-        index: Int,
-        element: ControllerModel,
-    ) {
+    private fun handleElementModified(element: ControllerModel) {
         _state.update { current ->
-            val newList = current.elements.toMutableList().apply { this[index] = element }
+            val newList =
+                current.elements.toMutableList().map {
+                    if (it.id == element.id) element else it
+                }
+
             current.copy(
                 elements = newList,
-                selectedElementIndex = index,
+                selectedElementId = element.id,
             )
         }
     }

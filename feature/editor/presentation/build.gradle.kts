@@ -49,6 +49,7 @@ kotlin {
                 implementation(project(":core"))
                 implementation(project(":feature-editor-api"))
                 implementation(project(":feature-library-api"))
+                implementation(project(":feature-signal-api"))
             }
         }
 

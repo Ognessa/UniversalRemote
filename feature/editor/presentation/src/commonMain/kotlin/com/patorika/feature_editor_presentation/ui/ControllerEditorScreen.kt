@@ -11,8 +11,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patorika.core.model.controller.ControllerRenderMode
-import com.patorika.core.ui.elements.canvas.ControllerCanvas
+import com.patorika.core.controller.canvas.ControllerCanvas
+import com.patorika.core.controller.model.ControllerRenderMode
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
 import com.patorika.feature_editor_presentation.ui.components.EditorToolbar
@@ -29,10 +29,20 @@ fun ControllerEditorScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             EditorToolbar(
+                isAnythingSelected = state.selectedElementId != null,
                 onOrientationPressed = {
                     // todo
                 },
                 onPlusPressed = { navigate(ControllerEditorNavigation.OpenLibrary) },
+                onEditPressed = {
+                    // TODO replace with cleaner version
+                    state.elements
+                        .firstOrNull {
+                            state.selectedElementId.orEmpty() == it.id
+                        }?.let {
+                            navigate(ControllerEditorNavigation.OpenSignalEditor(it))
+                        }
+                },
                 onSavePressed = {
                     // todo
                 },
@@ -53,19 +63,16 @@ fun ControllerEditorScreen(
             ControllerCanvas(
                 modifier = Modifier.fillMaxSize(),
                 list = state.elements,
-                selectedElementIndex = state.selectedElementIndex,
+                selectedElementId = state.selectedElementId,
                 renderMode = ControllerRenderMode.Editor,
-                onClick = { index, _ ->
+                onClick = { model ->
                     viewModel.onEvent(
-                        ControllerEditorUserEvent.ElementClicked(index = index),
+                        ControllerEditorUserEvent.ElementClicked(model.id),
                     )
                 },
-                onModified = { index, element ->
+                onModified = { model ->
                     viewModel.onEvent(
-                        ControllerEditorUserEvent.ElementModified(
-                            index = index,
-                            element = element,
-                        ),
+                        ControllerEditorUserEvent.ElementModified(element = model),
                     )
                 },
             )

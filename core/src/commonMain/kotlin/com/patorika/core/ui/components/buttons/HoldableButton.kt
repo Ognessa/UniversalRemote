@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.patorika.core.model.controller.InteractionConfig
+import com.patorika.core.controller.elements.buttons.config.ButtonConfigModel
 import kotlinx.coroutines.delay
 
 @Composable
@@ -21,7 +21,7 @@ fun HoldableButton(
     modifier: Modifier = Modifier,
     name: String,
     shape: Shape = ButtonDefaults.shape,
-    interactionConfig: InteractionConfig.Button,
+    interactionConfig: ButtonConfigModel,
     onAction: (String) -> Unit = {},
 ) {
     val holdIntervalMs = 50L

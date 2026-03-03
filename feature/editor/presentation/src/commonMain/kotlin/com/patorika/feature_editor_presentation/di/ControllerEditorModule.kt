@@ -7,6 +7,7 @@ import com.patorika.feature_editor_presentation.api.ControllerEditorScreenBuilde
 import com.patorika.feature_editor_presentation.api.EditorSharedStateImpl
 import com.patorika.feature_editor_presentation.ui.ControllerEditorViewModel
 import com.patorika.feature_library_api.EditorLibraryScreenBuilder
+import com.patorika.feature_signal_api.SignalEditorScreenBuilder
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -24,6 +25,7 @@ val controllerEditorModule =
         factory<ControllerEditorScreenBuilder> {
             ControllerEditorScreenBuilderImpl(
                 editorLibraryScreenBuilder = get<EditorLibraryScreenBuilder>(),
+                signalEditorScreenBuilder = get<SignalEditorScreenBuilder>(),
             )
         } bind ScreenBuilder::class
     }

@@ -93,3 +93,7 @@ android {
         compose = true
     }
 }
+
+compose.resources {
+    publicResClass = true
+}

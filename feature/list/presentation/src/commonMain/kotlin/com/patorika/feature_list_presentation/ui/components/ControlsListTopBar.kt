@@ -15,7 +15,10 @@ import universalremote.feature_list_presentation.generated.resources.controls_li
 internal fun ControlsListTopBar() {
     TopAppBar(
         title = {
-            Text(stringResource(Res.string.controls_list_screen_title))
+            Text(
+                stringResource(Res.string.controls_list_screen_title),
+                style = MaterialTheme.typography.titleLarge,
+            )
         },
         colors =
             topAppBarColors(
