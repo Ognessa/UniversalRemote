@@ -1,4 +1,4 @@
-package com.patorika.core.controller.model
+package com.patorika.core.controller.elements.basic.model
 
 enum class ControllerRenderMode {
     Preview,

@@ -2,7 +2,7 @@ package com.patorika.feature_signal_presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patorika.core.controller.model.ControllerModel
+import com.patorika.core.controller.elements.basic.model.ControllerElementModel
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenEvent
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenNavigation
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SignalEditorViewModel(
-    private val elementData: ControllerModel,
+    private val elementData: ControllerElementModel,
     private val editorSharedState: EditorSharedState,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SignalEditorScreenState(elementData))
@@ -38,7 +38,7 @@ class SignalEditorViewModel(
         }
     }
 
-    private fun onElementModified(element: ControllerModel) {
+    private fun onElementModified(element: ControllerElementModel) {
         _state.update { current -> current.copy(element = element) }
     }
 

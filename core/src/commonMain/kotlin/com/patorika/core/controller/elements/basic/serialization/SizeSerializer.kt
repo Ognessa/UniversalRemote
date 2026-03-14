@@ -1,6 +1,6 @@
-package com.patorika.core.controller.model.serialization
+package com.patorika.core.controller.elements.basic.serialization
 
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -9,39 +9,39 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-class OffsetSerializer : KSerializer<Offset> {
+class SizeSerializer : KSerializer<Size> {
     override val descriptor: SerialDescriptor =
-        buildClassSerialDescriptor("Offset") {
-            element("x", Float.Companion.serializer().descriptor)
-            element("y", Float.serializer().descriptor)
+        buildClassSerialDescriptor("Size") {
+            element("width", Float.Companion.serializer().descriptor)
+            element("height", Float.serializer().descriptor)
         }
 
     override fun serialize(
         encoder: Encoder,
-        value: Offset,
+        value: Size,
     ) {
         val composite = encoder.beginStructure(descriptor)
-        composite.encodeFloatElement(descriptor, 0, value.x)
-        composite.encodeFloatElement(descriptor, 1, value.y)
+        composite.encodeFloatElement(descriptor, 0, value.width)
+        composite.encodeFloatElement(descriptor, 1, value.height)
         composite.endStructure(descriptor)
     }
 
-    override fun deserialize(decoder: Decoder): Offset {
+    override fun deserialize(decoder: Decoder): Size {
         val composite = decoder.beginStructure(descriptor)
 
-        var x = 0f
-        var y = 0f
+        var width = 0f
+        var height = 0f
 
         loop@ while (true) {
             when (val index = composite.decodeElementIndex(descriptor)) {
-                0 -> x = composite.decodeFloatElement(descriptor, 0)
-                1 -> y = composite.decodeFloatElement(descriptor, 1)
+                0 -> width = composite.decodeFloatElement(descriptor, 0)
+                1 -> height = composite.decodeFloatElement(descriptor, 1)
                 CompositeDecoder.Companion.DECODE_DONE -> break@loop
                 else -> error("Unexpected index: $index")
             }
         }
 
         composite.endStructure(descriptor)
-        return Offset(x, y)
+        return Size(width, height)
     }
 }

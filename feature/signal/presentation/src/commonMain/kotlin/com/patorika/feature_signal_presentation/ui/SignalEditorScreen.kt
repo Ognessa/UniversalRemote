@@ -16,13 +16,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.patorika.core.controller.elements.basic.model.ControllerElementModel
 import com.patorika.core.controller.elements.buttons.square.model.SquareButtonModel
 import com.patorika.core.controller.elements.buttons.square.ui.SquareButtonEditorBlock
 import com.patorika.core.controller.elements.buttons.xbox.model.XboxButtonClusterModel
 import com.patorika.core.controller.elements.buttons.xbox.ui.XboxButtonClusterEditorBlockUi
 import com.patorika.core.controller.elements.slider.model.SliderModel
 import com.patorika.core.controller.elements.slider.ui.SliderEditorBlockUi
-import com.patorika.core.controller.model.ControllerModel
 import com.patorika.core.ui.theme.CoreDimens
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenEvent
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenNavigation
@@ -71,7 +71,7 @@ fun SignalEditorScreen(
 
 @Composable
 private fun ColumnScope.EditorByElementType(
-    element: ControllerModel,
+    element: ControllerElementModel,
     onEvent: (SignalEditorScreenEvent) -> Unit,
 ) {
     when (element) {

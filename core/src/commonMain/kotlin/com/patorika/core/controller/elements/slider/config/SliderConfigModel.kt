@@ -1,6 +1,6 @@
 package com.patorika.core.controller.elements.slider.config
 
-import com.patorika.core.controller.model.config.InteractionConfig
+import com.patorika.core.controller.elements.basic.config.InteractionConfig
 import com.patorika.core.provider.TextProvider
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

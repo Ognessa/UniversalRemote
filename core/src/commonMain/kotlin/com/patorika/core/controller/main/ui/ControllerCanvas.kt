@@ -1,24 +1,26 @@
-package com.patorika.core.controller.canvas
+package com.patorika.core.controller.main.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.patorika.core.controller.elements.basic.model.ControllerElementModel
+import com.patorika.core.controller.elements.basic.model.ControllerRenderMode
 import com.patorika.core.controller.elements.buttons.square.model.SquareButtonModel
 import com.patorika.core.controller.elements.buttons.square.ui.SquareButtonUi
 import com.patorika.core.controller.elements.buttons.xbox.model.XboxButtonClusterModel
 import com.patorika.core.controller.elements.buttons.xbox.ui.XboxButtonClusterUi
 import com.patorika.core.controller.elements.slider.model.SliderModel
 import com.patorika.core.controller.elements.slider.ui.SliderUi
-import com.patorika.core.controller.model.ControllerModel
-import com.patorika.core.controller.model.ControllerRenderMode
+import com.patorika.core.controller.main.model.ControllerOrientation
 
 @Composable
 fun ControllerCanvas(
     modifier: Modifier = Modifier,
-    list: List<ControllerModel>,
+    list: List<ControllerElementModel>,
+    orientation: ControllerOrientation,
     selectedElementId: String? = null,
     renderMode: ControllerRenderMode,
-    onClick: (ControllerModel) -> Unit,
-    onModified: (ControllerModel) -> Unit,
+    onClick: (ControllerElementModel) -> Unit,
+    onModified: (ControllerElementModel) -> Unit,
     onAction: (String) -> Unit = {},
 ) {
     list.forEach { element ->
@@ -27,6 +29,7 @@ fun ControllerCanvas(
                 SquareButtonUi(
                     modifier = modifier,
                     data = element,
+                    orientation = orientation,
                     isSelected = selectedElementId == element.id,
                     renderMode = renderMode,
                     onClick = { onClick(element) },
@@ -39,6 +42,7 @@ fun ControllerCanvas(
                 XboxButtonClusterUi(
                     modifier = modifier,
                     data = element,
+                    orientation = orientation,
                     isSelected = selectedElementId == element.id,
                     renderMode = renderMode,
                     onClick = { onClick(element) },
@@ -51,6 +55,7 @@ fun ControllerCanvas(
                 SliderUi(
                     modifier = modifier,
                     data = element,
+                    orientation = orientation,
                     isSelected = selectedElementId == element.id,
                     renderMode = renderMode,
                     onClick = { onClick(element) },

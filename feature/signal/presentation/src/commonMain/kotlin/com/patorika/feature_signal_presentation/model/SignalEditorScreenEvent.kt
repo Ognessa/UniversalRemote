@@ -1,10 +1,10 @@
 package com.patorika.feature_signal_presentation.model
 
-import com.patorika.core.controller.model.ControllerModel
+import com.patorika.core.controller.elements.basic.model.ControllerElementModel
 
 sealed class SignalEditorScreenEvent {
     data class OnElementModified(
-        val element: ControllerModel,
+        val element: ControllerElementModel,
     ) : SignalEditorScreenEvent()
 
     data object SaveChanges : SignalEditorScreenEvent()

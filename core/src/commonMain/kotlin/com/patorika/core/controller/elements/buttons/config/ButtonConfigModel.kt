@@ -1,6 +1,6 @@
 package com.patorika.core.controller.elements.buttons.config
 
-import com.patorika.core.controller.model.config.InteractionConfig
+import com.patorika.core.controller.elements.basic.config.InteractionConfig
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

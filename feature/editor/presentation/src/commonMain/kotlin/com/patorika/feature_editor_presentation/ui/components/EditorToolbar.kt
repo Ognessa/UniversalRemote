@@ -12,6 +12,9 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import com.patorika.core.controller.ext.setOrientation
+import com.patorika.core.controller.main.model.ControllerOrientation
 import org.jetbrains.compose.resources.painterResource
 import universalremote.core.generated.resources.Res
 import universalremote.core.generated.resources.ic_check
@@ -22,7 +25,8 @@ import universalremote.core.generated.resources.ic_plus
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditorToolbar(
-    isAnythingSelected: Boolean,
+    isElementSelected: Boolean,
+    orientation: ControllerOrientation,
     onOrientationPressed: () -> Unit,
     onPlusPressed: () -> Unit,
     onEditPressed: () -> Unit,
@@ -36,22 +40,31 @@ internal fun EditorToolbar(
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(onClick = onOrientationPressed) {
+                IconButton(
+                    modifier = Modifier.setOrientation(orientation),
+                    onClick = onOrientationPressed,
+                ) {
                     Icon(
                         painter = painterResource(Res.drawable.ic_orientation),
                         contentDescription = null,
                     )
                 }
 
-                IconButton(onClick = onPlusPressed) {
+                IconButton(
+                    modifier = Modifier.setOrientation(orientation),
+                    onClick = onPlusPressed,
+                ) {
                     Icon(
                         painter = painterResource(Res.drawable.ic_plus),
                         contentDescription = null,
                     )
                 }
 
-                if (isAnythingSelected) {
-                    IconButton(onClick = onEditPressed) {
+                if (isElementSelected) {
+                    IconButton(
+                        modifier = Modifier.setOrientation(orientation),
+                        onClick = onEditPressed,
+                    ) {
                         Icon(
                             painter = painterResource(Res.drawable.ic_edit),
                             contentDescription = null,
@@ -59,7 +72,10 @@ internal fun EditorToolbar(
                     }
                 }
 
-                IconButton(onClick = onSavePressed) {
+                IconButton(
+                    modifier = Modifier.setOrientation(orientation),
+                    onClick = onSavePressed,
+                ) {
                     Icon(
                         painter = painterResource(Res.drawable.ic_check),
                         contentDescription = null,
