@@ -1,6 +1,6 @@
 package com.patorika.feature_signal_presentation.di
 
-import com.patorika.core.controller.model.ControllerModel
+import com.patorika.core.controller.elements.basic.model.ControllerElementModel
 import com.patorika.core.navigation.ScreenBuilder
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_signal_api.SignalEditorScreenBuilder
@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val signalEditorModule =
     module {
-        viewModel { (controllerElement: ControllerModel) ->
+        viewModel { (controllerElement: ControllerElementModel) ->
             SignalEditorViewModel(
                 elementData = controllerElement,
                 editorSharedState = get<EditorSharedState>(),

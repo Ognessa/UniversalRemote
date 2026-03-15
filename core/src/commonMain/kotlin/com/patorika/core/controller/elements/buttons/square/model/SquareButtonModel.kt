@@ -1,8 +1,9 @@
 package com.patorika.core.controller.elements.buttons.square.model
 
+import com.patorika.core.controller.elements.basic.config.NormalizedDisplay
+import com.patorika.core.controller.elements.basic.model.ControllerElementModel
 import com.patorika.core.controller.elements.buttons.config.ButtonConfigModel
-import com.patorika.core.controller.model.ControllerModel
-import com.patorika.core.controller.model.config.NormalizedDisplay
+import com.patorika.core.controller.main.model.ControllerOrientation
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi
@@ -16,10 +17,13 @@ data class SquareButtonModel(
     override val displayParameters: NormalizedDisplay = NormalizedDisplay(),
     val name: String = "Btn",
     val interactionConfig: ButtonConfigModel = ButtonConfigModel(),
-) : ControllerModel() {
-    override fun createElementWithNewId(): ControllerModel = this.copy(id = Uuid.Companion.random().toString())
+) : ControllerElementModel() {
+    override fun createElementWithNewId(): ControllerElementModel = this.copy(id = Uuid.Companion.random().toString())
 
-    override fun getElementWithDefaultDisplayParameters(): ControllerModel = this.copy(displayParameters = NormalizedDisplay())
+    override fun getElementWithDefaultDisplayParameters(): ControllerElementModel = this.copy(displayParameters = NormalizedDisplay())
 
     override fun validate(): Boolean = true
+
+    override fun changeOrientation(orientation: ControllerOrientation): ControllerElementModel =
+        this.copy(displayParameters = displayParameters.changeOrientation(orientation))
 }

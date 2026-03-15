@@ -3,19 +3,21 @@ package com.patorika.core.controller.elements.slider.ui
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.patorika.core.controller.elements.basic.BasicElementUi
+import com.patorika.core.controller.elements.basic.model.ControllerElementModel
+import com.patorika.core.controller.elements.basic.model.ControllerRenderMode
+import com.patorika.core.controller.elements.basic.ui.BasicElementUi
 import com.patorika.core.controller.elements.slider.model.SliderModel
-import com.patorika.core.controller.model.ControllerModel
-import com.patorika.core.controller.model.ControllerRenderMode
+import com.patorika.core.controller.main.model.ControllerOrientation
 
 @Composable
 fun SliderUi(
     modifier: Modifier = Modifier,
     data: SliderModel,
+    orientation: ControllerOrientation,
     isSelected: Boolean,
     renderMode: ControllerRenderMode,
     onClick: () -> Unit = {},
-    onModified: (ControllerModel) -> Unit = {},
+    onModified: (ControllerElementModel) -> Unit = {},
     onAction: (String) -> Unit = {},
 ) {
     val prefix = data.interactionConfig.prefix
@@ -30,6 +32,7 @@ fun SliderUi(
         parameters = data.displayParameters,
         isSelected = isSelected,
         renderMode = renderMode,
+        orientation = orientation,
         onClick = onClick,
         onParametersModified = { params ->
             onModified(data.copy(displayParameters = params))

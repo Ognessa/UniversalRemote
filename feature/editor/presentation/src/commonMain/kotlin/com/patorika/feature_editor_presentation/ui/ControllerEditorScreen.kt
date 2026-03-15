@@ -11,8 +11,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patorika.core.controller.canvas.ControllerCanvas
-import com.patorika.core.controller.model.ControllerRenderMode
+import com.patorika.core.controller.elements.basic.model.ControllerRenderMode
+import com.patorika.core.controller.main.ui.ControllerCanvas
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
 import com.patorika.feature_editor_presentation.ui.components.EditorToolbar
@@ -29,13 +29,12 @@ fun ControllerEditorScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             EditorToolbar(
-                isAnythingSelected = state.selectedElementId != null,
-                onOrientationPressed = {
-                    // todo
-                },
+                isElementSelected = state.selectedElementId != null,
+                orientation = state.orientation,
+                onOrientationPressed = { viewModel.onEvent(ControllerEditorUserEvent.OrientationChanged) },
                 onPlusPressed = { navigate(ControllerEditorNavigation.OpenLibrary) },
                 onEditPressed = {
-                    // TODO replace with cleaner version
+                    // TODO replace with context menu
                     state.elements
                         .firstOrNull {
                             state.selectedElementId.orEmpty() == it.id
@@ -43,9 +42,7 @@ fun ControllerEditorScreen(
                             navigate(ControllerEditorNavigation.OpenSignalEditor(it))
                         }
                 },
-                onSavePressed = {
-                    // todo
-                },
+                onSavePressed = { viewModel.onEvent(ControllerEditorUserEvent.Save) },
             )
         },
     ) { innerPadding ->
@@ -63,6 +60,7 @@ fun ControllerEditorScreen(
             ControllerCanvas(
                 modifier = Modifier.fillMaxSize(),
                 list = state.elements,
+                orientation = state.orientation,
                 selectedElementId = state.selectedElementId,
                 renderMode = ControllerRenderMode.Editor,
                 onClick = { model ->

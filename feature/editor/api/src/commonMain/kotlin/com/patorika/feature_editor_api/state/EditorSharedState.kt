@@ -1,12 +1,12 @@
 package com.patorika.feature_editor_api.state
 
-import com.patorika.core.controller.model.ControllerModel
+import com.patorika.core.controller.elements.basic.model.ControllerElementModel
 import kotlinx.coroutines.flow.SharedFlow
 
 interface EditorSharedState {
-    val newElementsFlow: SharedFlow<List<ControllerModel>>
+    val newElementsFlow: SharedFlow<List<ControllerElementModel>>
 
-    suspend fun emitElement(element: ControllerModel)
+    suspend fun emitElement(element: ControllerElementModel)
 
-    suspend fun emitElements(list: List<ControllerModel>)
+    suspend fun emitElements(list: List<ControllerElementModel>)
 }

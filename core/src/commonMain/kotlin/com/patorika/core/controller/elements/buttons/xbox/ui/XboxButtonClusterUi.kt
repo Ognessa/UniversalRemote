@@ -10,11 +10,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
-import com.patorika.core.controller.elements.basic.BasicElementUi
+import com.patorika.core.controller.elements.basic.model.ControllerElementModel
+import com.patorika.core.controller.elements.basic.model.ControllerRenderMode
+import com.patorika.core.controller.elements.basic.ui.BasicElementUi
 import com.patorika.core.controller.elements.buttons.xbox.model.XboxButtonClusterModel
-import com.patorika.core.controller.model.ControllerModel
-import com.patorika.core.controller.model.ControllerRenderMode
+import com.patorika.core.controller.main.model.ControllerOrientation
 import com.patorika.core.ui.components.buttons.HoldableButton
 import com.patorika.core.ui.ext.pxToDp
 
@@ -22,10 +24,11 @@ import com.patorika.core.ui.ext.pxToDp
 fun XboxButtonClusterUi(
     modifier: Modifier = Modifier,
     data: XboxButtonClusterModel,
+    orientation: ControllerOrientation,
     isSelected: Boolean,
     renderMode: ControllerRenderMode,
     onClick: () -> Unit = {},
-    onModified: (ControllerModel) -> Unit = {},
+    onModified: (ControllerElementModel) -> Unit = {},
     onAction: (String) -> Unit = {},
 ) {
     BasicElementUi(
@@ -33,6 +36,7 @@ fun XboxButtonClusterUi(
         parameters = data.displayParameters,
         isSelected = isSelected,
         renderMode = renderMode,
+        orientation = orientation,
         onClick = onClick,
         onParametersModified = { params ->
             onModified(data.copy(displayParameters = params))
@@ -52,28 +56,28 @@ fun XboxButtonClusterUi(
                         ).padding(8.dp),
             ) {
                 HoldableButton(
-                    modifier = Modifier.size((sizePx / 3).pxToDp()).align(Alignment.TopCenter),
+                    modifier = Modifier.setXboxButtonSize(sizePx).align(Alignment.TopCenter),
                     name = data.nameY,
                     interactionConfig = data.interactionConfigY,
                     onAction = onAction,
                 )
 
                 HoldableButton(
-                    modifier = Modifier.size((sizePx / 3).pxToDp()).align(Alignment.CenterStart),
+                    modifier = Modifier.setXboxButtonSize(sizePx).align(Alignment.CenterStart),
                     name = data.nameX,
                     interactionConfig = data.interactionConfigX,
                     onAction = onAction,
                 )
 
                 HoldableButton(
-                    modifier = Modifier.size((sizePx / 3).pxToDp()).align(Alignment.CenterEnd),
+                    modifier = Modifier.setXboxButtonSize(sizePx).align(Alignment.CenterEnd),
                     name = data.nameB,
                     interactionConfig = data.interactionConfigB,
                     onAction = onAction,
                 )
 
                 HoldableButton(
-                    modifier = Modifier.size((sizePx / 3).pxToDp()).align(Alignment.BottomCenter),
+                    modifier = Modifier.setXboxButtonSize(sizePx).align(Alignment.BottomCenter),
                     name = data.nameA,
                     interactionConfig = data.interactionConfigA,
                     onAction = onAction,
@@ -82,3 +86,10 @@ fun XboxButtonClusterUi(
         },
     )
 }
+
+@Composable
+private fun Modifier.setXboxButtonSize(sizePx: Size) =
+    this.size(
+        width = (sizePx.width / 3).pxToDp(),
+        height = (sizePx.height / 3).pxToDp(),
+    )
