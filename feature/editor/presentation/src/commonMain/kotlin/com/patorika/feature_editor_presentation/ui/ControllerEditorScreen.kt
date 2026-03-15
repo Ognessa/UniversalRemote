@@ -34,7 +34,7 @@ fun ControllerEditorScreen(
                 onOrientationPressed = { viewModel.onEvent(ControllerEditorUserEvent.OrientationChanged) },
                 onPlusPressed = { navigate(ControllerEditorNavigation.OpenLibrary) },
                 onEditPressed = {
-                    // TODO replace with cleaner version
+                    // TODO replace with context menu
                     state.elements
                         .firstOrNull {
                             state.selectedElementId.orEmpty() == it.id

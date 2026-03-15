@@ -34,8 +34,61 @@ import com.patorika.core.controller.main.model.ControllerOrientation
 import com.patorika.core.ui.ext.dpToPx
 import com.patorika.core.ui.ext.pxToDp
 
-// TODO change description
-// use onDraw or onComposable depending on existing of a needed element
+/**
+ * A base composable used to render and edit controller elements inside the controller editor.
+ *
+ * This component is responsible for:
+ * - positioning the element inside the controller canvas
+ * - handling drag gestures for moving the element
+ * - resizing the element via corner handles
+ * - converting between normalized element parameters and pixel-based layout values
+ * - rendering the element content using either a Canvas or composable content
+ * - applying a global controller orientation (portrait / landscape)
+ *
+ * The element internally operates in **pixel coordinates**, while the public API uses
+ * normalized parameters ([NormalizedDisplay]).
+ *
+ * ### Layout structure
+ *
+ * The composable consists of three main layers:
+ *
+ * 1. **Layout container**
+ *    - Positioned using pixel coordinates calculated from normalized parameters
+ *    - Defines the logical bounding box used for interaction and resizing
+ *
+ * 2. **Visual content layer**
+ *    - Responsible only for rendering element UI
+ *    - Applies controller orientation using a custom layout transformation
+ *    - Supports both Canvas-based and composable-based rendering
+ *
+ * 3. **Interaction layer**
+ *    - Handles drag gestures for moving the element
+ *    - Displays resize handles when the element is selected
+ *    - Shows selection borders
+ *
+ * ### Orientation handling
+ *
+ * Controller orientation is global and affects all elements simultaneously.
+ * Instead of rotating the interaction layer, a custom layout transformation is applied
+ * only to the visual content layer. In landscape mode:
+ *
+ * - layout constraints are swapped (width ↔ height)
+ * - the content is rotated by 90°
+ * - the interaction bounding box remains unchanged
+ *
+ * This approach ensures that drag and resize gestures remain intuitive and always operate
+ * in the same screen coordinate system.
+ *
+ * @param modifier Modifier applied to the root container.
+ * @param parameters Normalized display parameters describing the element position and size.
+ * @param isSelected Indicates whether the element is currently selected in the editor.
+ * @param renderMode Controls interaction and editing behavior.
+ * @param orientation Global controller orientation (portrait or landscape).
+ * @param onClick Callback triggered when the element is tapped.
+ * @param onParametersModified Callback invoked when the element position or size changes.
+ * @param onDraw Canvas drawing lambda used to render custom graphics.
+ * @param onComposable Composable content used to render additional UI inside the element.
+ */
 @Composable
 fun BasicElementUi(
     modifier: Modifier = Modifier,

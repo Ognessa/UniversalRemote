@@ -78,7 +78,6 @@ class ControllerEditorViewModel(
         _state.update {
             val newOrientation = it.orientation.changeOrientation()
 
-            // TODO continue here. changeOrientation doesn't work properly
             val newElementsList =
                 it.elements.map { element -> element.changeOrientation(newOrientation) }
 
