@@ -12,8 +12,8 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.patorika.core.controller.ext.setOrientation
-import com.patorika.core.controller.main.model.ControllerOrientation
+import com.patorika.feature_controller.ext.setOrientation
+import com.patorika.feature_controller.main.model.ControllerOrientation
 import org.jetbrains.compose.resources.painterResource
 import universalremote.core.generated.resources.Res
 import universalremote.core.generated.resources.ic_check

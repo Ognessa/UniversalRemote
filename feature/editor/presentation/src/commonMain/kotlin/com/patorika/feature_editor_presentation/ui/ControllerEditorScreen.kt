@@ -11,8 +11,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patorika.core.controller.elements.basic.model.ControllerRenderMode
-import com.patorika.core.controller.main.ui.ControllerCanvas
+import com.patorika.feature_controller.elements.basic.model.ControllerRenderMode
+import com.patorika.feature_controller.main.ui.ControllerCanvas
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
 import com.patorika.feature_editor_presentation.ui.components.EditorToolbar

@@ -2,9 +2,9 @@ package com.patorika.feature_editor_presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patorika.core.controller.elements.basic.model.ControllerElementModel
-import com.patorika.core.controller.main.model.ControllerModel
 import com.patorika.core.util.LoggerUtil
+import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.main.model.ControllerModel
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_editor_presentation.model.ControllerEditorScreenState
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
