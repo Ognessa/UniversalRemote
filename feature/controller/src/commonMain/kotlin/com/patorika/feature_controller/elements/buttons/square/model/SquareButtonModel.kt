@@ -26,4 +26,7 @@ data class SquareButtonModel(
 
     override fun changeOrientation(orientation: ControllerOrientation): ControllerElementModel =
         this.copy(displayParameters = displayParameters.changeOrientation(orientation))
+
+    override val jsonVersion: Int = 1
+    override val serialName: String = serializer().descriptor.serialName
 }

@@ -17,4 +17,8 @@ abstract class ControllerElementModel {
     abstract fun validate(): Boolean
 
     abstract fun changeOrientation(orientation: ControllerOrientation): ControllerElementModel
+
+    abstract val jsonVersion: Int
+
+    abstract val serialName: String
 }

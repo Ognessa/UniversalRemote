@@ -11,6 +11,7 @@ import kotlin.uuid.Uuid
 @SerialName("ControllerModel")
 data class ControllerModel(
     val id: String = Uuid.Companion.random().toString(),
+    val name: String = "",
     val elements: List<ControllerElementModel> = emptyList(),
     val orientation: ControllerOrientation = ControllerOrientation.PORTRAIT,
 )

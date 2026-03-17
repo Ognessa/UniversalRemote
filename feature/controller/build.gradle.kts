@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -48,6 +49,8 @@ kotlin {
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
 
+                implementation(libs.sqldelight.coroutinesExt)
+
                 implementation(project(":core"))
             }
         }
@@ -60,6 +63,7 @@ kotlin {
 
         androidMain {
             dependencies {
+                implementation(libs.sqldelight.android)
             }
         }
 
@@ -73,6 +77,7 @@ kotlin {
 
         iosMain {
             dependencies {
+                implementation(libs.sqldelight.native)
             }
         }
     }
@@ -90,5 +95,13 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+}
+
+sqldelight {
+    databases {
+        create("ControllerDatabase") {
+            packageName.set("com.patorika.feature_controller.data.database")
+        }
     }
 }
