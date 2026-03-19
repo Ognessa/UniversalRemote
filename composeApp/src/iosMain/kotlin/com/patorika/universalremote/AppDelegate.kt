@@ -6,6 +6,6 @@ import org.koin.core.context.startKoin
 
 fun initKoinIos() {
     startKoin {
-        modules(listOf(appModule, iosControllerModule))
+        modules(listOf(iosControllerModule, appModule))
     }
 }

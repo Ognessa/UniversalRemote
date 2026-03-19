@@ -75,7 +75,7 @@ fun EditorLibraryScreen(
                 ControllerCanvas(
                     list = defaultControllersList,
                     orientation = ControllerOrientation.PORTRAIT,
-                    renderMode = ControllerRenderMode.Preview,
+                    renderMode = ControllerRenderMode.LibraryPreview,
                     onClick = { element ->
                         viewModel.onUserEvent(
                             EditorLibraryUserEvents.ElementSelected(element),

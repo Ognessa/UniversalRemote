@@ -136,7 +136,7 @@ fun BasicElementUi(
 
         val currentTopLeftPx =
             remember(currentCenterPx, currentSizePx) {
-                if (renderMode == ControllerRenderMode.Preview) {
+                if (renderMode == ControllerRenderMode.LibraryPreview) {
                     Offset.Zero
                 } else {
                     centerToTopLeft(

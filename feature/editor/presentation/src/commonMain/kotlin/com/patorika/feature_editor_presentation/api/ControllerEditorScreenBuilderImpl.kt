@@ -41,6 +41,10 @@ class ControllerEditorScreenBuilderImpl(
                     route = "${signalEditorScreenBuilder.routeName}/${type.model.toNavArg()}",
                 )
             }
+
+            is ControllerEditorNavigation.Close -> {
+                navController.popBackStack()
+            }
         }
     }
 }

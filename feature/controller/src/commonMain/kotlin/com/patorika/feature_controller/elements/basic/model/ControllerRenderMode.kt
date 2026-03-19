@@ -13,7 +13,8 @@ package com.patorika.feature_controller.elements.basic.model
  *   Interaction UI is hidden and only the element content is rendered.
  */
 enum class ControllerRenderMode {
-    Preview,
+    LibraryPreview,
+    ListPreview,
     Editor,
     Action,
 }

@@ -2,17 +2,18 @@ package com.patorika.feature_list_presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patorika.core.ui.theme.CoreDimens
+import com.patorika.feature_controller.main.model.ControllerModel
 
 @Composable
 internal fun ControlsListBody(
     modifier: Modifier = Modifier,
-    list: List<String>,
+    list: List<ControllerModel>,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -22,8 +23,8 @@ internal fun ControlsListBody(
         if (list.isNotEmpty()) {
             items(items = list) { item ->
                 ControlsListItemUi(
-                    modifier = Modifier.fillMaxWidth(),
-                    name = item,
+                    modifier = Modifier.fillMaxSize(),
+                    model = item,
                 )
             }
         } else {
