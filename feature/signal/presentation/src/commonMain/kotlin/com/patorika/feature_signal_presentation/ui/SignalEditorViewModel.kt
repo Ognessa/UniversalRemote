@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SignalEditorViewModel(
-    private val elementData: ControllerElementModel,
+    elementData: ControllerElementModel,
     private val editorSharedState: EditorSharedState,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SignalEditorScreenState(elementData))

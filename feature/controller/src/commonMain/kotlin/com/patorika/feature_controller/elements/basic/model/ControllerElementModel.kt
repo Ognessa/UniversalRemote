@@ -1,7 +1,6 @@
 package com.patorika.feature_controller.elements.basic.model
 
 import com.patorika.feature_controller.elements.basic.config.NormalizedDisplay
-import com.patorika.feature_controller.main.model.ControllerOrientation
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,7 +15,7 @@ abstract class ControllerElementModel {
 
     abstract fun validate(): Boolean
 
-    abstract fun changeOrientation(orientation: ControllerOrientation): ControllerElementModel
+    abstract fun changeOrientation(): ControllerElementModel
 
     abstract val jsonVersion: Int
 

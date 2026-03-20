@@ -4,7 +4,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import com.patorika.feature_controller.elements.basic.serialization.OffsetSerializer
 import com.patorika.feature_controller.elements.basic.serialization.SizeSerializer
-import com.patorika.feature_controller.main.model.ControllerOrientation
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -23,8 +22,5 @@ data class NormalizedDisplay(
     @Serializable(with = OffsetSerializer::class)
     val centerOffset: Offset = Offset(0.5f, 0.5f), // 0f..1f
 ) {
-    fun changeOrientation(orientation: ControllerOrientation): NormalizedDisplay =
-        copy(
-            scaleSize = Size(scaleSize.height, scaleSize.width),
-        )
+    fun changeOrientation(): NormalizedDisplay = copy(scaleSize = Size(scaleSize.height, scaleSize.width))
 }

@@ -12,7 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 class SizeSerializer : KSerializer<Size> {
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("Size") {
-            element("width", Float.Companion.serializer().descriptor)
+            element("width", Float.serializer().descriptor)
             element("height", Float.serializer().descriptor)
         }
 
@@ -36,7 +36,7 @@ class SizeSerializer : KSerializer<Size> {
             when (val index = composite.decodeElementIndex(descriptor)) {
                 0 -> width = composite.decodeFloatElement(descriptor, 0)
                 1 -> height = composite.decodeFloatElement(descriptor, 1)
-                CompositeDecoder.Companion.DECODE_DONE -> break@loop
+                CompositeDecoder.DECODE_DONE -> break@loop
                 else -> error("Unexpected index: $index")
             }
         }

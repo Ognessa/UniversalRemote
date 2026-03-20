@@ -12,7 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 class OffsetSerializer : KSerializer<Offset> {
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("Offset") {
-            element("x", Float.Companion.serializer().descriptor)
+            element("x", Float.serializer().descriptor)
             element("y", Float.serializer().descriptor)
         }
 
@@ -36,7 +36,7 @@ class OffsetSerializer : KSerializer<Offset> {
             when (val index = composite.decodeElementIndex(descriptor)) {
                 0 -> x = composite.decodeFloatElement(descriptor, 0)
                 1 -> y = composite.decodeFloatElement(descriptor, 1)
-                CompositeDecoder.Companion.DECODE_DONE -> break@loop
+                CompositeDecoder.DECODE_DONE -> break@loop
                 else -> error("Unexpected index: $index")
             }
         }

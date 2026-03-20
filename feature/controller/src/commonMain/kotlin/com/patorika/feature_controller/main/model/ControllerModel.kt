@@ -10,7 +10,7 @@ import kotlin.uuid.Uuid
 @Serializable
 @SerialName("ControllerModel")
 data class ControllerModel(
-    val id: String = Uuid.Companion.random().toString(),
+    val id: String = Uuid.random().toString(),
     val name: String = "",
     val elements: List<ControllerElementModel> = emptyList(),
     val orientation: ControllerOrientation = ControllerOrientation.PORTRAIT,

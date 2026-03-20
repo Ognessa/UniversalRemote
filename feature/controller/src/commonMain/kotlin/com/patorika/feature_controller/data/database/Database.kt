@@ -2,11 +2,12 @@ package com.patorika.feature_controller.data.database
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.patorika.feature_controller.data.entity.FullControllerDao
+import com.patorika.feature_controller.data.entity.mapToControllerDao
 import com.patorika.feature_controller.elements.basic.serialization.decodeToControllerElementModel
 import com.patorika.feature_controller.elements.basic.serialization.encodeToString
 import com.patorika.feature_controller.main.model.ControllerModel
 import com.patorika.feature_controller.main.model.ControllerOrientation
-import com.patorika.featurecontroller.data.database.GetAllControllers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -24,14 +25,21 @@ internal class Database(
             .getAllControllers()
             .asFlow()
             .mapToList(Dispatchers.IO)
-            .map { it.mapControllers() }
+            .map { list ->
+                list
+                    .map { item -> item.mapToControllerDao() }
+                    .mapControllers()
+            }
 
     suspend fun getControllerById(id: String): ControllerModel? =
-        dbQuery
-            .getAllControllers()
-            .executeAsList()
-            .mapControllers()
-            .firstOrNull()
+        withContext(Dispatchers.IO) {
+            dbQuery
+                .getControllerById(id)
+                .executeAsList()
+                .map { it.mapToControllerDao() }
+                .mapControllers()
+                .firstOrNull()
+        }
 
     suspend fun insertController(model: ControllerModel) {
         withContext(Dispatchers.IO) {
@@ -62,7 +70,7 @@ internal class Database(
     }
 
     // TODO add data migration here
-    private fun List<GetAllControllers>.mapControllers(): List<ControllerModel> =
+    private fun List<FullControllerDao>.mapControllers(): List<ControllerModel> =
         this.groupBy { it.controllerId }.map { (controllerId, data) ->
             ControllerModel(
                 id = controllerId,
