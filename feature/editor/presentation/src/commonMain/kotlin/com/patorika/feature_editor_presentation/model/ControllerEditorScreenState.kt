@@ -1,7 +1,7 @@
 package com.patorika.feature_editor_presentation.model
 
-import com.patorika.core.controller.elements.basic.model.ControllerElementModel
-import com.patorika.core.controller.main.model.ControllerOrientation
+import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.main.model.ControllerOrientation
 
 data class ControllerEditorScreenState(
     val orientation: ControllerOrientation = ControllerOrientation.PORTRAIT,

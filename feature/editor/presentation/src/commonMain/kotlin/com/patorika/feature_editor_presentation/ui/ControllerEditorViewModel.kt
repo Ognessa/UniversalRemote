@@ -2,13 +2,17 @@ package com.patorika.feature_editor_presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patorika.core.controller.elements.basic.model.ControllerElementModel
-import com.patorika.core.controller.main.model.ControllerModel
 import com.patorika.core.util.LoggerUtil
+import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.main.model.ControllerModel
 import com.patorika.feature_editor_api.state.EditorSharedState
+import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorScreenState
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
+import com.patorika.feature_editor_presentation.usecase.SaveControllerUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
@@ -16,9 +20,13 @@ import kotlinx.coroutines.launch
 
 class ControllerEditorViewModel(
     private val editorSharedState: EditorSharedState,
+    private val saveControllerUseCase: SaveControllerUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ControllerEditorScreenState())
     val state = _state.asStateFlow()
+
+    private val _events = MutableSharedFlow<ControllerEditorNavigation>()
+    val events = _events.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -90,13 +98,14 @@ class ControllerEditorViewModel(
         LoggerUtil.d(TAG, "Controller orientation changed to ${_state.value.orientation}")
     }
 
-    private fun saveController() {
-        val model =
+    private suspend fun saveController() {
+        saveControllerUseCase.execute(
             ControllerModel(
                 orientation = _state.value.orientation,
                 elements = _state.value.elements,
-            )
-        // TODO
+            ),
+        )
+        _events.emit(ControllerEditorNavigation.Close)
     }
 
     companion object {

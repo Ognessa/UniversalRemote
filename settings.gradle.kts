@@ -54,3 +54,6 @@ project(":feature-signal-api").projectDir = file("feature/signal/api")
 
 include(":feature-signal-presentation")
 project(":feature-signal-presentation").projectDir = file("feature/signal/presentation")
+
+include(":feature-controller")
+project(":feature-controller").projectDir = file("feature/controller")

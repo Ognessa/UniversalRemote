@@ -3,7 +3,7 @@ package com.patorika.feature_editor_presentation.api
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.patorika.core.controller.elements.basic.serialization.toNavArg
+import com.patorika.feature_controller.elements.basic.serialization.toNavArg
 import com.patorika.feature_editor_api.navigation.ControllerEditorScreenBuilder
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.ui.ControllerEditorScreen
@@ -40,6 +40,10 @@ class ControllerEditorScreenBuilderImpl(
                 navController.navigate(
                     route = "${signalEditorScreenBuilder.routeName}/${type.model.toNavArg()}",
                 )
+            }
+
+            is ControllerEditorNavigation.Close -> {
+                navController.popBackStack()
             }
         }
     }

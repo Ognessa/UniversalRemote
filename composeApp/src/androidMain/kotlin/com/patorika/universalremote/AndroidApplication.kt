@@ -1,7 +1,9 @@
 package com.patorika.universalremote
 
 import android.app.Application
+import com.patorika.feature_controller.di.androidControllerModule
 import com.patorika.universalremote.di.appModule
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class AndroidApplication : Application() {
@@ -12,7 +14,8 @@ class AndroidApplication : Application() {
 
     private fun initKoin() {
         startKoin {
-            modules(appModule)
+            androidContext(this@AndroidApplication)
+            modules(androidControllerModule, appModule)
         }
     }
 }

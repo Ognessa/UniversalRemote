@@ -48,6 +48,7 @@ kotlin {
                 implementation(libs.koin.compose.viewmodel)
 
                 implementation(project(":core"))
+                implementation(project(":feature-controller"))
             }
         }
 
