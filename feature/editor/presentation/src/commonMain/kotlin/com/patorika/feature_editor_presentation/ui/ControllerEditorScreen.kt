@@ -1,7 +1,8 @@
 package com.patorika.feature_editor_presentation.ui
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -10,11 +11,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.patorika.core.ui.ext.pxToDp
 import com.patorika.feature_controller.elements.basic.model.ControllerRenderMode
 import com.patorika.feature_controller.main.ui.ControllerCanvas
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
@@ -57,7 +60,7 @@ fun ControllerEditorScreen(
             )
         },
     ) { innerPadding ->
-        Box(
+        BoxWithConstraints(
             modifier =
                 Modifier
                     .fillMaxSize()
@@ -68,6 +71,12 @@ fun ControllerEditorScreen(
                         }
                     },
         ) {
+            ListenToCanvasSizeChanges(
+                onSizeDpChanged = { size ->
+                    viewModel.onEvent(ControllerEditorUserEvent.CanvasSizeChanged(size))
+                },
+            )
+
             ControllerCanvas(
                 modifier = Modifier.fillMaxSize(),
                 list = state.elements,
@@ -86,5 +95,24 @@ fun ControllerEditorScreen(
                 },
             )
         }
+    }
+}
+
+@Composable
+private fun BoxWithConstraintsScope.ListenToCanvasSizeChanges(onSizeDpChanged: (Size) -> Unit) {
+    val containerWidthPx =
+        constraints.maxWidth
+            .toFloat()
+            .pxToDp()
+            .value
+
+    val containerHeightPx =
+        constraints.maxHeight
+            .toFloat()
+            .pxToDp()
+            .value
+
+    LaunchedEffect(maxWidth, maxHeight) {
+        onSizeDpChanged(Size(containerWidthPx, containerHeightPx))
     }
 }

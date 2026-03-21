@@ -1,7 +1,8 @@
 CREATE TABLE controllers (
   id TEXT NOT NULL PRIMARY KEY,
   name TEXT NOT NULL,
-  orientation TEXT NOT NULL
+  orientation TEXT NOT NULL,
+  canvas_ratio REAL NOT NULL
 );
 
 CREATE TABLE elements (
@@ -25,6 +26,7 @@ SELECT
     c.id AS controllerId,
     c.name,
     c.orientation,
+    c.canvas_ratio AS canvasRatio,
     e.id AS elementId,
     e.parent_id AS parentId,
     e.type,
@@ -38,6 +40,7 @@ SELECT
     c.id AS controllerId,
     c.name,
     c.orientation,
+    c.canvas_ratio AS canvasRatio,
     e.id AS elementId,
     e.parent_id AS parentId,
     e.type,
@@ -49,8 +52,8 @@ WHERE c.id = :id;
 
 insertController:
 INSERT OR REPLACE
-INTO controllers(id, name, orientation)
-VALUES(?, ?, ?);
+INTO controllers(id, name, orientation, canvas_ratio)
+VALUES(?, ?, ?, ?);
 
 insertElement:
 INSERT OR REPLACE

@@ -34,6 +34,7 @@ fun XboxButtonClusterUi(
     BasicElementUi(
         modifier = modifier,
         parameters = data.displayParameters,
+        defaultSize = data.getDefaultSize(),
         isSelected = isSelected,
         renderMode = renderMode,
         orientation = orientation,

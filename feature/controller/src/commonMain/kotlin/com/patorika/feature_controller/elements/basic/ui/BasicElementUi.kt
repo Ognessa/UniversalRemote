@@ -93,6 +93,7 @@ import com.patorika.feature_controller.main.model.ControllerOrientation
 fun BasicElementUi(
     modifier: Modifier = Modifier,
     parameters: NormalizedDisplay,
+    defaultSize: Size,
     isSelected: Boolean,
     renderMode: ControllerRenderMode,
     orientation: ControllerOrientation,
@@ -108,8 +109,8 @@ fun BasicElementUi(
         val containerHeightPx = constraints.maxHeight.toFloat()
         val containerSizePx = Size(containerWidthPx, containerHeightPx)
 
-        val defaultWidthPx = 120.dp.dpToPx()
-        val defaultHeightPx = 120.dp.dpToPx()
+        val defaultWidthPx = defaultSize.width.dp.dpToPx()
+        val defaultHeightPx = defaultSize.height.dp.dpToPx()
         val defaultSizePx = Size(defaultWidthPx, defaultHeightPx)
 
         val minWidthPx = 40.dp.dpToPx()
@@ -126,12 +127,16 @@ fun BasicElementUi(
         }
 
         var currentSizePx by remember {
-            mutableStateOf(
-                Size(
-                    width = defaultWidthPx * parameters.scaleSize.width,
-                    height = defaultHeightPx * parameters.scaleSize.height,
-                ),
-            )
+            if (renderMode == ControllerRenderMode.LibraryPreview) {
+                mutableStateOf(defaultSizePx)
+            } else {
+                mutableStateOf(
+                    Size(
+                        width = containerWidthPx * parameters.scaleSize.width,
+                        height = containerHeightPx * parameters.scaleSize.height,
+                    ),
+                )
+            }
         }
 
         val currentTopLeftPx =
@@ -146,18 +151,20 @@ fun BasicElementUi(
                 }
             }
 
-        LaunchedEffect(parameters) {
-            currentCenterPx =
-                Offset(
-                    x = parameters.centerOffset.x * containerWidthPx,
-                    y = parameters.centerOffset.y * containerHeightPx,
-                )
+        if (renderMode != ControllerRenderMode.LibraryPreview) {
+            LaunchedEffect(parameters) {
+                currentCenterPx =
+                    Offset(
+                        x = parameters.centerOffset.x * containerWidthPx,
+                        y = parameters.centerOffset.y * containerHeightPx,
+                    )
 
-            currentSizePx =
-                Size(
-                    width = defaultWidthPx * parameters.scaleSize.width,
-                    height = defaultHeightPx * parameters.scaleSize.height,
-                )
+                currentSizePx =
+                    Size(
+                        width = containerWidthPx * parameters.scaleSize.width,
+                        height = containerHeightPx * parameters.scaleSize.height,
+                    )
+            }
         }
 
         Box(
@@ -245,7 +252,6 @@ fun BasicElementUi(
                                             centerPx = currentCenterPx,
                                             sizePx = currentSizePx,
                                             containerSizePx = containerSizePx,
-                                            defaultSizePx = defaultSizePx,
                                         ),
                                     )
                                 }
@@ -276,7 +282,6 @@ fun BasicElementUi(
                                         centerPx = currentCenterPx,
                                         sizePx = currentSizePx,
                                         containerSizePx = containerSizePx,
-                                        defaultSizePx = defaultSizePx,
                                     ),
                                 )
                             },
@@ -305,7 +310,6 @@ fun BasicElementUi(
                                         centerPx = currentCenterPx,
                                         sizePx = currentSizePx,
                                         containerSizePx = containerSizePx,
-                                        defaultSizePx = defaultSizePx,
                                     ),
                                 )
                             },
@@ -334,7 +338,6 @@ fun BasicElementUi(
                                         centerPx = currentCenterPx,
                                         sizePx = currentSizePx,
                                         containerSizePx = containerSizePx,
-                                        defaultSizePx = defaultSizePx,
                                     ),
                                 )
                             },
@@ -363,7 +366,6 @@ fun BasicElementUi(
                                         centerPx = currentCenterPx,
                                         sizePx = currentSizePx,
                                         containerSizePx = containerSizePx,
-                                        defaultSizePx = defaultSizePx,
                                     ),
                                 )
                             },
@@ -450,13 +452,12 @@ private fun createNormalizedDisplay(
     centerPx: Offset,
     sizePx: Size,
     containerSizePx: Size,
-    defaultSizePx: Size,
 ): NormalizedDisplay =
     NormalizedDisplay(
         scaleSize =
             Size(
-                width = sizePx.width / defaultSizePx.width,
-                height = sizePx.height / defaultSizePx.height,
+                width = sizePx.width / containerSizePx.width,
+                height = sizePx.height / containerSizePx.height,
             ),
         centerOffset =
             Offset(

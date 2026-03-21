@@ -1,24 +1,23 @@
 package com.patorika.feature_controller.elements.basic.model
 
+import androidx.compose.ui.geometry.Size
 import com.patorika.feature_controller.elements.basic.config.NormalizedDisplay
-import com.patorika.feature_controller.main.model.ControllerOrientation
 import kotlinx.serialization.Serializable
 
 @Serializable
 abstract class ControllerElementModel {
     abstract val id: String
-
     abstract val displayParameters: NormalizedDisplay
+
+    abstract val jsonVersion: Int
+    abstract val serialName: String
 
     abstract fun createElementWithNewId(): ControllerElementModel
 
-    abstract fun getElementWithDefaultDisplayParameters(): ControllerElementModel
+    // Size with dp values
+    abstract fun getDefaultSize(): Size
 
     abstract fun validate(): Boolean
 
-    abstract fun changeOrientation(orientation: ControllerOrientation): ControllerElementModel
-
-    abstract val jsonVersion: Int
-
-    abstract val serialName: String
+    abstract fun changeDisplayParameters(params: NormalizedDisplay): ControllerElementModel
 }

@@ -1,5 +1,6 @@
 package com.patorika.feature_editor_presentation.model
 
+import androidx.compose.ui.geometry.Size
 import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
 
 sealed class ControllerEditorUserEvent {
@@ -16,4 +17,8 @@ sealed class ControllerEditorUserEvent {
     data object OrientationChanged : ControllerEditorUserEvent()
 
     data object Save : ControllerEditorUserEvent()
+
+    data class CanvasSizeChanged(
+        val size: Size,
+    ) : ControllerEditorUserEvent()
 }

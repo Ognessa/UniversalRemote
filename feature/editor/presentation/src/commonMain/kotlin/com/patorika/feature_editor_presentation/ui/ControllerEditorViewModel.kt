@@ -1,10 +1,12 @@
 package com.patorika.feature_editor_presentation.ui
 
+import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.main.model.ControllerModel
+import com.patorika.feature_controller.main.model.ControllerOrientation
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorScreenState
@@ -37,9 +39,24 @@ class ControllerEditorViewModel(
     private suspend fun observeNewElements() {
         editorSharedState.newElementsFlow.collectLatest { newElements ->
             _state.update { currentState ->
+                val normalizedElements =
+                    newElements.map { element ->
+                        if (currentState.elements.firstOrNull { it.id == element.id } == null) {
+                            element.setInitialSizeScale().let {
+                                if (currentState.orientation == ControllerOrientation.LANDSCAPE) {
+                                    it.changeOrientation()
+                                } else {
+                                    it
+                                }
+                            }
+                        } else {
+                            element
+                        }
+                    }
+
                 currentState.copy(
                     elements =
-                        (currentState.elements + newElements)
+                        (currentState.elements + normalizedElements)
                             .associateBy { it.id }
                             .values
                             .toList(),
@@ -48,23 +65,37 @@ class ControllerEditorViewModel(
         }
     }
 
+    private fun ControllerElementModel.setInitialSizeScale(): ControllerElementModel {
+        val canvasSizeDp = _state.value.canvasSizeDp
+        return this.changeDisplayParameters(
+            this.displayParameters.copy(
+                scaleSize =
+                    Size(
+                        width = this.getDefaultSize().width / canvasSizeDp.width,
+                        height = this.getDefaultSize().height / canvasSizeDp.height,
+                    ),
+            ),
+        )
+    }
+
     fun onEvent(event: ControllerEditorUserEvent) {
         viewModelScope.launch {
             when (event) {
-                is ControllerEditorUserEvent.ElementClicked -> handleElementClicked(event.id)
-                is ControllerEditorUserEvent.ElementModified -> handleElementModified(event.element)
-                is ControllerEditorUserEvent.ClearSelection -> clearSelection()
-                is ControllerEditorUserEvent.OrientationChanged -> handleOrientationChanges()
-                is ControllerEditorUserEvent.Save -> saveController()
+                is ControllerEditorUserEvent.ElementClicked -> onElementClicked(event.id)
+                is ControllerEditorUserEvent.ElementModified -> onElementModified(event.element)
+                is ControllerEditorUserEvent.ClearSelection -> onClearSelection()
+                is ControllerEditorUserEvent.OrientationChanged -> onOrientationChanges()
+                is ControllerEditorUserEvent.Save -> onSaveController()
+                is ControllerEditorUserEvent.CanvasSizeChanged -> onCanvasSizeChanged(event.size)
             }
         }
     }
 
-    private fun handleElementClicked(id: String) {
+    private fun onElementClicked(id: String) {
         _state.update { it.copy(selectedElementId = id) }
     }
 
-    private fun handleElementModified(element: ControllerElementModel) {
+    private fun onElementModified(element: ControllerElementModel) {
         _state.update { current ->
             val newList =
                 current.elements.toMutableList().map {
@@ -78,16 +109,14 @@ class ControllerEditorViewModel(
         }
     }
 
-    private fun clearSelection() {
+    private fun onClearSelection() {
         _state.update { it.copy(selectedElementId = null) }
     }
 
-    private fun handleOrientationChanges() {
+    private fun onOrientationChanges() {
         _state.update {
             val newOrientation = it.orientation.changeOrientation()
-
-            val newElementsList =
-                it.elements.map { element -> element.changeOrientation(newOrientation) }
+            val newElementsList = it.elements.map { element -> element.changeOrientation() }
 
             it.copy(
                 orientation = newOrientation,
@@ -98,14 +127,39 @@ class ControllerEditorViewModel(
         LoggerUtil.d(TAG, "Controller orientation changed to ${_state.value.orientation}")
     }
 
-    private suspend fun saveController() {
+    private fun ControllerElementModel.changeOrientation(): ControllerElementModel {
+        val canvasSizeDp = _state.value.canvasSizeDp
+        val elementsWidthDp = canvasSizeDp.width * this.displayParameters.scaleSize.width
+        val elementsHeightDp = canvasSizeDp.height * this.displayParameters.scaleSize.height
+
+        return this.changeDisplayParameters(
+            this.displayParameters.copy(
+                scaleSize =
+                    Size(
+                        width = elementsHeightDp / canvasSizeDp.width,
+                        height = elementsWidthDp / canvasSizeDp.height,
+                    ),
+            ),
+        )
+    }
+
+    private suspend fun onSaveController() {
+        val canvasSizeDp = _state.value.canvasSizeDp
+
         saveControllerUseCase.execute(
             ControllerModel(
                 orientation = _state.value.orientation,
+                canvasRatio = canvasSizeDp.width / canvasSizeDp.height,
                 elements = _state.value.elements,
             ),
         )
+
         _events.emit(ControllerEditorNavigation.Close)
+    }
+
+    private fun onCanvasSizeChanged(size: Size) {
+        LoggerUtil.d(TAG, "Canvas size changed to $size")
+        _state.update { it.copy(canvasSizeDp = size) }
     }
 
     companion object {
