@@ -46,11 +46,11 @@ kotlin {
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
 
-                implementation(project(":core"))
-                implementation(project(":feature-controller"))
-                implementation(project(":feature-editor-api"))
-                implementation(project(":feature-library-api"))
-                implementation(project(":feature-signal-api"))
+                implementation(projects.core)
+                implementation(projects.featureController)
+                implementation(projects.featureEditorApi)
+                implementation(projects.featureLibraryApi)
+                implementation(projects.featureSignalApi)
             }
         }
 
