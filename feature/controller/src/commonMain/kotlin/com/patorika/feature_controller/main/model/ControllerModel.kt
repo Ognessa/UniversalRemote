@@ -12,6 +12,7 @@ import kotlin.uuid.Uuid
 data class ControllerModel(
     val id: String = Uuid.random().toString(),
     val name: String = "",
+    val canvasRatio: Float = 1f,
     val elements: List<ControllerElementModel> = emptyList(),
     val orientation: ControllerOrientation = ControllerOrientation.PORTRAIT,
 )

@@ -1,5 +1,6 @@
 package com.patorika.feature_controller.elements.slider.model
 
+import androidx.compose.ui.geometry.Size
 import com.patorika.feature_controller.elements.basic.config.NormalizedDisplay
 import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.elements.slider.config.SliderConfigModel
@@ -20,11 +21,11 @@ data class SliderModel(
 ) : ControllerElementModel() {
     override fun createElementWithNewId(): ControllerElementModel = this.copy(id = Uuid.random().toString())
 
-    override fun getElementWithDefaultDisplayParameters(): ControllerElementModel = this.copy(displayParameters = NormalizedDisplay())
+    override fun getDefaultSize(): Size = Size(180f, 60f)
 
     override fun validate(): Boolean = interactionConfig.validate()
 
-    override fun changeOrientation(): ControllerElementModel = this.copy(displayParameters = displayParameters.changeOrientation())
+    override fun changeDisplayParameters(params: NormalizedDisplay): ControllerElementModel = this.copy(displayParameters = params)
 
     override val jsonVersion: Int = 1
     override val serialName: String = serializer().descriptor.serialName

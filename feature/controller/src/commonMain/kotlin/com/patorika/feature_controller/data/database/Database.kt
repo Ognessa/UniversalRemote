@@ -48,6 +48,7 @@ internal class Database(
                     id = model.id,
                     name = model.name,
                     orientation = model.orientation.name,
+                    canvas_ratio = model.canvasRatio.toDouble(),
                 )
 
                 model.elements.forEach { element ->
@@ -76,6 +77,7 @@ internal class Database(
                 id = controllerId,
                 name = data.first().name,
                 orientation = ControllerOrientation.from(data.first().orientation),
+                canvasRatio = data.first().canvasRatio,
                 elements =
                     data.mapNotNull { element ->
                         element.json?.decodeToControllerElementModel()

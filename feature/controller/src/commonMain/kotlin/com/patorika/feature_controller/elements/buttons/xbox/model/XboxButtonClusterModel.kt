@@ -1,5 +1,6 @@
 package com.patorika.feature_controller.elements.buttons.xbox.model
 
+import androidx.compose.ui.geometry.Size
 import com.patorika.feature_controller.elements.basic.config.NormalizedDisplay
 import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.elements.buttons.config.ButtonConfigModel
@@ -25,11 +26,11 @@ data class XboxButtonClusterModel(
 ) : ControllerElementModel() {
     override fun createElementWithNewId(): ControllerElementModel = this.copy(id = Uuid.random().toString())
 
-    override fun getElementWithDefaultDisplayParameters(): ControllerElementModel = this.copy(displayParameters = NormalizedDisplay())
+    override fun getDefaultSize(): Size = Size(120f, 120f)
 
     override fun validate(): Boolean = true
 
-    override fun changeOrientation(): ControllerElementModel = this.copy(displayParameters = displayParameters.changeOrientation())
+    override fun changeDisplayParameters(params: NormalizedDisplay): ControllerElementModel = this.copy(displayParameters = params)
 
     override val jsonVersion: Int = 1
     override val serialName: String = serializer().descriptor.serialName
