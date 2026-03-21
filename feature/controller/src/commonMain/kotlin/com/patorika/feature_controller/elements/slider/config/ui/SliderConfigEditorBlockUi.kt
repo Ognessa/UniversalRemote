@@ -1,4 +1,4 @@
-package com.patorika.feature_controller.elements.slider.config
+package com.patorika.feature_controller.elements.slider.config.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import com.patorika.core.provider.TextProvider
 import com.patorika.core.provider.getString
+import com.patorika.feature_controller.elements.slider.config.model.SliderConfigErrorType
+import com.patorika.feature_controller.elements.slider.config.model.SliderConfigModel
 import org.jetbrains.compose.resources.stringResource
 import universalremote.feature_controller.generated.resources.Res
 import universalremote.feature_controller.generated.resources.slider_config_edit_max_value_label

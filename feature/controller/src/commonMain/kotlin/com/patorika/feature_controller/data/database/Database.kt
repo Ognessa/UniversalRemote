@@ -70,7 +70,6 @@ internal class Database(
         }
     }
 
-    // TODO add data migration here
     private fun List<FullControllerDao>.mapControllers(): List<ControllerModel> =
         this.groupBy { it.controllerId }.map { (controllerId, data) ->
             ControllerModel(

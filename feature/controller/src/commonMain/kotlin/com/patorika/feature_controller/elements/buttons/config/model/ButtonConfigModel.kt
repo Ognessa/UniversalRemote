@@ -1,4 +1,4 @@
-package com.patorika.feature_controller.elements.buttons.config
+package com.patorika.feature_controller.elements.buttons.config.model
 
 import com.patorika.feature_controller.elements.basic.config.InteractionConfig
 import kotlinx.serialization.SerialName

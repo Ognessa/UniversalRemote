@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patorika.feature_controller.elements.buttons.config.ButtonConfigModel
+import com.patorika.feature_controller.elements.buttons.config.model.ButtonConfigModel
 import kotlinx.coroutines.delay
 
 @Composable

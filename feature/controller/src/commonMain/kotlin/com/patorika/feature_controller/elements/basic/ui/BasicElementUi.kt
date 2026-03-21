@@ -259,117 +259,34 @@ fun BasicElementUi(
                         }.clickable { onClick() },
                 ) {
                     if (isSelected) {
-                        ResizeHandle(
-                            alignment = Alignment.TopStart,
-                            isResizeAllowed = renderMode == ControllerRenderMode.Editor,
-                            onResize = { dragAmount ->
-                                val resized =
-                                    resizeFromCorner(
-                                        corner = ResizeCorner.TopStart,
-                                        centerPx = currentCenterPx,
-                                        sizePx = currentSizePx,
-                                        drag = dragAmount,
-                                        minSizePx = minSizePx,
-                                        containerSizePx = containerSizePx,
+                        ResizeCorner.entries.forEach { corner ->
+                            ResizeHandle(
+                                alignment = corner.alignment,
+                                isResizeAllowed = renderMode == ControllerRenderMode.Editor,
+                                onResize = { dragAmount ->
+                                    val resized =
+                                        resizeFromCorner(
+                                            corner = corner,
+                                            centerPx = currentCenterPx,
+                                            sizePx = currentSizePx,
+                                            drag = dragAmount,
+                                            minSizePx = minSizePx,
+                                            containerSizePx = containerSizePx,
+                                        )
+                                    currentCenterPx = resized.center
+                                    currentSizePx = Size(resized.width, resized.height)
+                                },
+                                onResizeEnd = {
+                                    onParametersModified(
+                                        createNormalizedDisplay(
+                                            centerPx = currentCenterPx,
+                                            sizePx = currentSizePx,
+                                            containerSizePx = containerSizePx,
+                                        ),
                                     )
-
-                                currentCenterPx = resized.center
-                                currentSizePx = Size(resized.width, resized.height)
-                            },
-                            onResizeEnd = {
-                                onParametersModified(
-                                    createNormalizedDisplay(
-                                        centerPx = currentCenterPx,
-                                        sizePx = currentSizePx,
-                                        containerSizePx = containerSizePx,
-                                    ),
-                                )
-                            },
-                        )
-
-                        ResizeHandle(
-                            alignment = Alignment.TopEnd,
-                            isResizeAllowed = renderMode == ControllerRenderMode.Editor,
-                            onResize = { dragAmount ->
-                                val resized =
-                                    resizeFromCorner(
-                                        corner = ResizeCorner.TopEnd,
-                                        centerPx = currentCenterPx,
-                                        sizePx = currentSizePx,
-                                        drag = dragAmount,
-                                        minSizePx = minSizePx,
-                                        containerSizePx = containerSizePx,
-                                    )
-
-                                currentCenterPx = resized.center
-                                currentSizePx = Size(resized.width, resized.height)
-                            },
-                            onResizeEnd = {
-                                onParametersModified(
-                                    createNormalizedDisplay(
-                                        centerPx = currentCenterPx,
-                                        sizePx = currentSizePx,
-                                        containerSizePx = containerSizePx,
-                                    ),
-                                )
-                            },
-                        )
-
-                        ResizeHandle(
-                            alignment = Alignment.BottomStart,
-                            isResizeAllowed = renderMode == ControllerRenderMode.Editor,
-                            onResize = { dragAmount ->
-                                val resized =
-                                    resizeFromCorner(
-                                        corner = ResizeCorner.BottomStart,
-                                        centerPx = currentCenterPx,
-                                        sizePx = currentSizePx,
-                                        drag = dragAmount,
-                                        minSizePx = minSizePx,
-                                        containerSizePx = containerSizePx,
-                                    )
-
-                                currentCenterPx = resized.center
-                                currentSizePx = Size(resized.width, resized.height)
-                            },
-                            onResizeEnd = {
-                                onParametersModified(
-                                    createNormalizedDisplay(
-                                        centerPx = currentCenterPx,
-                                        sizePx = currentSizePx,
-                                        containerSizePx = containerSizePx,
-                                    ),
-                                )
-                            },
-                        )
-
-                        ResizeHandle(
-                            alignment = Alignment.BottomEnd,
-                            isResizeAllowed = renderMode == ControllerRenderMode.Editor,
-                            onResize = { dragAmount ->
-                                val resized =
-                                    resizeFromCorner(
-                                        corner = ResizeCorner.BottomEnd,
-                                        centerPx = currentCenterPx,
-                                        sizePx = currentSizePx,
-                                        drag = dragAmount,
-                                        minSizePx = minSizePx,
-                                        containerSizePx = containerSizePx,
-                                    )
-
-                                currentCenterPx = resized.center
-                                currentSizePx = Size(resized.width, resized.height)
-                            },
-                            onResizeEnd = {
-                                onParametersModified(
-                                    createNormalizedDisplay(
-                                        centerPx = currentCenterPx,
-                                        sizePx = currentSizePx,
-                                        containerSizePx = containerSizePx,
-                                    ),
-                                )
-                            },
-                        )
+                                },
+                            )
+                        }
                     }
                 }
             }
@@ -408,6 +325,16 @@ private enum class ResizeCorner {
     TopEnd,
     BottomStart,
     BottomEnd,
+    ;
+
+    val alignment: Alignment
+        get() =
+            when (this) {
+                TopStart -> Alignment.TopStart
+                TopEnd -> Alignment.TopEnd
+                BottomStart -> Alignment.BottomStart
+                BottomEnd -> Alignment.BottomEnd
+            }
 }
 
 private data class ResizedElement(

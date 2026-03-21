@@ -3,7 +3,7 @@ package com.patorika.feature_controller.elements.slider.model
 import androidx.compose.ui.geometry.Size
 import com.patorika.feature_controller.elements.basic.config.NormalizedDisplay
 import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
-import com.patorika.feature_controller.elements.slider.config.SliderConfigModel
+import com.patorika.feature_controller.elements.slider.config.model.SliderConfigModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi

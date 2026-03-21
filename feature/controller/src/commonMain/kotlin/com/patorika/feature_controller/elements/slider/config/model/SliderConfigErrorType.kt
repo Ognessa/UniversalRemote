@@ -1,4 +1,4 @@
-package com.patorika.feature_controller.elements.slider.config
+package com.patorika.feature_controller.elements.slider.config.model
 
 import com.patorika.core.provider.TextProvider
 

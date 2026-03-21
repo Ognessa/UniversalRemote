@@ -95,5 +95,7 @@ private fun ColumnScope.EditorByElementType(
                 onModified = { onEvent(SignalEditorScreenEvent.OnElementModified(it)) },
             )
         }
+
+        else -> {}
     }
 }

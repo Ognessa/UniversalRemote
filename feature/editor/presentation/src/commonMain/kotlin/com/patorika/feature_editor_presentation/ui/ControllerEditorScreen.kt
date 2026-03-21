@@ -100,19 +100,19 @@ fun ControllerEditorScreen(
 
 @Composable
 private fun BoxWithConstraintsScope.ListenToCanvasSizeChanges(onSizeDpChanged: (Size) -> Unit) {
-    val containerWidthPx =
+    val containerWidthDp =
         constraints.maxWidth
             .toFloat()
             .pxToDp()
             .value
 
-    val containerHeightPx =
+    val containerHeightDp =
         constraints.maxHeight
             .toFloat()
             .pxToDp()
             .value
 
     LaunchedEffect(maxWidth, maxHeight) {
-        onSizeDpChanged(Size(containerWidthPx, containerHeightPx))
+        onSizeDpChanged(Size(containerWidthDp, containerHeightDp))
     }
 }

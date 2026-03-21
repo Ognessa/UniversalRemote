@@ -24,7 +24,7 @@ class SignalEditorScreenBuilderImpl : SignalEditorScreenBuilder {
             route = "$routeName/{$EDITED_ELEMENT_ARG}",
             arguments = initArguments(),
         ) { backStackEntry ->
-            val elementData = backStackEntry.encodeEditedElementArgument()
+            val elementData = backStackEntry.extractEditedElementArgument()
 
             SignalEditorScreen(
                 viewModel = koinViewModel { parametersOf(elementData) },
@@ -33,7 +33,7 @@ class SignalEditorScreenBuilderImpl : SignalEditorScreenBuilder {
         }
     }
 
-    private fun NavBackStackEntry.encodeEditedElementArgument(): ControllerElementModel {
+    private fun NavBackStackEntry.extractEditedElementArgument(): ControllerElementModel {
         val encoded =
             this.arguments?.read {
                 getStringOrNull(EDITED_ELEMENT_ARG)

@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.patorika.feature_controller.elements.slider.config.SliderConfigEditorBlockUi
+import com.patorika.feature_controller.elements.slider.config.ui.SliderConfigEditorBlockUi
 import com.patorika.feature_controller.elements.slider.model.SliderModel
 import org.jetbrains.compose.resources.stringResource
 import universalremote.feature_controller.generated.resources.Res

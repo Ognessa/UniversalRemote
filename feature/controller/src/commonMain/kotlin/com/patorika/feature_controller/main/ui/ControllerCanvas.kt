@@ -63,6 +63,8 @@ fun ControllerCanvas(
                     onAction = onAction,
                 )
             }
+
+            else -> {}
         }
     }
 }

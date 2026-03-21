@@ -3,7 +3,7 @@ package com.patorika.feature_controller.elements.buttons.square.model
 import androidx.compose.ui.geometry.Size
 import com.patorika.feature_controller.elements.basic.config.NormalizedDisplay
 import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
-import com.patorika.feature_controller.elements.buttons.config.ButtonConfigModel
+import com.patorika.feature_controller.elements.buttons.config.model.ButtonConfigModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi

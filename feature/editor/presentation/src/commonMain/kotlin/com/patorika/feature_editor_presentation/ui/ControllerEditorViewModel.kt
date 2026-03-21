@@ -39,21 +39,7 @@ class ControllerEditorViewModel(
     private suspend fun observeNewElements() {
         editorSharedState.newElementsFlow.collectLatest { newElements ->
             _state.update { currentState ->
-                val normalizedElements =
-                    newElements.map { element ->
-                        if (currentState.elements.firstOrNull { it.id == element.id } == null) {
-                            element.setInitialSizeScale().let {
-                                if (currentState.orientation == ControllerOrientation.LANDSCAPE) {
-                                    it.changeOrientation()
-                                } else {
-                                    it
-                                }
-                            }
-                        } else {
-                            element
-                        }
-                    }
-
+                val normalizedElements = newElements.normalizeReceivedElements(currentState)
                 currentState.copy(
                     elements =
                         (currentState.elements + normalizedElements)
@@ -65,6 +51,23 @@ class ControllerEditorViewModel(
         }
     }
 
+    private fun List<ControllerElementModel>.normalizeReceivedElements(
+        currentState: ControllerEditorScreenState,
+    ): List<ControllerElementModel> =
+        this.map { element ->
+            if (currentState.elements.none { it.id == element.id }) {
+                element.setInitialSizeScale().let {
+                    if (currentState.orientation == ControllerOrientation.LANDSCAPE) {
+                        it.changeOrientation()
+                    } else {
+                        it
+                    }
+                }
+            } else {
+                element
+            }
+        }
+
     private fun ControllerElementModel.setInitialSizeScale(): ControllerElementModel {
         val canvasSizeDp = _state.value.canvasSizeDp
         return this.changeDisplayParameters(
@@ -73,6 +76,22 @@ class ControllerEditorViewModel(
                     Size(
                         width = this.getDefaultSize().width / canvasSizeDp.width,
                         height = this.getDefaultSize().height / canvasSizeDp.height,
+                    ),
+            ),
+        )
+    }
+
+    private fun ControllerElementModel.changeOrientation(): ControllerElementModel {
+        val canvasSizeDp = _state.value.canvasSizeDp
+        val elementsWidthDp = canvasSizeDp.width * this.displayParameters.scaleSize.width
+        val elementsHeightDp = canvasSizeDp.height * this.displayParameters.scaleSize.height
+
+        return this.changeDisplayParameters(
+            this.displayParameters.copy(
+                scaleSize =
+                    Size(
+                        width = elementsHeightDp / canvasSizeDp.width,
+                        height = elementsWidthDp / canvasSizeDp.height,
                     ),
             ),
         )
@@ -125,22 +144,6 @@ class ControllerEditorViewModel(
         }
 
         LoggerUtil.d(TAG, "Controller orientation changed to ${_state.value.orientation}")
-    }
-
-    private fun ControllerElementModel.changeOrientation(): ControllerElementModel {
-        val canvasSizeDp = _state.value.canvasSizeDp
-        val elementsWidthDp = canvasSizeDp.width * this.displayParameters.scaleSize.width
-        val elementsHeightDp = canvasSizeDp.height * this.displayParameters.scaleSize.height
-
-        return this.changeDisplayParameters(
-            this.displayParameters.copy(
-                scaleSize =
-                    Size(
-                        width = elementsHeightDp / canvasSizeDp.width,
-                        height = elementsWidthDp / canvasSizeDp.height,
-                    ),
-            ),
-        )
     }
 
     private suspend fun onSaveController() {
