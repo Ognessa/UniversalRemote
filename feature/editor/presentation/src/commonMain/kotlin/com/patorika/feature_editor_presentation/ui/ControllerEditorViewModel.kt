@@ -147,17 +147,21 @@ class ControllerEditorViewModel(
     }
 
     private suspend fun onSaveController() {
-        val canvasSizeDp = _state.value.canvasSizeDp
+        if (_state.value.elements.isNotEmpty()) {
+            val canvasSizeDp = _state.value.canvasSizeDp
 
-        saveControllerUseCase.execute(
-            ControllerModel(
-                orientation = _state.value.orientation,
-                canvasRatio = canvasSizeDp.width / canvasSizeDp.height,
-                elements = _state.value.elements,
-            ),
-        )
+            saveControllerUseCase.execute(
+                ControllerModel(
+                    orientation = _state.value.orientation,
+                    canvasRatio = canvasSizeDp.width / canvasSizeDp.height,
+                    elements = _state.value.elements,
+                ),
+            )
 
-        _events.emit(ControllerEditorNavigation.Close)
+            _events.emit(ControllerEditorNavigation.Close)
+        } else {
+            // TODO add message
+        }
     }
 
     private fun onCanvasSizeChanged(size: Size) {
