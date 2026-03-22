@@ -238,14 +238,7 @@ fun BasicElementUi(
                                 detectDragGestures { change, dragAmount ->
                                     change.consume()
 
-                                    val newCenter =
-                                        clampCenterToContainer(
-                                            center = currentCenterPx + dragAmount,
-                                            sizePx = currentSizePx,
-                                            containerSizePx = containerSizePx,
-                                        )
-
-                                    currentCenterPx = newCenter
+                                    currentCenterPx += dragAmount
 
                                     onParametersModified(
                                         createNormalizedDisplay(
@@ -271,7 +264,6 @@ fun BasicElementUi(
                                             sizePx = currentSizePx,
                                             drag = dragAmount,
                                             minSizePx = minSizePx,
-                                            containerSizePx = containerSizePx,
                                         )
                                     currentCenterPx = resized.center
                                     currentSizePx = Size(resized.width, resized.height)
@@ -361,20 +353,6 @@ private fun topLeftToCenter(
         y = topLeft.y + sizePx.height / 2f,
     )
 
-private fun clampCenterToContainer(
-    center: Offset,
-    sizePx: Size,
-    containerSizePx: Size,
-): Offset {
-    val halfWidth = sizePx.width / 2f
-    val halfHeight = sizePx.height / 2f
-
-    return Offset(
-        x = center.x.coerceIn(halfWidth, containerSizePx.width - halfWidth),
-        y = center.y.coerceIn(halfHeight, containerSizePx.height - halfHeight),
-    )
-}
-
 private fun createNormalizedDisplay(
     centerPx: Offset,
     sizePx: Size,
@@ -388,8 +366,8 @@ private fun createNormalizedDisplay(
             ),
         centerOffset =
             Offset(
-                x = (centerPx.x / containerSizePx.width).coerceIn(0f, 1f),
-                y = (centerPx.y / containerSizePx.height).coerceIn(0f, 1f),
+                x = centerPx.x / containerSizePx.width,
+                y = centerPx.y / containerSizePx.height,
             ),
     )
 
@@ -399,7 +377,6 @@ private fun resizeFromCorner(
     sizePx: Size,
     drag: Offset,
     minSizePx: Size,
-    containerSizePx: Size,
 ): ResizedElement {
     val currentTopLeft = centerToTopLeft(centerPx, sizePx)
 
@@ -417,24 +394,20 @@ private fun resizeFromCorner(
             }
 
             ResizeCorner.TopEnd -> {
-                val newRight =
-                    (right + drag.x).coerceIn(left + minSizePx.width, containerSizePx.width)
+                val newRight = (right + drag.x).coerceAtLeast(left + minSizePx.width)
                 val newTop = (top + drag.y).coerceIn(0f, bottom - minSizePx.height)
                 Rect(left, newTop, newRight, bottom)
             }
 
             ResizeCorner.BottomStart -> {
                 val newLeft = (left + drag.x).coerceIn(0f, right - minSizePx.width)
-                val newBottom =
-                    (bottom + drag.y).coerceIn(top + minSizePx.height, containerSizePx.height)
+                val newBottom = (bottom + drag.y).coerceAtLeast(top + minSizePx.height)
                 Rect(newLeft, top, right, newBottom)
             }
 
             ResizeCorner.BottomEnd -> {
-                val newRight =
-                    (right + drag.x).coerceIn(left + minSizePx.width, containerSizePx.width)
-                val newBottom =
-                    (bottom + drag.y).coerceIn(top + minSizePx.height, containerSizePx.height)
+                val newRight = (right + drag.x).coerceAtLeast(left + minSizePx.width)
+                val newBottom = (bottom + drag.y).coerceAtLeast(top + minSizePx.height)
                 Rect(left, top, newRight, newBottom)
             }
         }
