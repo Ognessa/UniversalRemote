@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import com.patorika.core.ui.theme.CoreDimens
-import com.patorika.feature_controller.elements.basic.model.ControllerRenderMode
+import com.patorika.feature_controller.main.elements.basic.model.ControllerRenderMode
 import com.patorika.feature_controller.main.model.ControllerModel
 import com.patorika.feature_controller.main.model.ControllerOrientation
 import com.patorika.feature_controller.main.ui.ControllerCanvas

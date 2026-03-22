@@ -18,7 +18,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.patorika.core.ui.ext.pxToDp
-import com.patorika.feature_controller.elements.basic.model.ControllerRenderMode
+import com.patorika.feature_controller.main.elements.basic.model.ControllerRenderMode
 import com.patorika.feature_controller.main.ui.ControllerCanvas
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
@@ -100,19 +100,19 @@ fun ControllerEditorScreen(
 
 @Composable
 private fun BoxWithConstraintsScope.ListenToCanvasSizeChanges(onSizeDpChanged: (Size) -> Unit) {
-    val containerWidthPx =
+    val containerWidthDp =
         constraints.maxWidth
             .toFloat()
             .pxToDp()
             .value
 
-    val containerHeightPx =
+    val containerHeightDp =
         constraints.maxHeight
             .toFloat()
             .pxToDp()
             .value
 
     LaunchedEffect(maxWidth, maxHeight) {
-        onSizeDpChanged(Size(containerWidthPx, containerHeightPx))
+        onSizeDpChanged(Size(containerWidthDp, containerHeightDp))
     }
 }

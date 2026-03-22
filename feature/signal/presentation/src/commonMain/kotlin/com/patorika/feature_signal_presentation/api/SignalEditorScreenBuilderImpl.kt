@@ -7,8 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.savedstate.read
-import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
-import com.patorika.feature_controller.elements.basic.serialization.controllerModelFromNavArg
+import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.main.elements.basic.serialization.controllerModelFromNavArg
 import com.patorika.feature_signal_api.SignalEditorScreenBuilder
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenNavigation
 import com.patorika.feature_signal_presentation.ui.SignalEditorScreen
@@ -24,7 +24,7 @@ class SignalEditorScreenBuilderImpl : SignalEditorScreenBuilder {
             route = "$routeName/{$EDITED_ELEMENT_ARG}",
             arguments = initArguments(),
         ) { backStackEntry ->
-            val elementData = backStackEntry.encodeEditedElementArgument()
+            val elementData = backStackEntry.extractEditedElementArgument()
 
             SignalEditorScreen(
                 viewModel = koinViewModel { parametersOf(elementData) },
@@ -33,7 +33,7 @@ class SignalEditorScreenBuilderImpl : SignalEditorScreenBuilder {
         }
     }
 
-    private fun NavBackStackEntry.encodeEditedElementArgument(): ControllerElementModel {
+    private fun NavBackStackEntry.extractEditedElementArgument(): ControllerElementModel {
         val encoded =
             this.arguments?.read {
                 getStringOrNull(EDITED_ELEMENT_ARG)

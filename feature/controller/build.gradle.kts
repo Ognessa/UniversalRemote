@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
-    alias(libs.plugins.google.services)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.sqldelight)
 }
@@ -24,7 +23,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "feature-editor-presentationKit"
+            baseName = "feature-controllerKit"
             isStatic = true
         }
     }
@@ -51,7 +50,7 @@ kotlin {
 
                 implementation(libs.sqldelight.coroutinesExt)
 
-                implementation(project(":core"))
+                implementation(projects.core)
             }
         }
 

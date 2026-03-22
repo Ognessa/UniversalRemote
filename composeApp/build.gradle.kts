@@ -45,6 +45,7 @@ kotlin {
             implementation(libs.firebase.crashlytic)
             implementation(libs.firebase.appdistribution)
         }
+
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
@@ -60,21 +61,22 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
-            implementation(project(":core"))
-            implementation(project(":feature-controller"))
+            implementation(projects.core)
+            implementation(projects.featureController)
 
-            implementation(project(":feature-list-api"))
-            implementation(project(":feature-list-presentation"))
+            implementation(projects.featureListApi)
+            implementation(projects.featureListPresentation)
 
-            implementation(project(":feature-editor-api"))
-            implementation(project(":feature-editor-presentation"))
+            implementation(projects.featureEditorApi)
+            implementation(projects.featureEditorPresentation)
 
-            implementation(project(":feature-library-api"))
-            implementation(project(":feature-library-presentation"))
+            implementation(projects.featureLibraryApi)
+            implementation(projects.featureLibraryPresentation)
 
-            implementation(project(":feature-signal-api"))
-            implementation(project(":feature-signal-presentation"))
+            implementation(projects.featureSignalApi)
+            implementation(projects.featureSignalPresentation)
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }

@@ -1,12 +1,10 @@
 package com.patorika.feature_signal_presentation.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -14,7 +12,6 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.patorika.core.ui.theme.CoreDimens
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_arrow_left
@@ -36,15 +33,12 @@ internal fun SignalEditorToolbar(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    modifier =
-                        Modifier
-                            .size(CoreDimens.current.standardIconBtnSize)
-                            .padding(CoreDimens.current.standardIconBtnPadding)
-                            .clickable { onBackPressed() },
-                    painter = painterResource(CoreRes.drawable.ic_arrow_left),
-                    contentDescription = null,
-                )
+                IconButton(onClick = onBackPressed) {
+                    Icon(
+                        painter = painterResource(CoreRes.drawable.ic_arrow_left),
+                        contentDescription = null,
+                    )
+                }
 
                 Text(
                     modifier = Modifier.weight(1f),
@@ -53,15 +47,12 @@ internal fun SignalEditorToolbar(
                 )
 
                 if (saveable) {
-                    Icon(
-                        modifier =
-                            Modifier
-                                .size(CoreDimens.current.standardIconBtnSize)
-                                .padding(CoreDimens.current.standardIconBtnPadding)
-                                .clickable { onSavePressed() },
-                        painter = painterResource(CoreRes.drawable.ic_check),
-                        contentDescription = null,
-                    )
+                    IconButton(onClick = onSavePressed) {
+                        Icon(
+                            painter = painterResource(CoreRes.drawable.ic_check),
+                            contentDescription = null,
+                        )
+                    }
                 }
             }
         },

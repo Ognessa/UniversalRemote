@@ -1,7 +1,7 @@
 package com.patorika.feature_editor_presentation.model
 
 import androidx.compose.ui.geometry.Size
-import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.main.model.ControllerOrientation
 
 data class ControllerEditorScreenState(
