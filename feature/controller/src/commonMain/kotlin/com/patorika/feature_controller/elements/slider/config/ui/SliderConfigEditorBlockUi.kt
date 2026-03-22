@@ -48,7 +48,7 @@ fun SliderConfigEditorBlockUi(
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         value = config.min,
-        onValueChange = { new -> onModified(config.copy(min = new)) },
+        onValueChange = { new -> onModified(config.copy(min = new.filterDecimalInput())) },
         supportingText = { ErrorBlock(errorsList = minErrors) },
         isError = minErrors.isNotEmpty(),
         label = { Text(stringResource(Res.string.slider_config_edit_min_value_label)) },
@@ -58,7 +58,7 @@ fun SliderConfigEditorBlockUi(
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         value = config.max,
-        onValueChange = { new -> onModified(config.copy(max = new)) },
+        onValueChange = { new -> onModified(config.copy(max = new.filterDecimalInput())) },
         supportingText = { ErrorBlock(errorsList = maxErrors) },
         isError = maxErrors.isNotEmpty(),
         label = { Text(stringResource(Res.string.slider_config_edit_max_value_label)) },
@@ -68,7 +68,7 @@ fun SliderConfigEditorBlockUi(
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         value = config.stepsAmount,
-        onValueChange = { new -> onModified(config.copy(stepsAmount = new)) },
+        onValueChange = { new -> onModified(config.copy(stepsAmount = new.filterIntInput())) },
         supportingText = {
             ErrorBlock(
                 errorsList = stepErrors,
@@ -86,6 +86,32 @@ fun SliderConfigEditorBlockUi(
         label = { Text(stringResource(Res.string.slider_config_edit_suffix_label)) },
     )
 }
+
+private const val NUMBERS_BEFORE_DOT = 10
+private const val NUMBERS_AFTER_DOT = 3
+
+private fun String.filterDecimalInput(): String {
+    var result =
+        this
+            .replace(',', '.')
+            .filter { it.isDigit() || it == '.' || it == '-' }
+
+    // only 1 dot
+    val dotIndex = result.indexOf('.')
+    if (dotIndex != -1) {
+        result = result.substring(0, dotIndex + 1) +
+            result.substring(dotIndex + 1).replace(".", "")
+    }
+
+    // limit before and after dot
+    val parts = result.split(".")
+    val intPart = parts[0].take(NUMBERS_BEFORE_DOT)
+    val fracPart = parts.getOrNull(1)?.take(NUMBERS_AFTER_DOT)
+
+    return if (fracPart != null) "$intPart.$fracPart" else intPart
+}
+
+private fun String.filterIntInput(): String = this.filter { it.isDigit() }.take(NUMBERS_BEFORE_DOT)
 
 @Composable
 private fun SliderConfigValidator(config: SliderConfigModel) {

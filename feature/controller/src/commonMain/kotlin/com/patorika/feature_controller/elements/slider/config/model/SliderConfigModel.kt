@@ -7,8 +7,7 @@ import kotlinx.serialization.Serializable
 import universalremote.feature_controller.generated.resources.Res
 import universalremote.feature_controller.generated.resources.slider_config_edit_max_value_must_be_bigger_error
 import universalremote.feature_controller.generated.resources.slider_config_edit_steps_amount_error
-import universalremote.feature_controller.generated.resources.slider_config_edit_steps_amount_integer_error
-import universalremote.feature_controller.generated.resources.slider_config_edit_value_empty_error
+import universalremote.feature_controller.generated.resources.slider_config_edit_value_invalid_error
 
 @Serializable
 @SerialName("SliderConfig")
@@ -27,28 +26,24 @@ data class SliderConfigModel(
 
     fun getErrorMessages(): List<SliderConfigErrorType> =
         mutableListOf<SliderConfigErrorType>().apply {
-            if (min.isBlank()) {
-                add(SliderConfigErrorType.Min(TextProvider.Res(Res.string.slider_config_edit_value_empty_error)))
+            if (min.isBlank() || min.toFloatOrNull() == null) {
+                add(SliderConfigErrorType.Min(TextProvider.Res(Res.string.slider_config_edit_value_invalid_error)))
             }
 
-            if (max.isBlank()) {
-                add(SliderConfigErrorType.Max(TextProvider.Res(Res.string.slider_config_edit_value_empty_error)))
+            if (max.isBlank() || max.toFloatOrNull() == null) {
+                add(SliderConfigErrorType.Max(TextProvider.Res(Res.string.slider_config_edit_value_invalid_error)))
             }
 
-            if (maxValue <= minValue) {
+            if (maxValue <= minValue && min.toFloatOrNull() != null && max.toFloatOrNull() != null) {
                 add(SliderConfigErrorType.Max(TextProvider.Res(Res.string.slider_config_edit_max_value_must_be_bigger_error)))
             }
 
-            if (stepsAmount.isBlank()) {
-                add(SliderConfigErrorType.Step(TextProvider.Res(Res.string.slider_config_edit_value_empty_error)))
+            if (stepsAmount.isBlank() || stepsAmount.toIntOrNull() == null) {
+                add(SliderConfigErrorType.Step(TextProvider.Res(Res.string.slider_config_edit_value_invalid_error)))
             }
 
-            if (stepsAmountValue < 0) {
+            if (stepsAmountValue < 0 && stepsAmount.toIntOrNull() != null) {
                 add(SliderConfigErrorType.Step(TextProvider.Res(Res.string.slider_config_edit_steps_amount_error)))
-            }
-
-            if (stepsAmount.contains("[,.]".toRegex())) {
-                add(SliderConfigErrorType.Step(TextProvider.Res(Res.string.slider_config_edit_steps_amount_integer_error)))
             }
         }
 }
