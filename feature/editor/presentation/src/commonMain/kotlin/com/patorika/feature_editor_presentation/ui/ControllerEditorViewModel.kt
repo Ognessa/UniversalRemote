@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patorika.core.util.LoggerUtil
-import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.main.model.ControllerModel
 import com.patorika.feature_controller.main.model.ControllerOrientation
 import com.patorika.feature_editor_api.state.EditorSharedState

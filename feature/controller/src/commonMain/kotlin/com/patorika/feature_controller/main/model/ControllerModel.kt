@@ -1,6 +1,6 @@
 package com.patorika.feature_controller.main.model
 
-import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi

@@ -1,6 +1,6 @@
 package com.patorika.feature_signal_presentation.model
 
-import com.patorika.feature_controller.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
 
 sealed class SignalEditorScreenEvent {
     data class OnElementModified(
