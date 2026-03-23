@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 internal class Database(
     databaseDriverFactory: DatabaseDriverFactory,
@@ -31,44 +30,35 @@ internal class Database(
                     .mapControllers()
             }
 
-    suspend fun getControllerById(id: String): ControllerModel? =
-        withContext(Dispatchers.IO) {
-            dbQuery
-                .getControllerById(id)
-                .executeAsList()
-                .map { it.mapToControllerDao() }
-                .mapControllers()
-                .firstOrNull()
-        }
+    fun getControllerById(id: String): ControllerModel? =
+        dbQuery
+            .getControllerById(id)
+            .executeAsList()
+            .map { it.mapToControllerDao() }
+            .mapControllers()
+            .firstOrNull()
 
-    suspend fun insertController(model: ControllerModel) {
-        withContext(Dispatchers.IO) {
-            dbQuery.transaction {
-                dbQuery.insertController(
-                    id = model.id,
-                    name = model.name,
-                    orientation = model.orientation.name,
-                    canvas_ratio = model.canvasRatio.toDouble(),
+    fun insertController(model: ControllerModel) =
+        dbQuery.transaction {
+            dbQuery.insertController(
+                id = model.id,
+                name = model.name,
+                orientation = model.orientation.name,
+                canvas_ratio = model.canvasRatio.toDouble(),
+            )
+
+            model.elements.forEach { element ->
+                dbQuery.insertElement(
+                    id = element.id,
+                    parent_id = model.id,
+                    type = element.serialName,
+                    jsonVersion = element.jsonVersion.toLong(),
+                    json = element.encodeToString(),
                 )
-
-                model.elements.forEach { element ->
-                    dbQuery.insertElement(
-                        id = element.id,
-                        parent_id = model.id,
-                        type = element.serialName,
-                        jsonVersion = element.jsonVersion.toLong(),
-                        json = element.encodeToString(),
-                    )
-                }
             }
         }
-    }
 
-    suspend fun removeController(id: String) {
-        withContext(Dispatchers.IO) {
-            dbQuery.removeController(id)
-        }
-    }
+    fun removeController(id: String) = dbQuery.removeController(id)
 
     private fun List<FullControllerDao>.mapControllers(): List<ControllerModel> =
         this.groupBy { it.controllerId }.map { (controllerId, data) ->

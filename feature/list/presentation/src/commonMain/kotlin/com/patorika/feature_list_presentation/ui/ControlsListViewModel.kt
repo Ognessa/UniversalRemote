@@ -2,6 +2,8 @@ package com.patorika.feature_list_presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patorika.core.util.LoggerUtil
+import com.patorika.feature_controller.main.model.ControllerModel
 import com.patorika.feature_list_presentation.model.ControlsListEvents
 import com.patorika.feature_list_presentation.model.ControlsListScreenState
 import com.patorika.feature_list_presentation.usecase.GetAllControllersUseCase
@@ -24,10 +26,20 @@ class ControlsListViewModel(
 
     private fun fetchControllers() {
         viewModelScope.launch {
-            getAllControllersUseCase.execute().collectLatest { list ->
-                _state.update { it.copy(controllersList = list) }
+            getAllControllersUseCase.execute().collectLatest { result ->
+                result
+                    .onSuccess(::onFetchListSuccess)
+                    .onFailure(::onFetchListFailure)
             }
         }
+    }
+
+    private fun onFetchListSuccess(list: List<ControllerModel>) {
+        _state.update { it.copy(controllersList = list) }
+    }
+
+    private fun onFetchListFailure(error: Throwable) {
+        LoggerUtil.d(TAG, "Error: $error")
     }
 
     fun onEvent(event: ControlsListEvents) {
@@ -42,5 +54,9 @@ class ControlsListViewModel(
             delay(3000)
             _state.update { it.copy(isLoading = false) }
         }
+    }
+
+    companion object {
+        private const val TAG = "ControlsListViewModel"
     }
 }
