@@ -1,0 +1,4 @@
+<resources>
+    <string name="editor_cant_save_empty_controller">Can't save empty controller</string>
+    <string name="editor_cant_save_changes">Couldn't save changes. Please try again.</string>
+</resources>

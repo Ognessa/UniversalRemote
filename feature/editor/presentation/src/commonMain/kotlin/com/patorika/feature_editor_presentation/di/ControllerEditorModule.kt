@@ -1,6 +1,7 @@
 package com.patorika.feature_editor_presentation.di
 
 import com.patorika.core.navigation.ScreenBuilder
+import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_editor_api.navigation.ControllerEditorScreenBuilder
 import com.patorika.feature_editor_api.state.EditorSharedState
@@ -20,6 +21,7 @@ val controllerEditorModule =
 
         viewModel {
             ControllerEditorViewModel(
+                appNotificationManager = get<AppNotificationManager>(),
                 editorSharedState = get<EditorSharedState>(),
                 saveControllerUseCase = get<SaveControllerUseCase>(),
             )

@@ -9,8 +9,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import com.patorika.core.provider.TextProvider
-import com.patorika.core.provider.getString
+import com.patorika.core.provider.text.TextProvider
+import com.patorika.core.provider.text.getString
 import com.patorika.feature_controller.main.constants.ElementsConstants
 import com.patorika.feature_controller.main.elements.slider.config.model.SliderConfigErrorType
 import com.patorika.feature_controller.main.elements.slider.config.model.SliderConfigModel

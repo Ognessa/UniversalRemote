@@ -3,6 +3,9 @@ package com.patorika.feature_editor_presentation.ui
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patorika.core.provider.notification.manager.AppNotificationManager
+import com.patorika.core.provider.notification.model.AppNotification
+import com.patorika.core.provider.text.TextProvider
 import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.main.model.ControllerModel
@@ -19,8 +22,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import universalremote.feature_editor_presentation.generated.resources.Res
+import universalremote.feature_editor_presentation.generated.resources.editor_cant_save_changes
+import universalremote.feature_editor_presentation.generated.resources.editor_cant_save_empty_controller
 
 class ControllerEditorViewModel(
+    private val appNotificationManager: AppNotificationManager,
     private val editorSharedState: EditorSharedState,
     private val saveControllerUseCase: SaveControllerUseCase,
 ) : ViewModel() {
@@ -160,9 +167,9 @@ class ControllerEditorViewModel(
             saveControllerUseCase
                 .execute(controllerModel)
                 .onSuccess { closeScreen() }
-                .onFailure { error -> LoggerUtil.d(TAG, "Error: $error") }
+                .onFailure { showSaveError() }
         } else {
-            LoggerUtil.d(TAG, "Elements list is empty")
+            showEmptyControllerError()
         }
     }
 
@@ -170,6 +177,24 @@ class ControllerEditorViewModel(
         viewModelScope.launch {
             _events.emit(ControllerEditorNavigation.Close)
         }
+    }
+
+    private fun showSaveError() {
+        viewModelScope.launch {
+            appNotificationManager.send(
+                AppNotification.SnackBar(
+                    message = TextProvider.Res(Res.string.editor_cant_save_changes),
+                ),
+            )
+        }
+    }
+
+    private suspend fun showEmptyControllerError() {
+        appNotificationManager.send(
+            AppNotification.SnackBar(
+                message = TextProvider.Res(Res.string.editor_cant_save_empty_controller),
+            ),
+        )
     }
 
     private fun onCanvasSizeChanged(size: Size) {

@@ -1,6 +1,6 @@
 package com.patorika.feature_controller.main.elements.slider.config.model
 
-import com.patorika.core.provider.TextProvider
+import com.patorika.core.provider.text.TextProvider
 
 sealed class SliderConfigErrorType {
     data class Min(

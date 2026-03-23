@@ -1,5 +1,6 @@
 package com.patorika.universalremote.di
 
+import com.patorika.core.di.coreModule
 import com.patorika.feature_controller.di.controllerModule
 import com.patorika.feature_editor_presentation.di.controllerEditorModule
 import com.patorika.feature_library_presentation.di.editorLibraryModule
@@ -10,6 +11,7 @@ import org.koin.dsl.module
 val appModule =
     module {
         includes(
+            coreModule,
             controllerModule,
             controlsListModule,
             controllerEditorModule,
