@@ -26,6 +26,7 @@ import com.patorika.feature_controller.main.elements.slider.model.SliderModel
 import com.patorika.feature_controller.main.elements.slider.ui.SliderEditorBlockUi
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenEvent
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenNavigation
+import com.patorika.feature_signal_presentation.ui.components.SignalEditorAbsentUi
 import com.patorika.feature_signal_presentation.ui.components.SignalEditorToolbar
 
 @Composable
@@ -96,6 +97,8 @@ private fun ColumnScope.EditorByElementType(
             )
         }
 
-        else -> {}
+        else -> {
+            SignalEditorAbsentUi()
+        }
     }
 }
