@@ -150,17 +150,25 @@ class ControllerEditorViewModel(
         if (_state.value.elements.isNotEmpty()) {
             val canvasSizeDp = _state.value.canvasSizeDp
 
-            saveControllerUseCase.execute(
+            val controllerModel =
                 ControllerModel(
                     orientation = _state.value.orientation,
                     canvasRatio = canvasSizeDp.width / canvasSizeDp.height,
                     elements = _state.value.elements,
-                ),
-            )
+                )
 
-            _events.emit(ControllerEditorNavigation.Close)
+            saveControllerUseCase
+                .execute(controllerModel)
+                .onSuccess { closeScreen() }
+                .onFailure { error -> LoggerUtil.d(TAG, "Error: $error") }
         } else {
-            // TODO add message
+            LoggerUtil.d(TAG, "Elements list is empty")
+        }
+    }
+
+    private fun closeScreen() {
+        viewModelScope.launch {
+            _events.emit(ControllerEditorNavigation.Close)
         }
     }
 

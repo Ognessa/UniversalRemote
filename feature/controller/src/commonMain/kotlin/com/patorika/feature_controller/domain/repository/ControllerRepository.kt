@@ -4,11 +4,11 @@ import com.patorika.feature_controller.main.model.ControllerModel
 import kotlinx.coroutines.flow.Flow
 
 interface ControllerRepository {
-    fun getAllControllers(): Flow<List<ControllerModel>>
+    fun getAllControllers(): Flow<Result<List<ControllerModel>>>
 
-    suspend fun getControllerById(id: String): ControllerModel?
+    suspend fun getControllerById(id: String): Result<ControllerModel>
 
-    suspend fun insertController(model: ControllerModel)
+    suspend fun insertController(model: ControllerModel): Result<Unit>
 
-    suspend fun removeController(id: String)
+    suspend fun removeController(id: String): Result<Unit>
 }

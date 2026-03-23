@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 class GetAllControllersUseCase(
     private val repository: ControllerRepository,
 ) {
-    fun execute(): Flow<List<ControllerModel>> = repository.getAllControllers()
+    fun execute(): Flow<Result<List<ControllerModel>>> = repository.getAllControllers()
 }

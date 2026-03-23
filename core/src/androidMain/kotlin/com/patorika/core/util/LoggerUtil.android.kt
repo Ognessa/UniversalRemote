@@ -1,17 +1,22 @@
 package com.patorika.core.util
 
 import android.util.Log
+import com.patorika.core.BuildConfig
 
 actual object LoggerUtil {
+    private val loggerAllowed = BuildConfig.DEBUG
+
     actual fun e(
         tag: String,
         message: String,
         throwable: Throwable?,
     ) {
-        if (throwable != null) {
-            Log.e(tag, message, throwable)
-        } else {
-            Log.e(tag, message)
+        if (loggerAllowed) {
+            if (throwable != null) {
+                Log.e(tag, message, throwable)
+            } else {
+                Log.e(tag, message)
+            }
         }
     }
 
@@ -19,13 +24,17 @@ actual object LoggerUtil {
         tag: String,
         message: String,
     ) {
-        Log.d(tag, message)
+        if (loggerAllowed) {
+            Log.d(tag, message)
+        }
     }
 
     actual fun i(
         tag: String,
         message: String,
     ) {
-        Log.i(tag, message)
+        if (loggerAllowed) {
+            Log.i(tag, message)
+        }
     }
 }
