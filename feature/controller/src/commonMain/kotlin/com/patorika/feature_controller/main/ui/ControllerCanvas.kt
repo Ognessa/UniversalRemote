@@ -8,6 +8,7 @@ import com.patorika.feature_controller.main.elements.buttons.square.model.Square
 import com.patorika.feature_controller.main.elements.buttons.square.ui.SquareButtonUi
 import com.patorika.feature_controller.main.elements.buttons.xbox.model.XboxButtonClusterModel
 import com.patorika.feature_controller.main.elements.buttons.xbox.ui.XboxButtonClusterUi
+import com.patorika.feature_controller.main.elements.error.ElementRepresentationError
 import com.patorika.feature_controller.main.elements.slider.model.SliderModel
 import com.patorika.feature_controller.main.elements.slider.ui.SliderUi
 import com.patorika.feature_controller.main.model.ControllerOrientation
@@ -64,7 +65,17 @@ fun ControllerCanvas(
                 )
             }
 
-            else -> {}
+            else -> {
+                ElementRepresentationError(
+                    modifier = modifier,
+                    data = element,
+                    orientation = orientation,
+                    isSelected = selectedElementId == element.id,
+                    renderMode = renderMode,
+                    onClick = { onClick(element) },
+                    onModified = { data -> onModified(data) },
+                )
+            }
         }
     }
 }

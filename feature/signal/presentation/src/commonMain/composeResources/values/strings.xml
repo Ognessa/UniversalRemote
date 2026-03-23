@@ -1,3 +1,5 @@
 <resources>
     <string name="signal_editor_screen_title">Element configs</string>
+
+    <string name="signal_editor_absent_label">Signal editor wasn't attached to this element</string>
 </resources>
