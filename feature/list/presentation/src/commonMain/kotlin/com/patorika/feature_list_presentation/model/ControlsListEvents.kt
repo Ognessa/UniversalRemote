@@ -1,5 +1,5 @@
 package com.patorika.feature_list_presentation.model
 
-sealed class ControlsListEvents {
-    data object Refresh : ControlsListEvents()
+sealed interface ControlsListEvents {
+    data object Refresh : ControlsListEvents
 }

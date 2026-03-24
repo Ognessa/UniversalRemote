@@ -21,7 +21,9 @@ import com.patorika.core.ui.ext.pxToDp
 import com.patorika.feature_controller.main.elements.basic.model.ControllerRenderMode
 import com.patorika.feature_controller.main.ui.ControllerCanvas
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
-import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.CanvasSizeChanged
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.ClearSelection
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.ElementAction
 import com.patorika.feature_editor_presentation.ui.components.EditorToolbar
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -43,20 +45,9 @@ fun ControllerEditorScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             EditorToolbar(
-                isElementSelected = state.selectedElementId != null,
+                selectedId = state.selectedElementId,
                 orientation = state.orientation,
-                onOrientationPressed = { viewModel.onEvent(ControllerEditorUserEvent.OrientationChanged) },
-                onPlusPressed = { navigate(ControllerEditorNavigation.OpenLibrary) },
-                onEditPressed = {
-                    // TODO replace with context menu
-                    state.elements
-                        .firstOrNull {
-                            state.selectedElementId.orEmpty() == it.id
-                        }?.let {
-                            navigate(ControllerEditorNavigation.OpenSignalEditor(it))
-                        }
-                },
-                onSavePressed = { viewModel.onEvent(ControllerEditorUserEvent.Save) },
+                onEvent = { viewModel.onEvent(it) },
             )
         },
     ) { innerPadding ->
@@ -67,13 +58,13 @@ fun ControllerEditorScreen(
                     .padding(innerPadding)
                     .pointerInput(Unit) {
                         detectTapGestures {
-                            viewModel.onEvent(ControllerEditorUserEvent.ClearSelection)
+                            viewModel.onEvent(ClearSelection)
                         }
                     },
         ) {
             ListenToCanvasSizeChanges(
                 onSizeDpChanged = { size ->
-                    viewModel.onEvent(ControllerEditorUserEvent.CanvasSizeChanged(size))
+                    viewModel.onEvent(CanvasSizeChanged(size))
                 },
             )
 
@@ -83,16 +74,8 @@ fun ControllerEditorScreen(
                 orientation = state.orientation,
                 selectedElementId = state.selectedElementId,
                 renderMode = ControllerRenderMode.Editor,
-                onClick = { model ->
-                    viewModel.onEvent(
-                        ControllerEditorUserEvent.ElementClicked(model.id),
-                    )
-                },
-                onModified = { model ->
-                    viewModel.onEvent(
-                        ControllerEditorUserEvent.ElementModified(element = model),
-                    )
-                },
+                onClick = { model -> viewModel.onEvent(ElementAction.Clicked(model.id)) },
+                onModified = { model -> viewModel.onEvent(ElementAction.Modified(element = model)) },
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.patorika.feature_editor_presentation.ui
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,12 @@ import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorScreenState
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.CanvasSizeChanged
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.ClearSelection
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.ElementAction
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.OpenLibrary
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.OrientationChanged
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.Save
 import com.patorika.feature_editor_presentation.usecase.SaveControllerUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +30,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import universalremote.feature_editor_presentation.generated.resources.Res
+import universalremote.feature_editor_presentation.generated.resources.editor_cant_duplicate_element
 import universalremote.feature_editor_presentation.generated.resources.editor_cant_save_changes
 import universalremote.feature_editor_presentation.generated.resources.editor_cant_save_empty_controller
 
@@ -107,13 +115,23 @@ class ControllerEditorViewModel(
     fun onEvent(event: ControllerEditorUserEvent) {
         viewModelScope.launch {
             when (event) {
-                is ControllerEditorUserEvent.ElementClicked -> onElementClicked(event.id)
-                is ControllerEditorUserEvent.ElementModified -> onElementModified(event.element)
-                is ControllerEditorUserEvent.ClearSelection -> onClearSelection()
-                is ControllerEditorUserEvent.OrientationChanged -> onOrientationChanges()
-                is ControllerEditorUserEvent.Save -> onSaveController()
-                is ControllerEditorUserEvent.CanvasSizeChanged -> onCanvasSizeChanged(event.size)
+                is ClearSelection -> onClearSelection()
+                is OrientationChanged -> onOrientationChanges()
+                is Save -> onSaveController()
+                is OpenLibrary -> emitNavigateEvent(ControllerEditorNavigation.OpenLibrary)
+                is CanvasSizeChanged -> onCanvasSizeChanged(event.size)
+                is ElementAction -> onElementConfigEvent(event)
             }
+        }
+    }
+
+    private fun onElementConfigEvent(event: ElementAction) {
+        when (event) {
+            is ElementAction.Clicked -> onElementClicked(event.id)
+            is ElementAction.Modified -> onElementModified(event.element)
+            is ElementAction.OpenSignalEditor -> openSignalEditor(event.id)
+            is ElementAction.Duplicate -> onDuplicateElement(event.id)
+            is ElementAction.Delete -> onDeleteElement(event.id)
         }
     }
 
@@ -166,16 +184,10 @@ class ControllerEditorViewModel(
 
             saveControllerUseCase
                 .execute(controllerModel)
-                .onSuccess { closeScreen() }
+                .onSuccess { emitNavigateEvent(ControllerEditorNavigation.Close) }
                 .onFailure { showSaveError() }
         } else {
             showEmptyControllerError()
-        }
-    }
-
-    private fun closeScreen() {
-        viewModelScope.launch {
-            _events.emit(ControllerEditorNavigation.Close)
         }
     }
 
@@ -200,6 +212,65 @@ class ControllerEditorViewModel(
     private fun onCanvasSizeChanged(size: Size) {
         LoggerUtil.d(TAG, "Canvas size changed to $size")
         _state.update { it.copy(canvasSizeDp = size) }
+    }
+
+    private fun emitNavigateEvent(event: ControllerEditorNavigation) {
+        viewModelScope.launch {
+            _events.emit(event)
+        }
+    }
+
+    private fun openSignalEditor(id: String) {
+        viewModelScope.launch {
+            _state.value.elements
+                .firstOrNull { id == it.id }
+                ?.let { element ->
+                    emitNavigateEvent(ControllerEditorNavigation.OpenSignalEditor(element))
+                }
+        }
+    }
+
+    private fun onDuplicateElement(id: String) {
+        viewModelScope.launch {
+            _state.update { currentState ->
+                val selectedElement = currentState.elements.firstOrNull { it.id == id }
+                if (selectedElement != null) {
+                    // copy element with basic position
+                    val copyElement =
+                        selectedElement.createElementWithNewId().let {
+                            val newDisplayParam =
+                                it.displayParameters.copy(
+                                    centerOffset = Offset(0.5f, 0.5f),
+                                )
+                            it.changeDisplayParameters(newDisplayParam)
+                        }
+
+                    currentState.copy(
+                        elements = currentState.elements.toMutableList().apply { add(copyElement) },
+                        selectedElementId = copyElement.id,
+                    )
+                } else {
+                    // show error
+                    appNotificationManager.send(
+                        AppNotification.SnackBar(
+                            message = TextProvider.Res(Res.string.editor_cant_duplicate_element),
+                        ),
+                    )
+                    currentState
+                }
+            }
+        }
+    }
+
+    private fun onDeleteElement(id: String) {
+        viewModelScope.launch {
+            _state.update { currentState ->
+                currentState.copy(
+                    elements = currentState.elements.filter { element -> element.id != id },
+                    selectedElementId = null,
+                )
+            }
+        }
     }
 
     companion object {
