@@ -9,7 +9,6 @@ import com.patorika.feature_controller.main.model.ControllerModel
 import com.patorika.feature_list_presentation.model.ControlsListEvents
 import com.patorika.feature_list_presentation.model.ControlsListScreenState
 import com.patorika.feature_list_presentation.usecase.GetAllControllersUseCase
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -26,31 +25,7 @@ class ControlsListViewModel(
     val state: StateFlow<ControlsListScreenState> = _state
 
     init {
-        fetchControllers()
-    }
-
-    private fun fetchControllers() {
-        viewModelScope.launch {
-            getAllControllersUseCase.execute().collectLatest { result ->
-                result
-                    .onSuccess(::onFetchListSuccess)
-                    .onFailure(::onFetchListFailure)
-            }
-        }
-    }
-
-    private fun onFetchListSuccess(list: List<ControllerModel>) {
-        _state.update { it.copy(controllersList = list) }
-    }
-
-    private fun onFetchListFailure(error: Throwable) {
-        viewModelScope.launch {
-            appNotificationManager.send(
-                AppNotification.SnackBar(
-                    message = TextProvider.Res(Res.string.controls_list_fetching_error),
-                ),
-            )
-        }
+        refreshScreenContent()
     }
 
     fun onEvent(event: ControlsListEvents) {
@@ -61,10 +36,37 @@ class ControlsListViewModel(
 
     private fun refreshScreenContent() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            delay(3000)
-            _state.update { it.copy(isLoading = false) }
+            setLoading(true)
+            fetchControllers()
         }
+    }
+
+    private suspend fun fetchControllers() {
+        getAllControllersUseCase.execute().collectLatest { result ->
+            result
+                .onSuccess(::onFetchListSuccess)
+                .onFailure(::onFetchListFailure)
+        }
+    }
+
+    private fun onFetchListSuccess(list: List<ControllerModel>) {
+        _state.update { it.copy(controllersList = list) }
+        setLoading(false)
+    }
+
+    private fun onFetchListFailure(error: Throwable) {
+        viewModelScope.launch {
+            appNotificationManager.send(
+                AppNotification.SnackBar(
+                    message = TextProvider.Res(Res.string.controls_list_fetching_error),
+                ),
+            )
+        }
+        setLoading(false)
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        _state.update { it.copy(isLoading = isLoading) }
     }
 
     companion object {
