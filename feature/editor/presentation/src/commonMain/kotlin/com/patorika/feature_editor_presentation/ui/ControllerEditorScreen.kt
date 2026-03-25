@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -18,6 +19,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.patorika.core.ui.ext.pxToDp
+import com.patorika.core.ui.loader.CustomLoader
 import com.patorika.feature_controller.main.elements.basic.model.ControllerRenderMode
 import com.patorika.feature_controller.main.ui.ControllerCanvas
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
@@ -76,6 +78,11 @@ fun ControllerEditorScreen(
                 renderMode = ControllerRenderMode.Editor,
                 onClick = { model -> viewModel.onEvent(ElementAction.Clicked(model.id)) },
                 onModified = { model -> viewModel.onEvent(ElementAction.Modified(element = model)) },
+            )
+
+            CustomLoader(
+                modifier = Modifier.align(Alignment.Center),
+                isLoading = state.isLoading,
             )
         }
     }
