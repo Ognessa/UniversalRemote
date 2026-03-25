@@ -1,4 +1,10 @@
 <resources>
+    <string name="editor_cant_load_controller">Can't load controller data</string>
     <string name="editor_cant_save_empty_controller">Can't save empty controller</string>
     <string name="editor_cant_save_changes">Couldn't save changes. Please try again.</string>
+    <string name="editor_cant_duplicate_element">Couldn't duplicate element</string>
+
+    <string name="editor_element_signals_edit_label">Edit Signals</string>
+    <string name="editor_element_dublicate_label">Duplicate</string>
+    <string name="editor_element_delete_label">Delete</string>
 </resources>

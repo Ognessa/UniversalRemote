@@ -12,27 +12,37 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.patorika.core.provider.text.TextProvider
+import com.patorika.core.ui.menu.dropdown.CustomDropdownItemModel
+import com.patorika.core.ui.menu.dropdown.CustomDropdownMenu
 import com.patorika.feature_controller.main.ext.setOrientation
 import com.patorika.feature_controller.main.model.ControllerOrientation
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.ElementAction
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.OpenLibrary
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.OrientationChanged
+import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.Save
 import org.jetbrains.compose.resources.painterResource
-import universalremote.core.generated.resources.Res
 import universalremote.core.generated.resources.ic_check
-import universalremote.core.generated.resources.ic_edit
+import universalremote.core.generated.resources.ic_gear
 import universalremote.core.generated.resources.ic_orientation
 import universalremote.core.generated.resources.ic_plus
+import universalremote.feature_editor_presentation.generated.resources.Res
+import universalremote.feature_editor_presentation.generated.resources.editor_element_delete_label
+import universalremote.feature_editor_presentation.generated.resources.editor_element_dublicate_label
+import universalremote.feature_editor_presentation.generated.resources.editor_element_signals_edit_label
+import universalremote.core.generated.resources.Res as CoreRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditorToolbar(
-    isElementSelected: Boolean,
+    selectedId: String?,
     orientation: ControllerOrientation,
-    onOrientationPressed: () -> Unit,
-    onPlusPressed: () -> Unit,
-    onEditPressed: () -> Unit,
-    onSavePressed: () -> Unit,
+    onEvent: (ControllerEditorUserEvent) -> Unit,
 ) {
     TopAppBar(
         modifier = Modifier.fillMaxWidth(),
+        colors = topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -41,50 +51,77 @@ internal fun EditorToolbar(
             ) {
                 IconButton(
                     modifier = Modifier.setOrientation(orientation),
-                    onClick = onOrientationPressed,
+                    onClick = { onEvent(OrientationChanged) },
                 ) {
                     Icon(
-                        painter = painterResource(Res.drawable.ic_orientation),
+                        painter = painterResource(CoreRes.drawable.ic_orientation),
                         contentDescription = null,
                     )
                 }
 
                 IconButton(
                     modifier = Modifier.setOrientation(orientation),
-                    onClick = onPlusPressed,
+                    onClick = { onEvent(OpenLibrary) },
                 ) {
                     Icon(
-                        painter = painterResource(Res.drawable.ic_plus),
+                        painter = painterResource(CoreRes.drawable.ic_plus),
                         contentDescription = null,
                     )
                 }
 
-                if (isElementSelected) {
-                    IconButton(
-                        modifier = Modifier.setOrientation(orientation),
-                        onClick = onEditPressed,
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_edit),
-                            contentDescription = null,
-                        )
-                    }
+                if (selectedId != null) {
+                    ElementsConfigButton(
+                        selectedId = selectedId,
+                        orientation = orientation,
+                        onEvent = onEvent,
+                    )
                 }
 
                 IconButton(
                     modifier = Modifier.setOrientation(orientation),
-                    onClick = onSavePressed,
+                    onClick = { onEvent(Save) },
                 ) {
                     Icon(
-                        painter = painterResource(Res.drawable.ic_check),
+                        painter = painterResource(CoreRes.drawable.ic_check),
                         contentDescription = null,
                     )
                 }
             }
         },
-        colors =
-            topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-            ),
     )
+}
+
+@Composable
+private fun ElementsConfigButton(
+    selectedId: String,
+    orientation: ControllerOrientation,
+    onEvent: (ControllerEditorUserEvent) -> Unit,
+) {
+    CustomDropdownMenu(
+        items =
+            listOf(
+                CustomDropdownItemModel(
+                    title = TextProvider.Res(Res.string.editor_element_signals_edit_label),
+                    onClick = { onEvent(ElementAction.OpenSignalEditor(selectedId)) },
+                ),
+                CustomDropdownItemModel(
+                    title = TextProvider.Res(Res.string.editor_element_dublicate_label),
+                    onClick = { onEvent(ElementAction.Duplicate(selectedId)) },
+                ),
+                CustomDropdownItemModel(
+                    title = TextProvider.Res(Res.string.editor_element_delete_label),
+                    onClick = { onEvent(ElementAction.Delete(selectedId)) },
+                ),
+            ),
+    ) { onClick ->
+        IconButton(
+            modifier = Modifier.setOrientation(orientation),
+            onClick = onClick,
+        ) {
+            Icon(
+                painter = painterResource(CoreRes.drawable.ic_gear),
+                contentDescription = null,
+            )
+        }
+    }
 }

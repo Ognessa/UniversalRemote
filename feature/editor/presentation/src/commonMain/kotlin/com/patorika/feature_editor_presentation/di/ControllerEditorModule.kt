@@ -7,7 +7,9 @@ import com.patorika.feature_editor_api.navigation.ControllerEditorScreenBuilder
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_editor_presentation.api.ControllerEditorScreenBuilderImpl
 import com.patorika.feature_editor_presentation.api.EditorSharedStateImpl
+import com.patorika.feature_editor_presentation.model.ControllerEditorParams
 import com.patorika.feature_editor_presentation.ui.ControllerEditorViewModel
+import com.patorika.feature_editor_presentation.usecase.GetControllerByIdUseCase
 import com.patorika.feature_editor_presentation.usecase.SaveControllerUseCase
 import com.patorika.feature_library_api.EditorLibraryScreenBuilder
 import com.patorika.feature_signal_api.SignalEditorScreenBuilder
@@ -21,9 +23,11 @@ val controllerEditorModule =
 
         viewModel {
             ControllerEditorViewModel(
+                params = get<ControllerEditorParams>(),
                 appNotificationManager = get<AppNotificationManager>(),
                 editorSharedState = get<EditorSharedState>(),
                 saveControllerUseCase = get<SaveControllerUseCase>(),
+                getControllerByIdUseCase = get<GetControllerByIdUseCase>(),
             )
         }
 
@@ -36,6 +40,12 @@ val controllerEditorModule =
 
         factory {
             SaveControllerUseCase(
+                repository = get<ControllerRepository>(),
+            )
+        }
+
+        factory {
+            GetControllerByIdUseCase(
                 repository = get<ControllerRepository>(),
             )
         }

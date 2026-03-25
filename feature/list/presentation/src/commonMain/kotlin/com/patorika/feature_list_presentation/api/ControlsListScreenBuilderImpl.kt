@@ -30,7 +30,7 @@ class ControlsListScreenBuilderImpl(
     ) {
         when (type) {
             is ControlsListNavigation.OpenEditor -> {
-                navController.navigate(editorScreenBuilder.routeName)
+                navController.navigate("${editorScreenBuilder.routeName}/${type.id}")
             }
         }
     }

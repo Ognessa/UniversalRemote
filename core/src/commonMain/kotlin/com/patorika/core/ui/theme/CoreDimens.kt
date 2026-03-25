@@ -16,4 +16,6 @@ class CoreDimensValues {
     val standardCornerSize: Dp = 16.dp
 
     val standardSnackBarInterval = 20.dp
+
+    val standardLoaderSize = 100.dp
 }
