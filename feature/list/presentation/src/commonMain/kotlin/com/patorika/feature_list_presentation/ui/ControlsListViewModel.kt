@@ -7,22 +7,39 @@ import com.patorika.core.provider.notification.model.AppNotification
 import com.patorika.core.provider.text.TextProvider
 import com.patorika.feature_controller.main.model.ControllerModel
 import com.patorika.feature_list_presentation.model.ControlsListEvents
+import com.patorika.feature_list_presentation.model.ControlsListEvents.CreateNew
+import com.patorika.feature_list_presentation.model.ControlsListEvents.Item
+import com.patorika.feature_list_presentation.model.ControlsListEvents.Refresh
+import com.patorika.feature_list_presentation.model.ControlsListNavigation
 import com.patorika.feature_list_presentation.model.ControlsListScreenState
+import com.patorika.feature_list_presentation.usecase.DeleteControllerUseCase
+import com.patorika.feature_list_presentation.usecase.DuplicateControllerUseCase
 import com.patorika.feature_list_presentation.usecase.GetAllControllersUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import universalremote.feature_list_presentation.generated.resources.Res
+import universalremote.feature_list_presentation.generated.resources.controller_delete_failure_message
+import universalremote.feature_list_presentation.generated.resources.controller_delete_success_message
+import universalremote.feature_list_presentation.generated.resources.controller_duplicate_failure_message
+import universalremote.feature_list_presentation.generated.resources.controller_duplicate_success_message
 import universalremote.feature_list_presentation.generated.resources.controls_list_fetching_error
 
 class ControlsListViewModel(
     private val appNotificationManager: AppNotificationManager,
     private val getAllControllersUseCase: GetAllControllersUseCase,
+    private val duplicateControllerUseCase: DuplicateControllerUseCase,
+    private val deleteControllerUseCase: DeleteControllerUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ControlsListScreenState())
     val state: StateFlow<ControlsListScreenState> = _state
+
+    private val _events = MutableSharedFlow<ControlsListNavigation>()
+    val events = _events.asSharedFlow()
 
     init {
         refreshScreenContent()
@@ -30,7 +47,17 @@ class ControlsListViewModel(
 
     fun onEvent(event: ControlsListEvents) {
         when (event) {
-            is ControlsListEvents.Refresh -> refreshScreenContent()
+            is Refresh -> refreshScreenContent()
+            is CreateNew -> emitNavigationEvent(ControlsListNavigation.OpenEditor())
+            is Item -> onItemEvent(event)
+        }
+    }
+
+    private fun onItemEvent(events: Item) {
+        when (events) {
+            is Item.Edit -> emitNavigationEvent(ControlsListNavigation.OpenEditor(events.id))
+            is Item.Duplicate -> onDuplicate(events.id)
+            is Item.Delete -> onDelete(events.id)
         }
     }
 
@@ -63,6 +90,75 @@ class ControlsListViewModel(
             )
         }
         setLoading(false)
+    }
+
+    private fun onDuplicate(id: String) {
+        viewModelScope.launch {
+            val model = _state.value.controllersList.firstOrNull { it.id == id }
+            if (model != null) {
+                duplicateControllerUseCase.execute(model).fold(
+                    onSuccess = ::duplicateSuccess,
+                    onFailure = ::duplicateFailure,
+                )
+            } else {
+                duplicateFailure(null)
+            }
+        }
+    }
+
+    private fun duplicateSuccess(unit: Unit) {
+        viewModelScope.launch {
+            appNotificationManager.send(
+                AppNotification.SnackBar(
+                    message = TextProvider.Res(Res.string.controller_duplicate_success_message),
+                ),
+            )
+        }
+    }
+
+    private fun duplicateFailure(error: Throwable?) {
+        viewModelScope.launch {
+            appNotificationManager.send(
+                AppNotification.SnackBar(
+                    message = TextProvider.Res(Res.string.controller_duplicate_failure_message),
+                ),
+            )
+        }
+    }
+
+    private fun onDelete(id: String) {
+        viewModelScope.launch {
+            deleteControllerUseCase.execute(id).fold(
+                onSuccess = ::deleteSuccess,
+                onFailure = ::deleteFailure,
+            )
+        }
+    }
+
+    private fun deleteSuccess(unit: Unit) {
+        viewModelScope.launch {
+            appNotificationManager.send(
+                AppNotification.SnackBar(
+                    message = TextProvider.Res(Res.string.controller_delete_success_message),
+                ),
+            )
+        }
+    }
+
+    private fun deleteFailure(error: Throwable) {
+        viewModelScope.launch {
+            appNotificationManager.send(
+                AppNotification.SnackBar(
+                    message = TextProvider.Res(Res.string.controller_delete_failure_message),
+                ),
+            )
+        }
+    }
+
+    private fun emitNavigationEvent(event: ControlsListNavigation) {
+        viewModelScope.launch {
+            _events.emit(event)
+        }
     }
 
     private fun setLoading(isLoading: Boolean) {

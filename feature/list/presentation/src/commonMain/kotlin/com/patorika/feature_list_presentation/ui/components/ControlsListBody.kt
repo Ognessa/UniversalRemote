@@ -9,11 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patorika.core.ui.theme.CoreDimens
 import com.patorika.feature_controller.main.model.ControllerModel
+import com.patorika.feature_list_presentation.model.ControlsListEvents
 
 @Composable
 internal fun ControlsListBody(
     modifier: Modifier = Modifier,
     list: List<ControllerModel>,
+    onEvent: (ControlsListEvents) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -25,6 +27,7 @@ internal fun ControlsListBody(
                 ControlsListItemUi(
                     modifier = Modifier.fillMaxSize(),
                     model = item,
+                    onEvent = onEvent,
                 )
             }
         } else {

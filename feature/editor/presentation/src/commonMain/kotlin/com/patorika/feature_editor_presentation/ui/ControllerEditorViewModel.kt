@@ -9,10 +9,12 @@ import com.patorika.core.provider.notification.model.AppNotification
 import com.patorika.core.provider.text.TextProvider
 import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.main.ext.generateControllerId
 import com.patorika.feature_controller.main.model.ControllerModel
 import com.patorika.feature_controller.main.model.ControllerOrientation
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
+import com.patorika.feature_editor_presentation.model.ControllerEditorParams
 import com.patorika.feature_editor_presentation.model.ControllerEditorScreenState
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.CanvasSizeChanged
@@ -21,6 +23,7 @@ import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.OpenLibrary
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.OrientationChanged
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.Save
+import com.patorika.feature_editor_presentation.usecase.GetControllerByIdUseCase
 import com.patorika.feature_editor_presentation.usecase.SaveControllerUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,13 +34,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import universalremote.feature_editor_presentation.generated.resources.Res
 import universalremote.feature_editor_presentation.generated.resources.editor_cant_duplicate_element
+import universalremote.feature_editor_presentation.generated.resources.editor_cant_load_controller
 import universalremote.feature_editor_presentation.generated.resources.editor_cant_save_changes
 import universalremote.feature_editor_presentation.generated.resources.editor_cant_save_empty_controller
 
 class ControllerEditorViewModel(
+    private val params: ControllerEditorParams,
     private val appNotificationManager: AppNotificationManager,
     private val editorSharedState: EditorSharedState,
     private val saveControllerUseCase: SaveControllerUseCase,
+    private val getControllerByIdUseCase: GetControllerByIdUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ControllerEditorScreenState())
     val state = _state.asStateFlow()
@@ -47,7 +53,41 @@ class ControllerEditorViewModel(
 
     init {
         viewModelScope.launch {
+            initEditedController()
             observeNewElements()
+        }
+    }
+
+    private suspend fun initEditedController() {
+        if (params.id != null) {
+            _state.update { it.copy(isLoading = true) }
+            getControllerByIdUseCase.execute(params.id).fold(
+                onSuccess = ::initEditedControllerSuccess,
+                onFailure = ::initEditedControllerFailure,
+            )
+        }
+    }
+
+    private fun initEditedControllerSuccess(model: ControllerModel) {
+        viewModelScope.launch {
+            _state.update { currentState ->
+                currentState.copy(
+                    isLoading = false,
+                    orientation = model.orientation,
+                    elements = model.elements,
+                )
+            }
+        }
+    }
+
+    private fun initEditedControllerFailure(error: Throwable) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = false) }
+            appNotificationManager.send(
+                AppNotification.SnackBar(
+                    message = TextProvider.Res(Res.string.editor_cant_load_controller),
+                ),
+            )
         }
     }
 
@@ -177,6 +217,7 @@ class ControllerEditorViewModel(
 
             val controllerModel =
                 ControllerModel(
+                    id = params.id ?: generateControllerId(),
                     orientation = _state.value.orientation,
                     canvasRatio = canvasSizeDp.width / canvasSizeDp.height,
                     elements = _state.value.elements,

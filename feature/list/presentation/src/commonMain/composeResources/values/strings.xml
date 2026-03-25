@@ -2,5 +2,17 @@
     <string name="controls_list_screen_title">Controllers</string>
     <string name="controls_list_empty_label">You don’t  have any controllers right now</string>
 
+    <!--Context Menu-->
+    <string name="control_item_edit">Edit</string>
+    <string name="control_item_duplicate">Duplicate</string>
+    <string name="control_item_delete">Delete</string>
+
+    <!--Messages-->
     <string name="controls_list_fetching_error">Couldn't load data. Please try again.</string>
+
+    <string name="controller_duplicate_success_message">Controller duplicated successfully</string>
+    <string name="controller_duplicate_failure_message">Controller duplication failed</string>
+
+    <string name="controller_delete_success_message">Controller deleted successfully</string>
+    <string name="controller_delete_failure_message">Controller deletion failed</string>
 </resources>

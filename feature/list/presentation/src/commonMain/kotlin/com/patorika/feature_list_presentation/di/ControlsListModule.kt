@@ -7,6 +7,8 @@ import com.patorika.feature_editor_api.navigation.ControllerEditorScreenBuilder
 import com.patorika.feature_list_api.ControlsListScreenBuilder
 import com.patorika.feature_list_presentation.api.ControlsListScreenBuilderImpl
 import com.patorika.feature_list_presentation.ui.ControlsListViewModel
+import com.patorika.feature_list_presentation.usecase.DeleteControllerUseCase
+import com.patorika.feature_list_presentation.usecase.DuplicateControllerUseCase
 import com.patorika.feature_list_presentation.usecase.GetAllControllersUseCase
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
@@ -18,6 +20,8 @@ val controlsListModule =
             ControlsListViewModel(
                 appNotificationManager = get<AppNotificationManager>(),
                 getAllControllersUseCase = get<GetAllControllersUseCase>(),
+                duplicateControllerUseCase = get<DuplicateControllerUseCase>(),
+                deleteControllerUseCase = get<DeleteControllerUseCase>(),
             )
         }
 
@@ -29,6 +33,18 @@ val controlsListModule =
 
         factory {
             GetAllControllersUseCase(
+                repository = get<ControllerRepository>(),
+            )
+        }
+
+        factory {
+            DuplicateControllerUseCase(
+                repository = get<ControllerRepository>(),
+            )
+        }
+
+        factory {
+            DeleteControllerUseCase(
                 repository = get<ControllerRepository>(),
             )
         }
