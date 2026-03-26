@@ -14,12 +14,17 @@ import com.patorika.feature_editor_presentation.model.ControllerEditorParams
 import com.patorika.feature_editor_presentation.ui.ControllerEditorScreen
 import com.patorika.feature_library_api.EditorLibraryScreenBuilder
 import com.patorika.feature_signal_api.SignalEditorScreenBuilder
+import com.patorika.feature_title_api.TitleEditorDialogBuilder
+import com.patorika.feature_title_api.TitleEditorNavArgs
+import com.patorika.feature_title_api.TitleEditorSuccessNavigation
+import com.patorika.feature_title_api.toNavArg
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 class ControllerEditorScreenBuilderImpl(
     private val editorLibraryScreenBuilder: EditorLibraryScreenBuilder,
     private val signalEditorScreenBuilder: SignalEditorScreenBuilder,
+    private val titleEditorDialogBuilder: () -> TitleEditorDialogBuilder,
 ) : ControllerEditorScreenBuilder {
     override fun build(
         builder: NavGraphBuilder,
@@ -67,6 +72,16 @@ class ControllerEditorScreenBuilderImpl(
 
             is ControllerEditorNavigation.Close -> {
                 navController.popBackStack()
+            }
+
+            is ControllerEditorNavigation.OpenTitleEditor -> {
+                val args =
+                    TitleEditorNavArgs(
+                        successNavigation = TitleEditorSuccessNavigation.OPEN_LIST,
+                        model = type.model,
+                    ).toNavArg()
+
+                navController.navigate("${titleEditorDialogBuilder().routeName}/$args")
             }
         }
     }

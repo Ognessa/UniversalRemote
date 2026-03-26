@@ -30,6 +30,7 @@ import universalremote.feature_list_presentation.generated.resources.Res
 import universalremote.feature_list_presentation.generated.resources.control_item_delete
 import universalremote.feature_list_presentation.generated.resources.control_item_duplicate
 import universalremote.feature_list_presentation.generated.resources.control_item_edit
+import universalremote.feature_list_presentation.generated.resources.control_item_rename
 
 @Composable
 internal fun ControlsListItemUi(
@@ -40,6 +41,10 @@ internal fun ControlsListItemUi(
     CustomDropdownMenu(
         items =
             listOf(
+                CustomDropdownItemModel(
+                    title = TextProvider.Res(Res.string.control_item_rename),
+                    onClick = { onEvent(ControlsListEvents.Item.Rename(model.id)) },
+                ),
                 CustomDropdownItemModel(
                     title = TextProvider.Res(Res.string.control_item_edit),
                     onClick = { onEvent(ControlsListEvents.Item.Edit(model.id)) },
@@ -68,7 +73,7 @@ internal fun ControlsListItemUi(
                     Modifier
                         .fillMaxWidth()
                         .padding(CoreDimens.current.standardContentPadding),
-                text = model.id,
+                text = model.name,
             )
         }
     }

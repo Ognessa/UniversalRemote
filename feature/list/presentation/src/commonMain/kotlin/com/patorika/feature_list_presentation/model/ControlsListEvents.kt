@@ -6,6 +6,10 @@ sealed interface ControlsListEvents {
     data object CreateNew : ControlsListEvents
 
     sealed interface Item : ControlsListEvents {
+        data class Rename(
+            val id: String,
+        ) : Item
+
         data class Edit(
             val id: String,
         ) : Item

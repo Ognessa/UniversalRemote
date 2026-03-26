@@ -21,10 +21,9 @@ val controllerModelModule =
         }
     }
 
-private val json =
+val controllerJson =
     Json {
-        serializersModule =
-            controllerModelModule
+        serializersModule = controllerModelModule
         encodeDefaults = true
         ignoreUnknownKeys = true
         classDiscriminator = "type"
@@ -36,7 +35,7 @@ fun ControllerElementModel.toNavArg(): String {
     return Base64.UrlSafe.encode(raw.encodeToByteArray())
 }
 
-fun ControllerElementModel.encodeToString(): String = json.encodeToString<@Polymorphic ControllerElementModel>(this)
+fun ControllerElementModel.encodeToString(): String = controllerJson.encodeToString<@Polymorphic ControllerElementModel>(this)
 
 @OptIn(ExperimentalEncodingApi::class)
 fun controllerModelFromNavArg(arg: String): ControllerElementModel {
@@ -44,4 +43,5 @@ fun controllerModelFromNavArg(arg: String): ControllerElementModel {
     return raw.decodeToControllerElementModel()
 }
 
-fun String.decodeToControllerElementModel(): ControllerElementModel = json.decodeFromString<@Polymorphic ControllerElementModel>(this)
+fun String.decodeToControllerElementModel(): ControllerElementModel =
+    controllerJson.decodeFromString<@Polymorphic ControllerElementModel>(this)

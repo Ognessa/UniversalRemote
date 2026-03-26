@@ -3,6 +3,7 @@
     <string name="controls_list_empty_label">You don’t  have any controllers right now</string>
 
     <!--Context Menu-->
+    <string name="control_item_rename">Rename</string>
     <string name="control_item_edit">Edit</string>
     <string name="control_item_duplicate">Duplicate</string>
     <string name="control_item_delete">Delete</string>
@@ -15,4 +16,6 @@
 
     <string name="controller_delete_success_message">Controller deleted successfully</string>
     <string name="controller_delete_failure_message">Controller deletion failed</string>
+
+    <string name="controller_not_exists_message">Can't find selected controller</string>
 </resources>

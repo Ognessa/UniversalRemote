@@ -75,6 +75,9 @@ kotlin {
 
             implementation(projects.featureSignalApi)
             implementation(projects.featureSignalPresentation)
+
+            implementation(projects.featureTitleApi)
+            implementation(projects.featureTitlePresentation)
         }
 
         commonTest.dependencies {

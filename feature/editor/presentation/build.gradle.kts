@@ -51,6 +51,7 @@ kotlin {
                 implementation(projects.featureEditorApi)
                 implementation(projects.featureLibraryApi)
                 implementation(projects.featureSignalApi)
+                implementation(projects.featureTitleApi)
             }
         }
 

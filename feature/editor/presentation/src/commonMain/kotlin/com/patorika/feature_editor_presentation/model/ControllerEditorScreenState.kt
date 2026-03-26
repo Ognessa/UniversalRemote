@@ -6,6 +6,7 @@ import com.patorika.feature_controller.main.model.ControllerOrientation
 
 data class ControllerEditorScreenState(
     val isLoading: Boolean = false,
+    val title: String = "",
     val canvasSizeDp: Size = Size(300f, 600f),
     val orientation: ControllerOrientation = ControllerOrientation.PORTRAIT,
     val elements: List<ControllerElementModel> = emptyList(),

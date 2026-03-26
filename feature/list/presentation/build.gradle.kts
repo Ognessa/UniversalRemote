@@ -50,6 +50,7 @@ kotlin {
                 implementation(projects.featureController)
                 implementation(projects.featureListApi)
                 implementation(projects.featureEditorApi)
+                implementation(projects.featureTitleApi)
             }
         }
 
