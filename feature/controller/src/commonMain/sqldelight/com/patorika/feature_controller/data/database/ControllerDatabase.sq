@@ -33,7 +33,8 @@ SELECT
     e.jsonVersion,
     e.json
 FROM controllers AS c
-LEFT JOIN elements AS e ON e.parent_id = c.id;
+LEFT JOIN elements AS e ON e.parent_id = c.id
+ORDER BY c.name ASC;
 
 getControllerById:
 SELECT

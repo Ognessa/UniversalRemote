@@ -1,0 +1,9 @@
+<resources>
+    <string name="editor_title">Controller title</string>
+    <string name="editor_save_label">Save</string>
+    <string name="editor_cancel_label">Cancel</string>
+
+    <!--Errors-->
+    <string name="editor_cant_save_changes">Couldn't save changes. Please try again.</string>
+    <string name="title_cant_be_empty">Title can't be empty.</string>
+</resources>

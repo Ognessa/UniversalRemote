@@ -10,9 +10,9 @@ import com.patorika.feature_editor_presentation.api.EditorSharedStateImpl
 import com.patorika.feature_editor_presentation.model.ControllerEditorParams
 import com.patorika.feature_editor_presentation.ui.ControllerEditorViewModel
 import com.patorika.feature_editor_presentation.usecase.GetControllerByIdUseCase
-import com.patorika.feature_editor_presentation.usecase.SaveControllerUseCase
 import com.patorika.feature_library_api.EditorLibraryScreenBuilder
 import com.patorika.feature_signal_api.SignalEditorScreenBuilder
+import com.patorika.feature_title_api.TitleEditorDialogBuilder
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -26,7 +26,6 @@ val controllerEditorModule =
                 params = get<ControllerEditorParams>(),
                 appNotificationManager = get<AppNotificationManager>(),
                 editorSharedState = get<EditorSharedState>(),
-                saveControllerUseCase = get<SaveControllerUseCase>(),
                 getControllerByIdUseCase = get<GetControllerByIdUseCase>(),
             )
         }
@@ -35,14 +34,9 @@ val controllerEditorModule =
             ControllerEditorScreenBuilderImpl(
                 editorLibraryScreenBuilder = get<EditorLibraryScreenBuilder>(),
                 signalEditorScreenBuilder = get<SignalEditorScreenBuilder>(),
+                titleEditorDialogBuilder = { get<TitleEditorDialogBuilder>() },
             )
         } bind ScreenBuilder::class
-
-        factory {
-            SaveControllerUseCase(
-                repository = get<ControllerRepository>(),
-            )
-        }
 
         factory {
             GetControllerByIdUseCase(

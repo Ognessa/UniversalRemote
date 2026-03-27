@@ -27,6 +27,7 @@ import universalremote.feature_list_presentation.generated.resources.controller_
 import universalremote.feature_list_presentation.generated.resources.controller_delete_success_message
 import universalremote.feature_list_presentation.generated.resources.controller_duplicate_failure_message
 import universalremote.feature_list_presentation.generated.resources.controller_duplicate_success_message
+import universalremote.feature_list_presentation.generated.resources.controller_not_exists_message
 import universalremote.feature_list_presentation.generated.resources.controls_list_fetching_error
 
 class ControlsListViewModel(
@@ -55,6 +56,7 @@ class ControlsListViewModel(
 
     private fun onItemEvent(events: Item) {
         when (events) {
+            is Item.Rename -> onRename(events.id)
             is Item.Edit -> emitNavigationEvent(ControlsListNavigation.OpenEditor(events.id))
             is Item.Duplicate -> onDuplicate(events.id)
             is Item.Delete -> onDelete(events.id)
@@ -90,6 +92,25 @@ class ControlsListViewModel(
             )
         }
         setLoading(false)
+    }
+
+    private fun onRename(id: String) {
+        viewModelScope.launch {
+            val model = _state.value.controllersList.firstOrNull { it.id == id }
+            if (model != null) {
+                emitNavigationEvent(ControlsListNavigation.OpenTitleEditor(model))
+            } else {
+                controllerNotExistsError()
+            }
+        }
+    }
+
+    private suspend fun controllerNotExistsError() {
+        appNotificationManager.send(
+            AppNotification.SnackBar(
+                message = TextProvider.Res(Res.string.controller_not_exists_message),
+            ),
+        )
     }
 
     private fun onDuplicate(id: String) {

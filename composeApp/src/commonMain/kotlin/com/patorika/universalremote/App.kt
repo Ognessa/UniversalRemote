@@ -1,5 +1,6 @@
 package com.patorika.universalremote
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -10,12 +11,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -26,7 +29,6 @@ import com.patorika.core.navigation.ScreenBuilder
 import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.model.AppNotification
 import com.patorika.core.provider.text.getString
-import com.patorika.core.ui.theme.CoreDimens
 import com.patorika.feature_list_api.ControlsListScreenBuilder
 import org.koin.compose.getKoin
 import org.koin.compose.koinInject
@@ -78,13 +80,7 @@ fun App() {
     MaterialTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            snackbarHost = {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier.padding(bottom = CoreDimens.current.standardSnackBarInterval),
-                )
-            },
-        ) {
+        ) { screenPaddings ->
             NavHost(
                 modifier = Modifier.fillMaxSize(),
                 navController = navController,
@@ -104,6 +100,19 @@ fun App() {
                         dialog.onConfirm()
                         activeDialog = null
                     },
+                )
+            }
+
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(screenPaddings)
+                        .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                SnackbarHost(
+                    hostState = snackbarHostState,
                 )
             }
         }
