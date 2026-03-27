@@ -46,13 +46,13 @@ class TitleEditorViewModel(
 
     private fun onTitleChanged(title: String) {
         viewModelScope.launch {
-            _state.update { it.copy(title = title.trim()) }
+            _state.update { it.copy(title = title) }
         }
     }
 
     private fun onSave() {
         viewModelScope.launch {
-            val title = _state.value.title
+            val title = _state.value.title.trim()
             if (title.isNotBlank()) {
                 saveControllerUseCase
                     .execute(args.model.copy(name = title))
