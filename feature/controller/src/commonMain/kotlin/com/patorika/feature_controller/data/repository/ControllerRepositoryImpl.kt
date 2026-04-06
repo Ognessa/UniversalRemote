@@ -4,7 +4,7 @@ import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.data.database.Database
 import com.patorika.feature_controller.data.database.DatabaseDriverFactory
 import com.patorika.feature_controller.domain.repository.ControllerRepository
-import com.patorika.feature_controller.main.model.ControllerModel
+import com.patorika.feature_controller.presentation.model.ControllerModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow

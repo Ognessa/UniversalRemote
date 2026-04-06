@@ -19,10 +19,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.patorika.core.ui.theme.CoreDimens
-import com.patorika.feature_controller.main.elements.basic.model.ControllerRenderMode
-import com.patorika.feature_controller.main.elements.defaultControllersList
-import com.patorika.feature_controller.main.model.ControllerOrientation
-import com.patorika.feature_controller.main.ui.ControllerCanvas
+import com.patorika.feature_controller.presentation.elements.basic.model.ControllerRenderMode
+import com.patorika.feature_controller.presentation.elements.defaultControllersList
+import com.patorika.feature_controller.presentation.model.ControllerOrientation
+import com.patorika.feature_controller.presentation.ui.ControllerCanvas
 import com.patorika.feature_library_presentation.model.EditorLibraryNavigation
 import com.patorika.feature_library_presentation.model.EditorLibraryUserEvents
 import com.patorika.feature_library_presentation.ui.components.EditorLibraryToolbar

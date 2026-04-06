@@ -1,7 +1,7 @@
 package com.patorika.feature_title_api
 
-import com.patorika.feature_controller.main.elements.basic.serialization.controllerJson
-import com.patorika.feature_controller.main.model.ControllerModel
+import com.patorika.feature_controller.presentation.elements.basic.serialization.controllerJson
+import com.patorika.feature_controller.presentation.model.ControllerModel
 import kotlinx.serialization.Serializable
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi

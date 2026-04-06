@@ -2,7 +2,7 @@ package com.patorika.feature_signal_presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenEvent
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenNavigation

@@ -4,10 +4,10 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.patorika.feature_controller.data.entity.FullControllerDao
 import com.patorika.feature_controller.data.entity.mapToControllerDao
-import com.patorika.feature_controller.main.elements.basic.serialization.decodeToControllerElementModel
-import com.patorika.feature_controller.main.elements.basic.serialization.encodeToString
-import com.patorika.feature_controller.main.model.ControllerModel
-import com.patorika.feature_controller.main.model.ControllerOrientation
+import com.patorika.feature_controller.presentation.elements.basic.serialization.decodeToControllerElementModel
+import com.patorika.feature_controller.presentation.elements.basic.serialization.encodeToString
+import com.patorika.feature_controller.presentation.model.ControllerModel
+import com.patorika.feature_controller.presentation.model.ControllerOrientation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow

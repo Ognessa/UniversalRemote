@@ -21,10 +21,10 @@ import com.patorika.core.provider.text.TextProvider
 import com.patorika.core.ui.menu.dropdown.CustomDropdownItemModel
 import com.patorika.core.ui.menu.dropdown.CustomDropdownMenu
 import com.patorika.core.ui.theme.CoreDimens
-import com.patorika.feature_controller.main.elements.basic.model.ControllerRenderMode
-import com.patorika.feature_controller.main.model.ControllerModel
-import com.patorika.feature_controller.main.model.ControllerOrientation
-import com.patorika.feature_controller.main.ui.ControllerCanvas
+import com.patorika.feature_controller.presentation.elements.basic.model.ControllerRenderMode
+import com.patorika.feature_controller.presentation.model.ControllerModel
+import com.patorika.feature_controller.presentation.model.ControllerOrientation
+import com.patorika.feature_controller.presentation.ui.ControllerCanvas
 import com.patorika.feature_list_presentation.model.ControlsListEvents
 import universalremote.feature_list_presentation.generated.resources.Res
 import universalremote.feature_list_presentation.generated.resources.control_item_delete

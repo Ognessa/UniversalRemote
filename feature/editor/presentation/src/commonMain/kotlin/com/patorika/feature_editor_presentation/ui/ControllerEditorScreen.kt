@@ -20,8 +20,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.patorika.core.ui.ext.pxToDp
 import com.patorika.core.ui.loader.CustomLoader
-import com.patorika.feature_controller.main.elements.basic.model.ControllerRenderMode
-import com.patorika.feature_controller.main.ui.ControllerCanvas
+import com.patorika.feature_controller.presentation.elements.basic.model.ControllerRenderMode
+import com.patorika.feature_controller.presentation.ui.ControllerCanvas
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.CanvasSizeChanged
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.ClearSelection

@@ -8,10 +8,10 @@ import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.model.AppNotification
 import com.patorika.core.provider.text.TextProvider
 import com.patorika.core.util.LoggerUtil
-import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
-import com.patorika.feature_controller.main.ext.generateControllerId
-import com.patorika.feature_controller.main.model.ControllerModel
-import com.patorika.feature_controller.main.model.ControllerOrientation
+import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.presentation.ext.generateControllerId
+import com.patorika.feature_controller.presentation.model.ControllerModel
+import com.patorika.feature_controller.presentation.model.ControllerOrientation
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorParams
