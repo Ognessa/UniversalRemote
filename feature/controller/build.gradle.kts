@@ -57,22 +57,16 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
 
         androidMain {
             dependencies {
                 implementation(libs.sqldelight.android)
+                implementation(libs.sqldelight)
             }
         }
-
-//        getByName("androidDeviceTest") {
-//            dependencies {
-//                implementation(libs.androidx.runner)
-//                implementation(libs.androidx.core)
-//                implementation(libs.androidx.testExt.junit)
-//            }
-//        }
 
         iosMain {
             dependencies {

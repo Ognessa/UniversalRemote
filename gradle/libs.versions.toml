@@ -95,6 +95,8 @@ androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 sqldelight-android = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "sqldelight" }
 sqldelight-native = { group = "app.cash.sqldelight", name = "native-driver", version.ref = "sqldelight" }
 sqldelight-coroutinesExt = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
+sqldelight = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
+
 
 [plugins]
 #BASE

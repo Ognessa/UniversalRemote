@@ -1,8 +1,8 @@
 package com.patorika.feature_controller.data.repository
 
+import app.cash.sqldelight.db.SqlDriver
 import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.data.database.Database
-import com.patorika.feature_controller.data.database.DatabaseDriverFactory
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_controller.presentation.model.ControllerModel
 import kotlinx.coroutines.Dispatchers
@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class ControllerRepositoryImpl(
-    databaseDriverFactory: DatabaseDriverFactory,
+    driver: SqlDriver,
 ) : ControllerRepository {
-    private val database = Database(databaseDriverFactory)
+    private val database = Database(driver)
 
     override fun getAllControllers(): Flow<Result<List<ControllerModel>>> =
         database

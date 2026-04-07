@@ -9,7 +9,7 @@ val controllerModule =
     module {
         single<ControllerRepository> {
             ControllerRepositoryImpl(
-                databaseDriverFactory = get<DatabaseDriverFactory>(),
+                driver = get<DatabaseDriverFactory>().createDriver(),
             )
         }
     }
