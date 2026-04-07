@@ -23,3 +23,5 @@ secrets.properties
 /composeApp/src/google-services.json
 /iosApp/iosApp/GoogleService-Info.plist
 /iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+/keystore/
+/composeApp/release/
