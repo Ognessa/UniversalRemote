@@ -122,3 +122,6 @@ jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrai
 
 #DB
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+
+#Test
+mokkery = { id = "dev.mokkery", version = "3.3.0" }
