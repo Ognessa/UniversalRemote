@@ -4,7 +4,7 @@ import com.patorika.feature_controller.presentation.elements.basic.model.Control
 import kotlinx.coroutines.flow.SharedFlow
 
 interface EditorSharedState {
-    val newElementsFlow: SharedFlow<List<ControllerElementModel>>
+    val elementsFlow: SharedFlow<List<ControllerElementModel>>
 
     suspend fun emitElement(element: ControllerElementModel)
 

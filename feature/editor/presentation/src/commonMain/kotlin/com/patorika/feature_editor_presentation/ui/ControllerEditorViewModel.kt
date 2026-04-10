@@ -90,7 +90,7 @@ class ControllerEditorViewModel(
     }
 
     private suspend fun observeNewElements() {
-        editorSharedState.newElementsFlow.collectLatest { newElements ->
+        editorSharedState.elementsFlow.collectLatest { newElements ->
             _state.update { currentState ->
                 val normalizedElements = newElements.normalizeReceivedElements(currentState)
                 currentState.copy(

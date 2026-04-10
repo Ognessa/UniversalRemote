@@ -6,15 +6,15 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 class EditorSharedStateImpl : EditorSharedState {
-    private val _newElementsFlow = MutableSharedFlow<List<ControllerElementModel>>()
-    override val newElementsFlow = _newElementsFlow.asSharedFlow()
+    private val _elementsFlow = MutableSharedFlow<List<ControllerElementModel>>()
+    override val elementsFlow = _elementsFlow.asSharedFlow()
 
     override suspend fun emitElement(element: ControllerElementModel) {
-        _newElementsFlow.emit(listOf(element))
+        _elementsFlow.emit(listOf(element))
     }
 
     override suspend fun emitElements(list: List<ControllerElementModel>) {
         if (list.isEmpty()) return
-        _newElementsFlow.emit(list)
+        _elementsFlow.emit(list)
     }
 }
