@@ -4,7 +4,7 @@ import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.manager.AppNotificationManagerImpl
 import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.domain.repository.ControllerRepository
-import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
+import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.model.ControllerModel
 import com.patorika.feature_title_api.TitleEditorNavArgs
 import com.patorika.feature_title_api.TitleEditorSuccessNavigation
@@ -199,7 +199,7 @@ class TitleEditorViewModelTest {
             successNavigation = successNavigation,
             model = ControllerModel(
                 name = modelName,
-                elements = listOf(SquareButtonModel()),
+                elements = defaultControllerElementsList,
             ),
         ),
         appNotificationManager = notificationManager,

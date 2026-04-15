@@ -2,8 +2,7 @@ package com.patorika.feature_controller.data.repository
 
 import app.cash.sqldelight.db.SqlDriver
 import com.patorika.feature_controller.data.database.createTestDatabaseDriver
-import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
-import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
+import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.model.ControllerModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -99,17 +98,10 @@ class ControllerRepositoryTest {
 
     private fun createFakeController(
         name: String = "",
-        elementsCount: Int = 1
     ): ControllerModel {
         return ControllerModel(
             name = name,
-            elements = if (elementsCount > 0) {
-                mutableListOf<ControllerElementModel>().apply {
-                    repeat(elementsCount) {
-                        add(SquareButtonModel())
-                    }
-                }
-            } else emptyList()
+            elements = defaultControllerElementsList.map { it.createElementWithNewId() }
         )
     }
 }

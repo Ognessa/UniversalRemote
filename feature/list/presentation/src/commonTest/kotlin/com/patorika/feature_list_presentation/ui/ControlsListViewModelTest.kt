@@ -4,7 +4,7 @@ import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.manager.AppNotificationManagerImpl
 import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.domain.repository.ControllerRepository
-import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
+import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.model.ControllerModel
 import com.patorika.feature_list_presentation.model.ControlsListEvents
 import com.patorika.feature_list_presentation.model.ControlsListNavigation
@@ -57,10 +57,17 @@ class ControlsListViewModelTest {
 
     @Test
     fun `initial load success updates controllersList and stops loading`() = runTest {
-        val controllers = listOf(
-            ControllerModel(name = "Controller 1", elements = listOf(SquareButtonModel())),
-            ControllerModel(name = "Controller 2", elements = listOf(SquareButtonModel())),
-        )
+        val controllers = mutableListOf<ControllerModel>().apply {
+            repeat(3) { number ->
+                add(
+                    ControllerModel(
+                        name = "Controller $number",
+                        elements = defaultControllerElementsList.map { it.createElementWithNewId() }
+                    )
+                )
+            }
+        }
+
         every { repository.getAllControllers() } returns flowOf(Result.success(controllers))
 
         val viewModel = createViewModel()
@@ -134,7 +141,10 @@ class ControlsListViewModelTest {
 
     @Test
     fun `Item_Rename emits OpenTitleEditor when controller exists in list`() = runTest {
-        val controller = ControllerModel(name = "My Controller", elements = listOf(SquareButtonModel()))
+        val controller = ControllerModel(
+            name = "My Controller",
+            elements = defaultControllerElementsList
+        )
         every { repository.getAllControllers() } returns flowOf(Result.success(listOf(controller)))
         val viewModel = createViewModel()
         yield()
@@ -177,7 +187,10 @@ class ControlsListViewModelTest {
 
     @Test
     fun `Item_Duplicate success sends success notification`() = runTest {
-        val controller = ControllerModel(name = "Controller", elements = listOf(SquareButtonModel()))
+        val controller = ControllerModel(
+            name = "Controller",
+            elements = defaultControllerElementsList
+        )
         every { repository.getAllControllers() } returns flowOf(Result.success(listOf(controller)))
         everySuspend { repository.insertController(any()) } returns Result.success(Unit)
         val viewModel = createViewModel()
@@ -199,7 +212,10 @@ class ControlsListViewModelTest {
 
     @Test
     fun `Item_Duplicate failure from use case sends failure notification`() = runTest {
-        val controller = ControllerModel(name = "Controller", elements = listOf(SquareButtonModel()))
+        val controller = ControllerModel(
+            name = "Controller",
+            elements = defaultControllerElementsList
+        )
         every { repository.getAllControllers() } returns flowOf(Result.success(listOf(controller)))
         everySuspend { repository.insertController(any()) } returns Result.failure(RuntimeException())
         val viewModel = createViewModel()

@@ -1,8 +1,6 @@
 package com.patorika.feature_title_api
 
-import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
-import com.patorika.feature_controller.presentation.elements.buttons.xbox.model.XboxButtonClusterModel
-import com.patorika.feature_controller.presentation.elements.slider.model.SliderModel
+import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.model.ControllerModel
 import com.patorika.feature_controller.presentation.model.ControllerOrientation
 import kotlin.test.Test
@@ -14,7 +12,7 @@ class TitleEditorNavArgsTest {
     fun `round-trip with empty controller and CLOSE navigation`() {
         val original = TitleEditorNavArgs(
             successNavigation = TitleEditorSuccessNavigation.CLOSE,
-            model = ControllerModel(),
+            model = ControllerModel(elements = defaultControllerElementsList),
         )
 
         val result = titleEditorNavArgsFromNavArg(original.toNavArg())
@@ -26,7 +24,7 @@ class TitleEditorNavArgsTest {
     fun `round-trip preserves OPEN_LIST navigation`() {
         val original = TitleEditorNavArgs(
             successNavigation = TitleEditorSuccessNavigation.OPEN_LIST,
-            model = ControllerModel(),
+            model = ControllerModel(elements = defaultControllerElementsList),
         )
 
         val result = titleEditorNavArgsFromNavArg(original.toNavArg())
@@ -38,13 +36,7 @@ class TitleEditorNavArgsTest {
     fun `round-trip preserves all element types`() {
         val original = TitleEditorNavArgs(
             successNavigation = TitleEditorSuccessNavigation.CLOSE,
-            model = ControllerModel(
-                elements = listOf(
-                    SquareButtonModel(),
-                    XboxButtonClusterModel(),
-                    SliderModel(),
-                ),
-            ),
+            model = ControllerModel(elements = defaultControllerElementsList),
         )
 
         val result = titleEditorNavArgsFromNavArg(original.toNavArg())
@@ -60,7 +52,7 @@ class TitleEditorNavArgsTest {
                 name = "My Controller",
                 canvasRatio = 1.5f,
                 orientation = ControllerOrientation.LANDSCAPE,
-                elements = listOf(SquareButtonModel()),
+                elements = defaultControllerElementsList,
             ),
         )
 

@@ -2,7 +2,7 @@ package com.patorika.feature_editor_presentation.api
 
 import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
-import com.patorika.feature_controller.presentation.elements.buttons.xbox.model.XboxButtonClusterModel
+import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.elements.slider.model.SliderModel
 import com.patorika.feature_editor_api.state.EditorSharedState
 import kotlinx.coroutines.Deferred
@@ -39,11 +39,7 @@ class EditorSharedStateTest {
 
     @Test
     fun `send elements list success check`() = runTest {
-        val list = listOf(
-            SquareButtonModel(),
-            XboxButtonClusterModel(),
-            SliderModel()
-        )
+        val list = defaultControllerElementsList
 
         val receiver = async { sharedState.elementsFlow.first() }
         yield()
@@ -98,11 +94,7 @@ class EditorSharedStateTest {
 
     @Test
     fun `broadcast multiple elements to multiple collectors check`() = runTest {
-        val list = listOf(
-            SquareButtonModel(),
-            XboxButtonClusterModel(),
-            SliderModel()
-        )
+        val list = defaultControllerElementsList
 
         val receivers = mutableListOf<Deferred<List<ControllerElementModel>>>().apply {
             repeat(5) {
@@ -137,11 +129,7 @@ class EditorSharedStateTest {
 
     @Test
     fun `late subscriber replay multiple elements behavior verification`() = runTest {
-        val list = listOf(
-            SquareButtonModel(),
-            XboxButtonClusterModel(),
-            SliderModel()
-        )
+        val list = defaultControllerElementsList
 
         sharedState.emitElements(list)
 
@@ -161,11 +149,7 @@ class EditorSharedStateTest {
     fun `emission order preservation check`() = runTest {
         //test data
         val element1 = SquareButtonModel()
-        val elementsList2 = listOf(
-            SquareButtonModel(),
-            XboxButtonClusterModel(),
-            SliderModel()
-        )
+        val elementsList2 = defaultControllerElementsList.map { it.createElementWithNewId() }
         val element3 = SliderModel()
 
         //common list for test data

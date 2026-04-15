@@ -20,7 +20,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.patorika.core.ui.theme.CoreDimens
 import com.patorika.feature_controller.presentation.elements.basic.model.ControllerRenderMode
-import com.patorika.feature_controller.presentation.elements.defaultControllersList
+import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.model.ControllerOrientation
 import com.patorika.feature_controller.presentation.ui.ControllerCanvas
 import com.patorika.feature_library_presentation.model.EditorLibraryNavigation
@@ -73,7 +73,7 @@ fun EditorLibraryScreen(
                 verticalArrangement = Arrangement.spacedBy(CoreDimens.current.standardContentInterval),
             ) {
                 ControllerCanvas(
-                    list = defaultControllersList,
+                    list = defaultControllerElementsList,
                     orientation = ControllerOrientation.PORTRAIT,
                     renderMode = ControllerRenderMode.LibraryPreview,
                     onClick = { element ->

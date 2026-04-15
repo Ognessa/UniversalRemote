@@ -5,7 +5,7 @@ import com.patorika.feature_controller.presentation.elements.buttons.square.mode
 import com.patorika.feature_controller.presentation.elements.buttons.xbox.model.XboxButtonClusterModel
 import com.patorika.feature_controller.presentation.elements.slider.model.SliderModel
 
-val defaultControllersList =
+val defaultControllerElementsList =
     listOf<ControllerElementModel>(
         SquareButtonModel(),
         XboxButtonClusterModel(),

@@ -2,6 +2,7 @@ package com.patorika.feature_list_presentation.usecase
 
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
+import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.model.ControllerModel
 import com.patorika.feature_controller.presentation.model.ControllerOrientation
 import dev.mokkery.answering.returns
@@ -24,7 +25,7 @@ class DuplicateControllerUseCaseTest {
     fun `execute returns success when repository succeeds`() = runTest {
         everySuspend { repository.insertController(any()) } returns Result.success(Unit)
 
-        val result = useCase.execute(ControllerModel(elements = listOf(SquareButtonModel())))
+        val result = useCase.execute(ControllerModel(elements = defaultControllerElementsList))
 
         assertTrue(result.isSuccess)
     }
@@ -34,7 +35,7 @@ class DuplicateControllerUseCaseTest {
         val exception = RuntimeException("insert failed")
         everySuspend { repository.insertController(any()) } returns Result.failure(exception)
 
-        val result = useCase.execute(ControllerModel(elements = listOf(SquareButtonModel())))
+        val result = useCase.execute(ControllerModel(elements = defaultControllerElementsList))
 
         assertTrue(result.isFailure)
         assertEquals(exception, result.exceptionOrNull())
@@ -43,7 +44,7 @@ class DuplicateControllerUseCaseTest {
     @Test
     fun `duplicate assigns new id to controller and all its elements`() = runTest {
         everySuspend { repository.insertController(any()) } returns Result.success(Unit)
-        val original = ControllerModel(elements = listOf(SquareButtonModel(), SquareButtonModel()))
+        val original = ControllerModel(elements = defaultControllerElementsList)
 
         useCase.execute(original)
 

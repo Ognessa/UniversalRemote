@@ -6,6 +6,7 @@ import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
 import com.patorika.feature_controller.presentation.elements.buttons.xbox.model.XboxButtonClusterModel
+import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.elements.slider.model.SliderModel
 import com.patorika.feature_controller.presentation.ext.generateControllerId
 import com.patorika.feature_controller.presentation.model.ControllerModel
@@ -179,11 +180,7 @@ class ControllerEditorViewModelTests {
         assertTrue(viewModel.state.value.elements.isEmpty())
 
         //emit new element
-        val elementsList = listOf(
-            SquareButtonModel(),
-            XboxButtonClusterModel(),
-            SliderModel(),
-        )
+        val elementsList = defaultControllerElementsList.map { it.createElementWithNewId() }
         sharedState.emitElements(elementsList)
         yield()
 
