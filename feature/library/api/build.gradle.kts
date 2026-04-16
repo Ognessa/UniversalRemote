@@ -61,14 +61,6 @@ kotlin {
             }
         }
 
-//        getByName("androidDeviceTest") {
-//            dependencies {
-//                implementation(libs.androidx.runner)
-//                implementation(libs.androidx.core)
-//                implementation(libs.androidx.testExt.junit)
-//            }
-//        }
-
         iosMain {
             dependencies {
             }

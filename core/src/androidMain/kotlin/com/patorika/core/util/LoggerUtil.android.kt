@@ -4,14 +4,16 @@ import android.util.Log
 import com.patorika.core.BuildConfig
 
 actual object LoggerUtil {
-    private val loggerAllowed = BuildConfig.DEBUG
+    actual var isEnabled = true
+
+    private fun loggerAllowed(): Boolean = BuildConfig.DEBUG && isEnabled
 
     actual fun e(
         tag: String,
         message: String,
         throwable: Throwable?,
     ) {
-        if (loggerAllowed) {
+        if (loggerAllowed()) {
             if (throwable != null) {
                 Log.e(tag, message, throwable)
             } else {
@@ -24,7 +26,7 @@ actual object LoggerUtil {
         tag: String,
         message: String,
     ) {
-        if (loggerAllowed) {
+        if (loggerAllowed()) {
             Log.d(tag, message)
         }
     }
@@ -33,7 +35,7 @@ actual object LoggerUtil {
         tag: String,
         message: String,
     ) {
-        if (loggerAllowed) {
+        if (loggerAllowed()) {
             Log.i(tag, message)
         }
     }

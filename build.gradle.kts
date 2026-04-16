@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.kotlinSerialization) apply false
+    alias(libs.plugins.mokkery) apply false
 }
 
 subprojects {

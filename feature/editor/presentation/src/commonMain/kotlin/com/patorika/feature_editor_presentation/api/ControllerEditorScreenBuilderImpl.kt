@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.savedstate.read
-import com.patorika.feature_controller.main.elements.basic.serialization.toNavArg
+import com.patorika.feature_controller.presentation.elements.basic.serialization.toNavArg
 import com.patorika.feature_editor_api.navigation.ControllerEditorScreenBuilder
 import com.patorika.feature_editor_presentation.model.ControllerEditorNavigation
 import com.patorika.feature_editor_presentation.model.ControllerEditorParams

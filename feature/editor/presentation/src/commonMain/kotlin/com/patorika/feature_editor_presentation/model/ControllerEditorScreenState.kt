@@ -1,8 +1,8 @@
 package com.patorika.feature_editor_presentation.model
 
 import androidx.compose.ui.geometry.Size
-import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
-import com.patorika.feature_controller.main.model.ControllerOrientation
+import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.presentation.model.ControllerOrientation
 
 data class ControllerEditorScreenState(
     val isLoading: Boolean = false,

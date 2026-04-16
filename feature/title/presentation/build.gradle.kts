@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.mokkery)
 }
 
 kotlin {
@@ -57,6 +58,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
 
@@ -64,14 +66,6 @@ kotlin {
             dependencies {
             }
         }
-
-//        getByName("androidDeviceTest") {
-//            dependencies {
-//                implementation(libs.androidx.runner)
-//                implementation(libs.androidx.core)
-//                implementation(libs.androidx.testExt.junit)
-//            }
-//        }
 
         iosMain {
             dependencies {
