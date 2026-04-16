@@ -61,7 +61,7 @@ class DuplicateControllerUseCaseTest {
     }
 
     @Test
-    fun `duplicate preserves name, canvasRatio and orientation`() = runTest {
+    fun `duplicate preserves name and canvasRatio and orientation`() = runTest {
         everySuspend { repository.insertController(any()) } returns Result.success(Unit)
         val original = ControllerModel(
             name = "My Controller",

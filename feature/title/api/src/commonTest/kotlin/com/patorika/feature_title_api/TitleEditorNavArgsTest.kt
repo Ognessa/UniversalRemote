@@ -45,7 +45,7 @@ class TitleEditorNavArgsTest {
     }
 
     @Test
-    fun `round-trip preserves controller name, canvasRatio and orientation`() {
+    fun `round-trip preserves controller name and canvasRatio and orientation`() {
         val original = TitleEditorNavArgs(
             successNavigation = TitleEditorSuccessNavigation.CLOSE,
             model = ControllerModel(
