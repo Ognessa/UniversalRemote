@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patorika.core.ui.theme.CoreDimens
-import com.patorika.feature_controller.main.model.ControllerModel
+import com.patorika.feature_controller.presentation.model.ControllerModel
 import com.patorika.feature_list_presentation.model.ControlsListEvents
 
 @Composable

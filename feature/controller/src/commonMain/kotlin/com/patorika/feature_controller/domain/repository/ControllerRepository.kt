@@ -1,6 +1,6 @@
 package com.patorika.feature_controller.domain.repository
 
-import com.patorika.feature_controller.main.model.ControllerModel
+import com.patorika.feature_controller.presentation.model.ControllerModel
 import kotlinx.coroutines.flow.Flow
 
 interface ControllerRepository {

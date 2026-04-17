@@ -1,7 +1,7 @@
 package com.patorika.feature_editor_presentation.model
 
-import com.patorika.feature_controller.main.elements.basic.model.ControllerElementModel
-import com.patorika.feature_controller.main.model.ControllerModel
+import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
+import com.patorika.feature_controller.presentation.model.ControllerModel
 
 sealed interface ControllerEditorNavigation {
     data object Close : ControllerEditorNavigation

@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import com.patorika.core.provider.text.TextProvider
 import com.patorika.core.ui.menu.dropdown.CustomDropdownItemModel
 import com.patorika.core.ui.menu.dropdown.CustomDropdownMenu
-import com.patorika.feature_controller.main.ext.setOrientation
-import com.patorika.feature_controller.main.model.ControllerOrientation
+import com.patorika.feature_controller.presentation.ext.setOrientation
+import com.patorika.feature_controller.presentation.model.ControllerOrientation
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.ElementAction
 import com.patorika.feature_editor_presentation.model.ControllerEditorUserEvent.OpenLibrary

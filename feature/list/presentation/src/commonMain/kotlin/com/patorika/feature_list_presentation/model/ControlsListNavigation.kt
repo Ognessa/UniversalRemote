@@ -1,6 +1,6 @@
 package com.patorika.feature_list_presentation.model
 
-import com.patorika.feature_controller.main.model.ControllerModel
+import com.patorika.feature_controller.presentation.model.ControllerModel
 
 sealed interface ControlsListNavigation {
     data class OpenEditor(
