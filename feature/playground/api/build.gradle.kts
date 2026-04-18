@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     alias(libs.plugins.google.services)
-    alias(libs.plugins.mokkery)
 }
 
 kotlin {
@@ -23,7 +22,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "feature-list-presentationKit"
+            baseName = "feature-playground-apiKit"
             isStatic = true
         }
     }
@@ -48,18 +47,12 @@ kotlin {
                 implementation(libs.koin.compose.viewmodel)
 
                 implementation(projects.core)
-                implementation(projects.featureController)
-                implementation(projects.featureListApi)
-                implementation(projects.featureEditorApi)
-                implementation(projects.featureTitleApi)
-                implementation(projects.featurePlaygroundApi)
             }
         }
 
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
-                implementation(libs.kotlinx.coroutines.test)
             }
         }
 
@@ -76,7 +69,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.patorika.feature_list_presentation"
+    namespace = "com.patorika.feature_playground_api"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -88,8 +81,4 @@ android {
     buildFeatures {
         compose = true
     }
-}
-
-compose.resources {
-    publicResClass = true
 }

@@ -7,6 +7,7 @@ import com.patorika.feature_editor_api.navigation.ControllerEditorScreenBuilder
 import com.patorika.feature_list_api.ControlsListScreenBuilder
 import com.patorika.feature_list_presentation.model.ControlsListNavigation
 import com.patorika.feature_list_presentation.ui.ControlsListScreen
+import com.patorika.feature_playground_api.api.PlaygroundScreenBuilder
 import com.patorika.feature_title_api.TitleEditorDialogBuilder
 import com.patorika.feature_title_api.TitleEditorNavArgs
 import com.patorika.feature_title_api.TitleEditorSuccessNavigation
@@ -16,6 +17,7 @@ import org.koin.compose.viewmodel.koinViewModel
 class ControlsListScreenBuilderImpl(
     private val editorScreenBuilder: ControllerEditorScreenBuilder,
     private val titleEditorDialogBuilder: () -> TitleEditorDialogBuilder,
+    private val playgroundScreenBuilder: PlaygroundScreenBuilder,
 ) : ControlsListScreenBuilder {
     override fun build(
         builder: NavGraphBuilder,
@@ -46,6 +48,10 @@ class ControlsListScreenBuilderImpl(
                     ).toNavArg()
 
                 navController.navigate("${titleEditorDialogBuilder().routeName}/$args")
+            }
+
+            is ControlsListNavigation.OpenPlayground -> {
+                navController.navigate("${playgroundScreenBuilder.routeName}/${type.id}")
             }
         }
     }

@@ -56,6 +56,7 @@ class ControlsListViewModel(
 
     private fun onItemEvent(events: Item) {
         when (events) {
+            is Item.Clicked -> emitNavigationEvent(ControlsListNavigation.OpenPlayground(events.id))
             is Item.Rename -> onRename(events.id)
             is Item.Edit -> emitNavigationEvent(ControlsListNavigation.OpenEditor(events.id))
             is Item.Duplicate -> onDuplicate(events.id)

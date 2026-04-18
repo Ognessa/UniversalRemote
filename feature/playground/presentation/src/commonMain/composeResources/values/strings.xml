@@ -1,0 +1,3 @@
+<resources>
+    <string name="controller_loading_error">Unable to load controller</string>
+</resources>

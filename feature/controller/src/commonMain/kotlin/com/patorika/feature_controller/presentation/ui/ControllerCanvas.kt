@@ -20,8 +20,8 @@ fun ControllerCanvas(
     orientation: ControllerOrientation,
     selectedElementId: String? = null,
     renderMode: ControllerRenderMode,
-    onClick: (ControllerElementModel) -> Unit,
-    onModified: (ControllerElementModel) -> Unit,
+    onClick: (ControllerElementModel) -> Unit = {},
+    onModified: (ControllerElementModel) -> Unit = {},
     onAction: (String) -> Unit = {},
 ) {
     list.forEach { element ->
