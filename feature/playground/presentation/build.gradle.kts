@@ -23,7 +23,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "feature-list-presentationKit"
+            baseName = "feature-playground-presentationKit"
             isStatic = true
         }
     }
@@ -49,9 +49,6 @@ kotlin {
 
                 implementation(projects.core)
                 implementation(projects.featureController)
-                implementation(projects.featureListApi)
-                implementation(projects.featureEditorApi)
-                implementation(projects.featureTitleApi)
                 implementation(projects.featurePlaygroundApi)
             }
         }
@@ -76,7 +73,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.patorika.feature_list_presentation"
+    namespace = "com.patorika.feature_playground_presentation"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()

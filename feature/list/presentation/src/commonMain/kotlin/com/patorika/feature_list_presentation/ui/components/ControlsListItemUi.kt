@@ -1,11 +1,10 @@
 package com.patorika.feature_list_presentation.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -60,12 +59,15 @@ internal fun ControlsListItemUi(
             ),
     ) { onOpenMenu ->
         Card(
-            modifier = modifier,
+            modifier =
+                modifier.combinedClickable(
+                    onClick = { onEvent(ControlsListEvents.Item.Clicked(model.id)) },
+                    onLongClick = onOpenMenu,
+                ),
             border = CardDefaults.outlinedCardBorder(),
         ) {
             ControllerPreview(
                 model = model,
-                onLongPress = onOpenMenu,
             )
 
             Text(
@@ -80,10 +82,7 @@ internal fun ControlsListItemUi(
 }
 
 @Composable
-private fun ControllerPreview(
-    model: ControllerModel,
-    onLongPress: () -> Unit,
-) {
+private fun ControllerPreview(model: ControllerModel) {
     val rotation =
         when (model.orientation) {
             ControllerOrientation.PORTRAIT -> 0f
@@ -107,16 +106,19 @@ private fun ControllerPreview(
             list = model.elements,
             orientation = model.orientation,
             renderMode = ControllerRenderMode.ListPreview,
-            onClick = {},
-            onModified = {},
         )
 
+        // blocks interaction events inside ControllerCanvas
         Box(
             modifier =
                 Modifier
-                    .fillMaxSize()
+                    .matchParentSize()
                     .pointerInput(Unit) {
-                        detectTapGestures(onLongPress = { onLongPress() })
+                        awaitPointerEventScope {
+                            while (true) {
+                                awaitPointerEvent()
+                            }
+                        }
                     },
         )
     }
@@ -127,7 +129,7 @@ fun Modifier.rotateWithBounds(degrees: Float): Modifier {
 
     return this
         .layout { measurable, constraints ->
-            // Міняємо constraints місцями перед вимірюванням
+            // Replace constraints before measurements
             val rotatedConstraints =
                 constraints.copy(
                     minWidth = constraints.minHeight,
@@ -137,7 +139,7 @@ fun Modifier.rotateWithBounds(degrees: Float): Modifier {
                 )
             val placeable = measurable.measure(rotatedConstraints)
 
-            // Layout розмір — поміняний місцями
+            // Layout size replaced
             layout(placeable.height, placeable.width) {
                 placeable.placeWithLayer(
                     x = -(placeable.width / 2 - placeable.height / 2),

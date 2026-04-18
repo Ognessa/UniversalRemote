@@ -10,4 +10,8 @@ sealed interface ControlsListNavigation {
     data class OpenTitleEditor(
         val model: ControllerModel,
     ) : ControlsListNavigation
+
+    data class OpenPlayground(
+        val id: String,
+    ) : ControlsListNavigation
 }

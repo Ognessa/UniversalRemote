@@ -80,6 +80,9 @@ kotlin {
 
             implementation(projects.featureTitleApi)
             implementation(projects.featureTitlePresentation)
+
+            implementation(projects.featurePlaygroundApi)
+            implementation(projects.featurePlaygroundPresentation)
         }
 
         commonTest.dependencies {

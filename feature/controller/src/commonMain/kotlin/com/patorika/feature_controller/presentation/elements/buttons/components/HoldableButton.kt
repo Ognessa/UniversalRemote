@@ -12,7 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextAlign
@@ -32,8 +34,14 @@ fun HoldableButton(
     val holdIntervalMs = 50L
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
+    var isInitialComposition by remember { mutableStateOf(true) }
 
     LaunchedEffect(isPressed) {
+        if (isInitialComposition) {
+            isInitialComposition = false
+            return@LaunchedEffect
+        }
+
         if (isPressed) {
             // just pressed
             onAction(interactionConfig.onPress)

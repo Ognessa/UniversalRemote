@@ -10,6 +10,7 @@ import com.patorika.feature_list_presentation.ui.ControlsListViewModel
 import com.patorika.feature_list_presentation.usecase.DeleteControllerUseCase
 import com.patorika.feature_list_presentation.usecase.DuplicateControllerUseCase
 import com.patorika.feature_list_presentation.usecase.GetAllControllersUseCase
+import com.patorika.feature_playground_api.api.PlaygroundScreenBuilder
 import com.patorika.feature_title_api.TitleEditorDialogBuilder
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.bind
@@ -30,6 +31,7 @@ val controlsListModule =
             ControlsListScreenBuilderImpl(
                 editorScreenBuilder = get<ControllerEditorScreenBuilder>(),
                 titleEditorDialogBuilder = { get<TitleEditorDialogBuilder>() },
+                playgroundScreenBuilder = get<PlaygroundScreenBuilder>(),
             )
         } bind ScreenBuilder::class
 

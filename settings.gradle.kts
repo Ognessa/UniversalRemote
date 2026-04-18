@@ -63,3 +63,9 @@ project(":feature-title-api").projectDir = file("feature/title/api")
 
 include(":feature-title-presentation")
 project(":feature-title-presentation").projectDir = file("feature/title/presentation")
+
+include(":feature-playground-api")
+project(":feature-playground-api").projectDir = file("feature/playground/api")
+
+include(":feature-playground-presentation")
+project(":feature-playground-presentation").projectDir = file("feature/playground/presentation")
