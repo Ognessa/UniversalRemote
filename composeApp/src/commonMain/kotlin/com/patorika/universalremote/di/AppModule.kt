@@ -1,6 +1,7 @@
 package com.patorika.universalremote.di
 
 import com.patorika.core.di.coreModule
+import com.patorika.feature_bluetooth_presentation.di.bluetoothDevicesModule
 import com.patorika.feature_controller.di.controllerModule
 import com.patorika.feature_editor_presentation.di.controllerEditorModule
 import com.patorika.feature_library_presentation.di.editorLibraryModule
@@ -21,5 +22,6 @@ val appModule =
             editorLibraryModule,
             signalEditorModule,
             playgroundModule,
+            bluetoothDevicesModule,
         )
     }

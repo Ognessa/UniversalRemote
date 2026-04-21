@@ -5,13 +5,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.savedstate.read
+import com.patorika.feature_bluetooth_api.BluetoothDevicesScreenBuilder
 import com.patorika.feature_playground_api.api.PlaygroundScreenBuilder
 import com.patorika.feature_playground_presentation.model.PlaygroundNavigationEvent
 import com.patorika.feature_playground_presentation.ui.PlaygroundScreen
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-class PlaygroundScreenBuilderImpl : PlaygroundScreenBuilder {
+class PlaygroundScreenBuilderImpl(
+    private val bluetoothDevicesScreenBuilder: BluetoothDevicesScreenBuilder,
+) : PlaygroundScreenBuilder {
     override fun build(
         builder: NavGraphBuilder,
         navController: NavController,
@@ -37,8 +40,13 @@ class PlaygroundScreenBuilderImpl : PlaygroundScreenBuilder {
         navController: NavController,
     ) {
         when (event) {
-            is PlaygroundNavigationEvent.Close -> navController.popBackStack()
-            is PlaygroundNavigationEvent.OpenDevicePicker -> return
+            is PlaygroundNavigationEvent.Close -> {
+                navController.popBackStack()
+            }
+
+            is PlaygroundNavigationEvent.OpenDevicePicker -> {
+                navController.navigate(bluetoothDevicesScreenBuilder.routeName)
+            }
         }
     }
 

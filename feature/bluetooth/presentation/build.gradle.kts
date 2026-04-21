@@ -23,7 +23,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "feature-playground-presentationKit"
+            baseName = "feature-bluetooth-presentationKit"
             isStatic = true
         }
     }
@@ -48,8 +48,6 @@ kotlin {
                 implementation(libs.koin.compose.viewmodel)
 
                 implementation(projects.core)
-                implementation(projects.featureController)
-                implementation(projects.featurePlaygroundApi)
                 implementation(projects.featureBluetoothApi)
             }
         }
@@ -74,7 +72,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.patorika.feature_playground_presentation"
+    namespace = "com.patorika.feature_bluetooth_presentation"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
