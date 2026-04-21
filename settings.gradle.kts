@@ -69,3 +69,9 @@ project(":feature-playground-api").projectDir = file("feature/playground/api")
 
 include(":feature-playground-presentation")
 project(":feature-playground-presentation").projectDir = file("feature/playground/presentation")
+
+include(":feature-bluetooth-api")
+project(":feature-bluetooth-api").projectDir = file("feature/bluetooth/api")
+
+include(":feature-bluetooth-presentation")
+project(":feature-bluetooth-presentation").projectDir = file("feature/bluetooth/presentation")

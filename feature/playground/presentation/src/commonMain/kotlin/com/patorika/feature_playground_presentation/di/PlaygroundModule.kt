@@ -1,6 +1,7 @@
 package com.patorika.feature_playground_presentation.di
 
 import com.patorika.core.navigation.ScreenBuilder
+import com.patorika.feature_bluetooth_api.BluetoothDevicesScreenBuilder
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_playground_api.api.PlaygroundScreenBuilder
 import com.patorika.feature_playground_presentation.api.PlaygroundScreenBuilderImpl
@@ -20,7 +21,9 @@ val playgroundModule =
         }
 
         factory<PlaygroundScreenBuilder> {
-            PlaygroundScreenBuilderImpl()
+            PlaygroundScreenBuilderImpl(
+                bluetoothDevicesScreenBuilder = get<BluetoothDevicesScreenBuilder>(),
+            )
         } bind ScreenBuilder::class
 
         factory {

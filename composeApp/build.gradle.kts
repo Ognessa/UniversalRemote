@@ -83,6 +83,9 @@ kotlin {
 
             implementation(projects.featurePlaygroundApi)
             implementation(projects.featurePlaygroundPresentation)
+
+            implementation(projects.featureBluetoothApi)
+            implementation(projects.featureBluetoothPresentation)
         }
 
         commonTest.dependencies {
