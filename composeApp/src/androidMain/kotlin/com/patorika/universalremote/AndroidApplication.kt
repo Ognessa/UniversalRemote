@@ -1,6 +1,7 @@
 package com.patorika.universalremote
 
 import android.app.Application
+import com.patorika.feature_bluetooth_manager.di.androidBluetoothModule
 import com.patorika.feature_controller.di.androidControllerModule
 import com.patorika.universalremote.di.appModule
 import org.koin.android.ext.koin.androidContext
@@ -15,7 +16,7 @@ class AndroidApplication : Application() {
     private fun initKoin() {
         startKoin {
             androidContext(this@AndroidApplication)
-            modules(androidControllerModule, appModule)
+            modules(androidControllerModule, androidBluetoothModule, appModule)
         }
     }
 }

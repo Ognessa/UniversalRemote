@@ -51,6 +51,7 @@ kotlin {
                 implementation(projects.featureController)
                 implementation(projects.featurePlaygroundApi)
                 implementation(projects.featureBluetoothApi)
+                implementation(projects.featureBluetoothManager)
             }
         }
 

@@ -1,6 +1,7 @@
 package com.patorika.feature_playground_presentation.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import com.patorika.feature_controller.presentation.elements.basic.model.Control
 import com.patorika.feature_controller.presentation.ui.ControllerCanvas
 import com.patorika.feature_playground_presentation.model.PlaygroundNavigationEvent
 import com.patorika.feature_playground_presentation.model.PlaygroundUserEvent
+import com.patorika.feature_playground_presentation.ui.components.BluetoothConnectionStatusBanner
 import com.patorika.feature_playground_presentation.ui.components.PlaygroundToolbar
 import org.jetbrains.compose.resources.stringResource
 import universalremote.feature_playground_presentation.generated.resources.Res
@@ -44,38 +46,46 @@ fun PlaygroundScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             PlaygroundToolbar(
+                connectedDeviceName = state.connectedDevice?.name,
+                deviceConnectionStatus = state.connectionState,
                 onEvent = viewModel::onEvent,
             )
         },
     ) { innerPadding ->
-        Box(
+        Column(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            if (state.isLoading.not()) {
-                state.controller?.let { model ->
-                    ControllerCanvas(
-                        modifier = Modifier.fillMaxSize(),
-                        list = model.elements,
-                        orientation = model.orientation,
-                        selectedElementId = null,
-                        renderMode = ControllerRenderMode.Action,
-                        onModified = { viewModel.onEvent(PlaygroundUserEvent.ElementModified(it)) },
-                        onAction = { viewModel.onEvent(PlaygroundUserEvent.ElementAction(it)) },
+            BluetoothConnectionStatusBanner(
+                state = state,
+            )
+
+            Box(modifier = Modifier.weight(1f)) {
+                if (state.isLoading.not()) {
+                    state.controller?.let { model ->
+                        ControllerCanvas(
+                            modifier = Modifier.fillMaxSize(),
+                            list = model.elements,
+                            orientation = model.orientation,
+                            selectedElementId = null,
+                            renderMode = ControllerRenderMode.Action,
+                            onModified = { viewModel.onEvent(PlaygroundUserEvent.ElementModified(it)) },
+                            onAction = { viewModel.onEvent(PlaygroundUserEvent.ElementAction(it)) },
+                        )
+                    } ?: Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(Res.string.controller_loading_error),
+                        textAlign = TextAlign.Center,
                     )
-                } ?: Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(Res.string.controller_loading_error),
-                    textAlign = TextAlign.Center,
+                }
+
+                CustomLoader(
+                    modifier = Modifier.align(Alignment.Center),
+                    isLoading = state.isLoading,
                 )
             }
-
-            CustomLoader(
-                modifier = Modifier.align(Alignment.Center),
-                isLoading = state.isLoading,
-            )
         }
     }
 }

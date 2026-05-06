@@ -15,7 +15,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.patorika.feature_bluetooth_presentation.model.BluetoothDevicesEvents
+import com.patorika.feature_bluetooth_presentation.model.DevicePickerEvents
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_arrow_left
@@ -25,7 +25,7 @@ import universalremote.core.generated.resources.Res as CoreRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun BluetoothDevicesTopBar(onEvent: (BluetoothDevicesEvents) -> Unit) {
+internal fun BluetoothDevicesTopBar(onEvent: (DevicePickerEvents) -> Unit) {
     TopAppBar(
         title = {
             Row(
@@ -34,7 +34,7 @@ internal fun BluetoothDevicesTopBar(onEvent: (BluetoothDevicesEvents) -> Unit) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
-                    onClick = { onEvent(BluetoothDevicesEvents.Close) },
+                    onClick = { onEvent(DevicePickerEvents.Close) },
                 ) {
                     Icon(
                         painter = painterResource(CoreRes.drawable.ic_arrow_left),

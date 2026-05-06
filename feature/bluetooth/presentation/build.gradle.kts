@@ -49,6 +49,7 @@ kotlin {
 
                 implementation(projects.core)
                 implementation(projects.featureBluetoothApi)
+                implementation(projects.featureBluetoothManager)
             }
         }
 
@@ -61,6 +62,7 @@ kotlin {
 
         androidMain {
             dependencies {
+                implementation(libs.androidx.activity.compose)
             }
         }
 

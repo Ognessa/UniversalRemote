@@ -3,6 +3,9 @@ package com.patorika.feature_playground_presentation.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patorika.core.util.LoggerUtil
+import com.patorika.feature_bluetooth_manager.BluetoothManager
+import com.patorika.feature_bluetooth_manager.model.BluetoothDevice
+import com.patorika.feature_bluetooth_manager.model.DeviceConnectionState
 import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.presentation.model.ControllerModel
 import com.patorika.feature_playground_presentation.model.PlaygroundNavigationEvent
@@ -13,12 +16,15 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PlaygroundViewModel(
     private val controllerId: String,
     private val getControllerByIdUseCase: GetControllerByIdUseCase,
+    private val bluetoothManager: BluetoothManager,
 ) : ViewModel() {
     private val _state = MutableStateFlow(PlaygroundScreenState())
     val state = _state.asStateFlow()
@@ -28,6 +34,7 @@ class PlaygroundViewModel(
 
     init {
         loadControllerDetails()
+        observeBluetoothState()
     }
 
     private fun loadControllerDetails() {
@@ -39,6 +46,26 @@ class PlaygroundViewModel(
                     onSuccess = ::handleFetchControllerSuccess,
                     onFailure = ::handleFetchControllerFailure,
                 )
+        }
+    }
+
+    private fun observeBluetoothState() {
+        viewModelScope.launch {
+            combine(
+                bluetoothManager.isBluetoothEnabled,
+                bluetoothManager.connectionState,
+                bluetoothManager.connectedDevice,
+            ) { args ->
+                args
+            }.collectLatest { args ->
+                _state.update {
+                    it.copy(
+                        isBluetoothEnabled = args[0] as Boolean,
+                        connectionState = args[1] as DeviceConnectionState,
+                        connectedDevice = args[2] as BluetoothDevice?,
+                    )
+                }
+            }
         }
     }
 
@@ -62,9 +89,7 @@ class PlaygroundViewModel(
             }
 
             is PlaygroundUserEvent.OpenDevicePicker -> {
-                handleNavigationEvent(
-                    PlaygroundNavigationEvent.OpenDevicePicker,
-                )
+                handleNavigationEvent(PlaygroundNavigationEvent.OpenDevicePicker)
             }
 
             is PlaygroundUserEvent.ElementAction -> {
@@ -78,7 +103,7 @@ class PlaygroundViewModel(
     }
 
     private fun onElementActionActivated(action: String) {
-        // TODO send action to the device
+        bluetoothManager.sendSignal(action)
         LoggerUtil.d(TAG, "Element action called: $action")
     }
 
@@ -87,16 +112,9 @@ class PlaygroundViewModel(
             currentState.controller?.let { controller ->
                 val elements =
                     controller.elements.map { currentElement ->
-                        if (currentElement.id == element.id) {
-                            element
-                        } else {
-                            currentElement
-                        }
+                        if (currentElement.id == element.id) element else currentElement
                     }
-
-                currentState.copy(
-                    controller = controller.copy(elements = elements),
-                )
+                currentState.copy(controller = controller.copy(elements = elements))
             } ?: currentState
         }
     }

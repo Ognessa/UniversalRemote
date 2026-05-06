@@ -5,7 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.patorika.feature_bluetooth_api.BluetoothDevicesScreenBuilder
 import com.patorika.feature_bluetooth_presentation.model.BluetoothDevicesNavigation
-import com.patorika.feature_bluetooth_presentation.ui.BluetoothDevicesScreen
+import com.patorika.feature_bluetooth_presentation.ui.DevicePickerScreen
+import com.patorika.feature_bluetooth_presentation.ui.DevicePickerViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 class BluetoothDevicesScreenBuilderImpl : BluetoothDevicesScreenBuilder {
@@ -14,8 +15,8 @@ class BluetoothDevicesScreenBuilderImpl : BluetoothDevicesScreenBuilder {
         navController: NavController,
     ) {
         builder.composable(routeName) {
-            BluetoothDevicesScreen(
-                viewModel = koinViewModel(),
+            DevicePickerScreen(
+                viewModel = koinViewModel<DevicePickerViewModel>(),
                 navigate = { handleNavigation(navController, it) },
             )
         }
@@ -27,7 +28,6 @@ class BluetoothDevicesScreenBuilderImpl : BluetoothDevicesScreenBuilder {
     ) {
         when (type) {
             is BluetoothDevicesNavigation.Close -> navController.popBackStack()
-            is BluetoothDevicesNavigation.DeviceSelected -> Unit
         }
     }
 }
