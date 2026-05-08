@@ -20,13 +20,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.patorika.core.ui.loader.CustomLoader
 import com.patorika.feature_controller.presentation.elements.basic.model.ControllerRenderMode
 import com.patorika.feature_controller.presentation.ui.ControllerCanvas
+import com.patorika.feature_playground_presentation.Res
+import com.patorika.feature_playground_presentation.controller_loading_error
 import com.patorika.feature_playground_presentation.model.PlaygroundNavigationEvent
 import com.patorika.feature_playground_presentation.model.PlaygroundUserEvent
 import com.patorika.feature_playground_presentation.ui.components.BluetoothConnectionStatusBanner
 import com.patorika.feature_playground_presentation.ui.components.PlaygroundToolbar
 import org.jetbrains.compose.resources.stringResource
-import universalremote.feature_playground_presentation.generated.resources.Res
-import universalremote.feature_playground_presentation.generated.resources.controller_loading_error
 
 @Composable
 fun PlaygroundScreen(

@@ -9,11 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.patorika.core.ui.theme.CoreDimens
+import com.patorika.feature_signal_presentation.Res
+import com.patorika.feature_signal_presentation.signal_editor_absent_label
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_warning
-import universalremote.feature_signal_presentation.generated.resources.Res
-import universalremote.feature_signal_presentation.generated.resources.signal_editor_absent_label
 import universalremote.core.generated.resources.Res as CoreRes
 
 @Composable

@@ -5,6 +5,7 @@ import com.patorika.feature_bluetooth_manager.model.BluetoothDevice
 import com.patorika.feature_bluetooth_manager.model.DeviceConnectionState
 import com.patorika.feature_bluetooth_manager.model.DeviceType
 import com.patorika.feature_bluetooth_manager.model.ScanState
+import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -269,6 +270,7 @@ private class CentralManagerDelegate :
         onBluetoothStateChanged?.invoke(central.state == CBCentralManagerStatePoweredOn)
     }
 
+    @ObjCSignatureOverride
     override fun centralManager(
         central: CBCentralManager,
         didDisconnectPeripheral: CBPeripheral,
@@ -278,6 +280,7 @@ private class CentralManagerDelegate :
         onDisconnected?.invoke(error)
     }
 
+    @ObjCSignatureOverride
     override fun centralManager(
         central: CBCentralManager,
         didFailToConnectPeripheral: CBPeripheral,

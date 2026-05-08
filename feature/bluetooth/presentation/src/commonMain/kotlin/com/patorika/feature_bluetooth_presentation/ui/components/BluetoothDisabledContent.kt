@@ -15,12 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.patorika.feature_bluetooth_presentation.Res
+import com.patorika.feature_bluetooth_presentation.bluetooth_disabled_message
+import com.patorika.feature_bluetooth_presentation.bluetooth_disabled_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_bluetooth
-import universalremote.feature_bluetooth_presentation.generated.resources.Res
-import universalremote.feature_bluetooth_presentation.generated.resources.bluetooth_disabled_message
-import universalremote.feature_bluetooth_presentation.generated.resources.bluetooth_disabled_title
 import universalremote.core.generated.resources.Res as CoreRes
 
 @Composable

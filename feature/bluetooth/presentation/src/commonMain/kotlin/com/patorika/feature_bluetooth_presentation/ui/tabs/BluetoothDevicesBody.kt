@@ -11,12 +11,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.patorika.feature_bluetooth_presentation.Res
 import com.patorika.feature_bluetooth_presentation.model.DevicePickerEvents
 import com.patorika.feature_bluetooth_presentation.model.DevicePickerUiState
+import com.patorika.feature_bluetooth_presentation.tab_ble
+import com.patorika.feature_bluetooth_presentation.tab_classic_bluetooth
 import org.jetbrains.compose.resources.stringResource
-import universalremote.feature_bluetooth_presentation.generated.resources.Res
-import universalremote.feature_bluetooth_presentation.generated.resources.tab_ble
-import universalremote.feature_bluetooth_presentation.generated.resources.tab_classic_bluetooth
 
 @Composable
 internal fun DevicePickerBody(

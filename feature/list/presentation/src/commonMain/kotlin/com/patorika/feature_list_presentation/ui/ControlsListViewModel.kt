@@ -6,6 +6,13 @@ import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.model.AppNotification
 import com.patorika.core.provider.text.TextProvider
 import com.patorika.feature_controller.presentation.model.ControllerModel
+import com.patorika.feature_list_presentation.Res
+import com.patorika.feature_list_presentation.controller_delete_failure_message
+import com.patorika.feature_list_presentation.controller_delete_success_message
+import com.patorika.feature_list_presentation.controller_duplicate_failure_message
+import com.patorika.feature_list_presentation.controller_duplicate_success_message
+import com.patorika.feature_list_presentation.controller_not_exists_message
+import com.patorika.feature_list_presentation.controls_list_fetching_error
 import com.patorika.feature_list_presentation.model.ControlsListEvents
 import com.patorika.feature_list_presentation.model.ControlsListEvents.CreateNew
 import com.patorika.feature_list_presentation.model.ControlsListEvents.Item
@@ -22,13 +29,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import universalremote.feature_list_presentation.generated.resources.Res
-import universalremote.feature_list_presentation.generated.resources.controller_delete_failure_message
-import universalremote.feature_list_presentation.generated.resources.controller_delete_success_message
-import universalremote.feature_list_presentation.generated.resources.controller_duplicate_failure_message
-import universalremote.feature_list_presentation.generated.resources.controller_duplicate_success_message
-import universalremote.feature_list_presentation.generated.resources.controller_not_exists_message
-import universalremote.feature_list_presentation.generated.resources.controls_list_fetching_error
 
 class ControlsListViewModel(
     private val appNotificationManager: AppNotificationManager,

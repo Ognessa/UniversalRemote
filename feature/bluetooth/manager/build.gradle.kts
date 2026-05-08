@@ -1,17 +1,23 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
 }
 
 kotlin {
-    androidTarget {
+    androidLibrary {
+        namespace = "com.patorika.feature_bluetooth_manager"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
         compilerOptions {
+            languageVersion = KotlinVersion.KOTLIN_2_3
             jvmTarget.set(JvmTarget.JVM_11)
         }
+        withHostTest {}
     }
 
     listOf(
@@ -50,17 +56,5 @@ kotlin {
             dependencies {
             }
         }
-    }
-}
-
-android {
-    namespace = "com.patorika.feature_bluetooth_manager"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
     }
 }

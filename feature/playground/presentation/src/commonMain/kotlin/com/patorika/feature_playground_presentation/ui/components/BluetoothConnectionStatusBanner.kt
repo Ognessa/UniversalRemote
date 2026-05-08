@@ -15,14 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.patorika.feature_bluetooth_manager.model.DeviceConnectionState
+import com.patorika.feature_playground_presentation.Res
+import com.patorika.feature_playground_presentation.bluetooth_connection_error
+import com.patorika.feature_playground_presentation.bluetooth_device_disconnected
+import com.patorika.feature_playground_presentation.bluetooth_disabled_banner
 import com.patorika.feature_playground_presentation.model.PlaygroundScreenState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_bluetooth
-import universalremote.feature_playground_presentation.generated.resources.Res
-import universalremote.feature_playground_presentation.generated.resources.bluetooth_connection_error
-import universalremote.feature_playground_presentation.generated.resources.bluetooth_device_disconnected
-import universalremote.feature_playground_presentation.generated.resources.bluetooth_disabled_banner
 import universalremote.core.generated.resources.Res as CoreRes
 
 @Composable

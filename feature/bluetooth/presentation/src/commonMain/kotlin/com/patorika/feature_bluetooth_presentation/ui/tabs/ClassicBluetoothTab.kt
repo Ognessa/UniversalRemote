@@ -23,18 +23,18 @@ import androidx.compose.ui.unit.dp
 import com.patorika.core.ui.theme.CoreDimens
 import com.patorika.feature_bluetooth_manager.BluetoothManager.Companion.CLASSIC_SCAN_DURATION
 import com.patorika.feature_bluetooth_manager.model.ScanState
+import com.patorika.feature_bluetooth_presentation.Res
+import com.patorika.feature_bluetooth_presentation.classic_unavailable_message
+import com.patorika.feature_bluetooth_presentation.classic_unavailable_title
 import com.patorika.feature_bluetooth_presentation.model.DevicePickerEvents
 import com.patorika.feature_bluetooth_presentation.model.DevicePickerUiState
+import com.patorika.feature_bluetooth_presentation.section_available_devices
+import com.patorika.feature_bluetooth_presentation.section_paired_devices
 import com.patorika.feature_bluetooth_presentation.ui.components.BluetoothDeviceItemUi
 import com.patorika.feature_bluetooth_presentation.ui.components.ScanButton
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_bluetooth
-import universalremote.feature_bluetooth_presentation.generated.resources.Res
-import universalremote.feature_bluetooth_presentation.generated.resources.classic_unavailable_message
-import universalremote.feature_bluetooth_presentation.generated.resources.classic_unavailable_title
-import universalremote.feature_bluetooth_presentation.generated.resources.section_available_devices
-import universalremote.feature_bluetooth_presentation.generated.resources.section_paired_devices
 import universalremote.core.generated.resources.Res as CoreRes
 
 @Composable

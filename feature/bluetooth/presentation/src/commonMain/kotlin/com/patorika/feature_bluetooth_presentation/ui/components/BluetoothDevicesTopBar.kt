@@ -15,12 +15,12 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.patorika.feature_bluetooth_presentation.Res
+import com.patorika.feature_bluetooth_presentation.bluetooth_devices_screen_title
 import com.patorika.feature_bluetooth_presentation.model.DevicePickerEvents
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_arrow_left
-import universalremote.feature_bluetooth_presentation.generated.resources.Res
-import universalremote.feature_bluetooth_presentation.generated.resources.bluetooth_devices_screen_title
 import universalremote.core.generated.resources.Res as CoreRes
 
 @OptIn(ExperimentalMaterial3Api::class)

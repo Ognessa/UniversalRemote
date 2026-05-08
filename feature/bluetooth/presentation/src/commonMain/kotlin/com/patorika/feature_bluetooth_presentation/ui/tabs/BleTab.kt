@@ -19,13 +19,13 @@ import androidx.compose.ui.unit.dp
 import com.patorika.core.ui.theme.CoreDimens
 import com.patorika.feature_bluetooth_manager.BluetoothManager.Companion.BLE_SCAN_DURATION
 import com.patorika.feature_bluetooth_manager.model.ScanState
+import com.patorika.feature_bluetooth_presentation.Res
+import com.patorika.feature_bluetooth_presentation.ble_scan_error
 import com.patorika.feature_bluetooth_presentation.model.DevicePickerEvents
 import com.patorika.feature_bluetooth_presentation.model.DevicePickerUiState
 import com.patorika.feature_bluetooth_presentation.ui.components.BluetoothDeviceItemUi
 import com.patorika.feature_bluetooth_presentation.ui.components.ScanButton
 import org.jetbrains.compose.resources.stringResource
-import universalremote.feature_bluetooth_presentation.generated.resources.Res
-import universalremote.feature_bluetooth_presentation.generated.resources.ble_scan_error
 
 @Composable
 internal fun BleTab(

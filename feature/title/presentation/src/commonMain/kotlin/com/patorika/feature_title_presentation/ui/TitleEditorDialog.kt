@@ -18,13 +18,13 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.patorika.core.ui.theme.CoreDimens
+import com.patorika.feature_title_presentation.Res
+import com.patorika.feature_title_presentation.editor_cancel_label
+import com.patorika.feature_title_presentation.editor_save_label
+import com.patorika.feature_title_presentation.editor_title
 import com.patorika.feature_title_presentation.model.TitleEditorEvents
 import com.patorika.feature_title_presentation.model.TitleEditorNavigation
 import org.jetbrains.compose.resources.stringResource
-import universalremote.feature_title_presentation.generated.resources.Res
-import universalremote.feature_title_presentation.generated.resources.editor_cancel_label
-import universalremote.feature_title_presentation.generated.resources.editor_save_label
-import universalremote.feature_title_presentation.generated.resources.editor_title
 
 @Composable
 fun TitleEditorDialog(

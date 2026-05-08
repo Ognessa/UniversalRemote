@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "986008406255",
+    "project_id": "universalremote-61433",
+    "storage_bucket": "universalremote-61433.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986008406255:android:9a687c5d569c206ffcf31a",
+        "android_client_info": {
+          "package_name": "com.patorika.universalremote"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0fNIG0H1HIJmpWJd9IGqzc1gvn-4lDAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,9 +6,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.patorika.feature_list_presentation.Res
+import com.patorika.feature_list_presentation.controls_list_empty_label
 import org.jetbrains.compose.resources.stringResource
-import universalremote.feature_list_presentation.generated.resources.Res
-import universalremote.feature_list_presentation.generated.resources.controls_list_empty_label
 
 @Composable
 internal fun ControlsListEmptyBox() {

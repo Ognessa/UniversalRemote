@@ -19,12 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.patorika.feature_bluetooth_manager.model.BluetoothDevice
 import com.patorika.feature_bluetooth_manager.model.DeviceConnectionState
+import com.patorika.feature_bluetooth_presentation.Res
+import com.patorika.feature_bluetooth_presentation.device_name_unknown
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_bluetooth
 import universalremote.core.generated.resources.ic_error
-import universalremote.feature_bluetooth_presentation.generated.resources.Res
-import universalremote.feature_bluetooth_presentation.generated.resources.device_name_unknown
 import universalremote.core.generated.resources.Res as CoreRes
 
 @Composable
