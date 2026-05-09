@@ -6,9 +6,12 @@ import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.model.AppNotification
 import com.patorika.core.provider.text.TextProvider
 import com.patorika.feature_title_api.TitleEditorNavArgs
+import com.patorika.feature_title_presentation.Res
+import com.patorika.feature_title_presentation.editor_cant_save_changes
 import com.patorika.feature_title_presentation.model.TitleEditorEvents
 import com.patorika.feature_title_presentation.model.TitleEditorNavigation
 import com.patorika.feature_title_presentation.model.TitleEditorScreenState
+import com.patorika.feature_title_presentation.title_cant_be_empty
 import com.patorika.feature_title_presentation.useCase.SaveControllerUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,9 +19,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import universalremote.feature_title_presentation.generated.resources.Res
-import universalremote.feature_title_presentation.generated.resources.editor_cant_save_changes
-import universalremote.feature_title_presentation.generated.resources.title_cant_be_empty
 
 class TitleEditorViewModel(
     private val args: TitleEditorNavArgs,

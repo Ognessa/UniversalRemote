@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bluetooth_devices_screen_title">Bluetooth Devices</string>
+
+    <!--Errors-->
+    <string name="bluetooth_disabled_title">Bluetooth is Off</string>
+    <string name="bluetooth_disabled_message">Please enable Bluetooth in your device settings to scan for and connect to devices.</string>
+
+    <string name="bluetooth_permission_denied_title">Permission Required</string>
+    <string name="bluetooth_permission_denied_message">Bluetooth permission is required to scan for nearby devices.</string>
+    <string name="bluetooth_permission_tap_label">Tap here to open Settings and grant access.</string>
+
+    <string name="classic_unavailable_title">Not Available on iOS</string>
+    <string name="classic_unavailable_message">Classic Bluetooth is not available on iOS due to system restrictions. Use the BLE tab to discover nearby devices.</string>
+
+    <string name="device_name_unknown">Unknown Device</string>
+
+    <!--Tabs and blocks-->
+    <string name="tab_classic_bluetooth">Bluetooth</string>
+    <string name="tab_ble">BLE</string>
+    <string name="section_paired_devices">Paired Devices</string>
+    <string name="section_available_devices">Available Devices</string>
+
+    <!--Scanning-->
+    <string name="ble_scan_error">Error: %1$s</string>
 </resources>

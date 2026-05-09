@@ -28,6 +28,7 @@ dependencyResolutionManagement {
     }
 }
 
+include(":androidApp")
 include(":composeApp")
 include(":core")
 
@@ -75,3 +76,6 @@ project(":feature-bluetooth-api").projectDir = file("feature/bluetooth/api")
 
 include(":feature-bluetooth-presentation")
 project(":feature-bluetooth-presentation").projectDir = file("feature/bluetooth/presentation")
+
+include(":feature-bluetooth-manager")
+project(":feature-bluetooth-manager").projectDir = file("feature/bluetooth/manager")

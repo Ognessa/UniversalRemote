@@ -12,11 +12,11 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.patorika.feature_library_presentation.Res
+import com.patorika.feature_library_presentation.library_screen_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_cross
-import universalremote.feature_library_presentation.generated.resources.Res
-import universalremote.feature_library_presentation.generated.resources.library_screen_title
 import universalremote.core.generated.resources.Res as CoreRes
 
 @OptIn(ExperimentalMaterial3Api::class)

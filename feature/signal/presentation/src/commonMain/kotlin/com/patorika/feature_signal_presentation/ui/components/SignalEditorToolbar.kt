@@ -12,12 +12,12 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.patorika.feature_signal_presentation.Res
+import com.patorika.feature_signal_presentation.signal_editor_screen_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import universalremote.core.generated.resources.ic_arrow_left
 import universalremote.core.generated.resources.ic_check
-import universalremote.feature_signal_presentation.generated.resources.Res
-import universalremote.feature_signal_presentation.generated.resources.signal_editor_screen_title
 import universalremote.core.generated.resources.Res as CoreRes
 
 @OptIn(ExperimentalMaterial3Api::class)

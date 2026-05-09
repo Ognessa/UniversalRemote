@@ -24,12 +24,12 @@ import com.patorika.feature_controller.presentation.elements.basic.model.Control
 import com.patorika.feature_controller.presentation.model.ControllerModel
 import com.patorika.feature_controller.presentation.model.ControllerOrientation
 import com.patorika.feature_controller.presentation.ui.ControllerCanvas
+import com.patorika.feature_list_presentation.Res
+import com.patorika.feature_list_presentation.control_item_delete
+import com.patorika.feature_list_presentation.control_item_duplicate
+import com.patorika.feature_list_presentation.control_item_edit
+import com.patorika.feature_list_presentation.control_item_rename
 import com.patorika.feature_list_presentation.model.ControlsListEvents
-import universalremote.feature_list_presentation.generated.resources.Res
-import universalremote.feature_list_presentation.generated.resources.control_item_delete
-import universalremote.feature_list_presentation.generated.resources.control_item_duplicate
-import universalremote.feature_list_presentation.generated.resources.control_item_edit
-import universalremote.feature_list_presentation.generated.resources.control_item_rename
 
 @Composable
 internal fun ControlsListItemUi(

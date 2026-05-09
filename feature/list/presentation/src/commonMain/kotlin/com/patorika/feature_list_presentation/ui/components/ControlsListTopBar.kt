@@ -6,9 +6,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import com.patorika.feature_list_presentation.Res
+import com.patorika.feature_list_presentation.controls_list_screen_title
 import org.jetbrains.compose.resources.stringResource
-import universalremote.feature_list_presentation.generated.resources.Res
-import universalremote.feature_list_presentation.generated.resources.controls_list_screen_title
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

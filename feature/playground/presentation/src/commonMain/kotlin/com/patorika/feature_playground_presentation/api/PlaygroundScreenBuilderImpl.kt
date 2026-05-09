@@ -5,7 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.savedstate.read
-import com.patorika.feature_bluetooth_api.BluetoothDevicesScreenBuilder
+import com.patorika.feature_bluetooth_api.DevicePickerScreenBuilder
 import com.patorika.feature_playground_api.api.PlaygroundScreenBuilder
 import com.patorika.feature_playground_presentation.model.PlaygroundNavigationEvent
 import com.patorika.feature_playground_presentation.ui.PlaygroundScreen
@@ -13,7 +13,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 class PlaygroundScreenBuilderImpl(
-    private val bluetoothDevicesScreenBuilder: BluetoothDevicesScreenBuilder,
+    private val bluetoothDevicesScreenBuilder: DevicePickerScreenBuilder,
 ) : PlaygroundScreenBuilder {
     override fun build(
         builder: NavGraphBuilder,

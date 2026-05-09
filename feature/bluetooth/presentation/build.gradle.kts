@@ -1,8 +1,9 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ktlint)
@@ -12,10 +13,16 @@ plugins {
 }
 
 kotlin {
-    androidTarget {
+    androidLibrary {
+        namespace = "com.patorika.feature_bluetooth_presentation"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
         compilerOptions {
+            languageVersion = KotlinVersion.KOTLIN_2_3
             jvmTarget.set(JvmTarget.JVM_11)
         }
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
+        withHostTest {}
     }
 
     listOf(
@@ -49,6 +56,7 @@ kotlin {
 
                 implementation(projects.core)
                 implementation(projects.featureBluetoothApi)
+                implementation(projects.featureBluetoothManager)
             }
         }
 
@@ -61,6 +69,7 @@ kotlin {
 
         androidMain {
             dependencies {
+                implementation(libs.androidx.activity.compose)
             }
         }
 
@@ -71,21 +80,7 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.patorika.feature_bluetooth_presentation"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    buildFeatures {
-        compose = true
-    }
-}
-
 compose.resources {
     publicResClass = true
+    packageOfResClass = "com.patorika.feature_bluetooth_presentation"
 }

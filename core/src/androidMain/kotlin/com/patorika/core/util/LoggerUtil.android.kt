@@ -1,12 +1,11 @@
 package com.patorika.core.util
 
 import android.util.Log
-import com.patorika.core.BuildConfig
 
 actual object LoggerUtil {
     actual var isEnabled = true
 
-    private fun loggerAllowed(): Boolean = BuildConfig.DEBUG && isEnabled
+    private fun loggerAllowed(): Boolean = isEnabled
 
     actual fun e(
         tag: String,
