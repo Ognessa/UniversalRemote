@@ -6,6 +6,8 @@ import com.patorika.feature_bluetooth_manager.model.ScanState
 import kotlinx.coroutines.flow.StateFlow
 
 interface BluetoothManager {
+    // --- Observable state ---
+
     val isBluetoothEnabled: StateFlow<Boolean>
     val pairedDevices: StateFlow<List<BluetoothDevice>>
     val discoveredClassicDevices: StateFlow<List<BluetoothDevice>>
@@ -14,6 +16,8 @@ interface BluetoothManager {
     val bleScanState: StateFlow<ScanState>
     val connectedDevice: StateFlow<BluetoothDevice?>
     val connectionState: StateFlow<DeviceConnectionState>
+
+    // --- Actions ---
 
     fun loadPairedDevices()
 
@@ -32,6 +36,10 @@ interface BluetoothManager {
     fun sendSignal(signal: String)
 
     fun clearDiscoveredDevices()
+
+    // Must be called when the manager is no longer needed to release platform resources
+    // (e.g. unregister the Android BroadcastReceiver).
+    fun close()
 
     companion object {
         const val CLASSIC_SCAN_DURATION = 12
