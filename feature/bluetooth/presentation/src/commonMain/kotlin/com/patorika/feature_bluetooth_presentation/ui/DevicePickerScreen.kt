@@ -16,9 +16,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.patorika.feature_bluetooth_presentation.model.BluetoothDevicesNavigation
 import com.patorika.feature_bluetooth_presentation.permission.BluetoothPermissionRequest
-import com.patorika.feature_bluetooth_presentation.ui.components.BluetoothDevicesTopBar
 import com.patorika.feature_bluetooth_presentation.ui.components.BluetoothDisabledContent
 import com.patorika.feature_bluetooth_presentation.ui.components.BluetoothPermissionDeniedContent
+import com.patorika.feature_bluetooth_presentation.ui.components.DevicePickerTopBar
 import com.patorika.feature_bluetooth_presentation.ui.tabs.DevicePickerBody
 
 @Composable
@@ -39,7 +39,7 @@ internal fun DevicePickerScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            BluetoothDevicesTopBar(onEvent = viewModel::onEvent)
+            DevicePickerTopBar(onEvent = viewModel::onEvent)
         },
     ) { paddingValues ->
         when {

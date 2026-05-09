@@ -25,7 +25,7 @@ import universalremote.core.generated.resources.Res as CoreRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun BluetoothDevicesTopBar(onEvent: (DevicePickerEvents) -> Unit) {
+internal fun DevicePickerTopBar(onEvent: (DevicePickerEvents) -> Unit) {
     TopAppBar(
         title = {
             Row(

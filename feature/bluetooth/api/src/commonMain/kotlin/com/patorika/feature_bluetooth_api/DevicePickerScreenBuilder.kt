@@ -2,7 +2,7 @@ package com.patorika.feature_bluetooth_api
 
 import com.patorika.core.navigation.ScreenBuilder
 
-interface BluetoothDevicesScreenBuilder : ScreenBuilder {
+interface DevicePickerScreenBuilder : ScreenBuilder {
     override val routeName: String
-        get() = "BluetoothDevices"
+        get() = "DevicePicker"
 }
