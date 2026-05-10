@@ -44,13 +44,13 @@ internal fun BleTab(
         ) {
             item {
                 Column {
-                    if (state.bleScanState is ScanState.Error) {
+                    if (state.scanState.ble is ScanState.Error) {
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text =
                                 stringResource(
                                     Res.string.ble_scan_error,
-                                    state.bleScanState.message,
+                                    state.scanState.ble.message,
                                 ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
@@ -59,7 +59,10 @@ internal fun BleTab(
                 }
             }
 
-            items(state.bleDevices, key = { it.id }) { device ->
+            items(
+                items = state.devices.ble,
+                key = { it.id },
+            ) { device ->
                 BluetoothDeviceItemUi(
                     modifier = Modifier.fillMaxWidth(),
                     device = device,
@@ -74,7 +77,7 @@ internal fun BleTab(
                 Modifier
                     .align(Alignment.BottomEnd)
                     .padding(CoreDimens.current.standardContentPadding),
-            scanState = state.bleScanState,
+            scanState = state.scanState.ble,
             durationSeconds = BLE_SCAN_DURATION,
             onStartScan = { onEvent(DevicePickerEvents.StartBleScan) },
         )

@@ -32,18 +32,18 @@ internal fun BluetoothConnectionStatusBanner(
 ) {
     val errorText =
         when {
-            state.isBluetoothEnabled.not() -> {
+            state.bluetoothState.isBluetoothEnabled.not() -> {
                 stringResource(Res.string.bluetooth_disabled_banner)
             }
 
-            state.connectionState is DeviceConnectionState.Idle -> {
+            state.bluetoothState.connectionState is DeviceConnectionState.Idle -> {
                 stringResource(Res.string.bluetooth_device_disconnected)
             }
 
-            state.connectionState is DeviceConnectionState.Error -> {
+            state.bluetoothState.connectionState is DeviceConnectionState.Error -> {
                 stringResource(
                     Res.string.bluetooth_connection_error,
-                    state.connectionState.message,
+                    state.bluetoothState.connectionState.message,
                 )
             }
 

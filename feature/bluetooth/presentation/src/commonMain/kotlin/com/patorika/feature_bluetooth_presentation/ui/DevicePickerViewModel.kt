@@ -4,38 +4,67 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patorika.feature_bluetooth_manager.BluetoothManager
 import com.patorika.feature_bluetooth_manager.model.BluetoothDevice
-import com.patorika.feature_bluetooth_manager.model.DeviceConnectionState
-import com.patorika.feature_bluetooth_manager.model.ScanState
 import com.patorika.feature_bluetooth_presentation.model.BluetoothDevicesNavigation
+import com.patorika.feature_bluetooth_presentation.model.ConnectionState
+import com.patorika.feature_bluetooth_presentation.model.DeviceListState
 import com.patorika.feature_bluetooth_presentation.model.DevicePickerEvents
 import com.patorika.feature_bluetooth_presentation.model.DevicePickerUiState
+import com.patorika.feature_bluetooth_presentation.model.ScanStateModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class DevicePickerViewModel(
     private val bluetoothManager: BluetoothManager,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(DevicePickerUiState())
-    val state: StateFlow<DevicePickerUiState> = _state
+    private val deviceListState =
+        combine(
+            bluetoothManager.pairedDevices,
+            bluetoothManager.discoveredClassicDevices,
+            bluetoothManager.bleDevices,
+            ::DeviceListState,
+        )
+
+    private val scanState =
+        combine(
+            bluetoothManager.classicScanState,
+            bluetoothManager.bleScanState,
+            ::ScanStateModel,
+        )
+
+    private val connectionState =
+        combine(
+            bluetoothManager.connectedDevice,
+            bluetoothManager.connectionState,
+            ::ConnectionState,
+        )
+
+    val state: StateFlow<DevicePickerUiState> =
+        combine(
+            bluetoothManager.isBluetoothEnabled,
+            deviceListState,
+            scanState,
+            connectionState,
+        ) { isEnabled, devices, scan, connection ->
+            buildUiState(isEnabled, devices, scan, connection)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = DevicePickerUiState(),
+        )
 
     private val _events = MutableSharedFlow<BluetoothDevicesNavigation>()
-    val events = _events.asSharedFlow()
-
-    init {
-        observeManagerFlows()
-    }
+    val events: SharedFlow<BluetoothDevicesNavigation> = _events.asSharedFlow()
 
     fun onEvent(event: DevicePickerEvents) {
         when (event) {
             is DevicePickerEvents.Close -> {
-                bluetoothManager.stopClassicScan()
-                bluetoothManager.stopBleScan()
-                bluetoothManager.clearDiscoveredDevices()
+                cleanup()
                 emitNavigationEvent(BluetoothDevicesNavigation.Close)
             }
 
@@ -60,64 +89,39 @@ class DevicePickerViewModel(
 
     override fun onCleared() {
         super.onCleared()
+        cleanup()
+    }
+
+    private fun cleanup() {
         bluetoothManager.stopClassicScan()
         bluetoothManager.stopBleScan()
         bluetoothManager.clearDiscoveredDevices()
     }
 
-    private fun observeManagerFlows() {
-        viewModelScope.launch {
-            combine(
-                bluetoothManager.isBluetoothEnabled,
-                bluetoothManager.pairedDevices,
-                bluetoothManager.discoveredClassicDevices,
-                bluetoothManager.bleDevices,
-                bluetoothManager.classicScanState,
-                bluetoothManager.bleScanState,
-                bluetoothManager.connectedDevice,
-                bluetoothManager.connectionState,
-            ) { args ->
-                @Suppress("UNCHECKED_CAST")
-                buildUiState(
-                    isBluetoothEnabled = args[0] as Boolean,
-                    pairedDevices = args[1] as List<BluetoothDevice>,
-                    discoveredClassicDevices = args[2] as List<BluetoothDevice>,
-                    bleDevices = args[3] as List<BluetoothDevice>,
-                    classicScanState = args[4] as ScanState,
-                    bleScanState = args[5] as ScanState,
-                    connectedDevice = args[6] as BluetoothDevice?,
-                    connectionState = args[7] as DeviceConnectionState,
-                )
-            }.collectLatest { _state.value = it }
-        }
-    }
-
     private fun buildUiState(
         isBluetoothEnabled: Boolean,
-        pairedDevices: List<BluetoothDevice>,
-        discoveredClassicDevices: List<BluetoothDevice>,
-        bleDevices: List<BluetoothDevice>,
-        classicScanState: ScanState,
-        bleScanState: ScanState,
-        connectedDevice: BluetoothDevice?,
-        connectionState: DeviceConnectionState,
+        devices: DeviceListState,
+        scanState: ScanStateModel,
+        connectionState: ConnectionState,
     ): DevicePickerUiState {
-        val connectedId = connectedDevice?.id
+        val connectedId = connectionState.device?.id
 
-        fun List<BluetoothDevice>.withConnectedFirst(): List<BluetoothDevice> {
-            if (connectedId == null) return this
-            val target = firstOrNull { it.id == connectedId } ?: return this
-            return listOf(target) + filter { it.id != connectedId }
-        }
+        fun List<BluetoothDevice>.withConnectedFirst(): List<BluetoothDevice> =
+            if (connectedId == null) {
+                this
+            } else {
+                sortedByDescending { it.id == connectedId }
+            }
 
         return DevicePickerUiState(
             isBluetoothEnabled = isBluetoothEnabled,
-            pairedDevices = pairedDevices.withConnectedFirst(),
-            discoveredClassicDevices = discoveredClassicDevices.withConnectedFirst(),
-            bleDevices = bleDevices.withConnectedFirst(),
-            classicScanState = classicScanState,
-            bleScanState = bleScanState,
-            connectedDevice = connectedDevice,
+            devices =
+                devices.copy(
+                    paired = devices.paired.withConnectedFirst(),
+                    discoveredClassic = devices.discoveredClassic.withConnectedFirst(),
+                    ble = devices.ble.withConnectedFirst(),
+                ),
+            scanState = scanState,
             connectionState = connectionState,
         )
     }

@@ -46,8 +46,8 @@ fun PlaygroundScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             PlaygroundToolbar(
-                connectedDeviceName = state.connectedDevice?.name,
-                deviceConnectionStatus = state.connectionState,
+                connectedDeviceName = state.bluetoothState.connectedDevice?.name,
+                deviceConnectionStatus = state.bluetoothState.connectionState,
                 onEvent = viewModel::onEvent,
             )
         },

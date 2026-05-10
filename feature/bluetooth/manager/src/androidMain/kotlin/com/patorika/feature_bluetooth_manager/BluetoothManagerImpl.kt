@@ -215,7 +215,8 @@ internal class BluetoothManagerImpl(
                                 writableCharacteristic = null
                                 currentGatt?.close()
                                 currentGatt = null
-                                _connectionState.value = DeviceConnectionState.Reconnecting(attempt = 1)
+                                _connectionState.value =
+                                    DeviceConnectionState.Reconnecting(attempt = 1)
                                 // autoConnect=true lets the system retry in the background, which is
                                 // more battery-efficient than spinning our own retry loop.
                                 val btDevice = adapter?.getRemoteDevice(device.id) ?: return

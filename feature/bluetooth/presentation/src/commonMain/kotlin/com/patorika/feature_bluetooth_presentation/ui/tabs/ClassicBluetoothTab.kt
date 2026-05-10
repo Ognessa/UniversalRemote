@@ -43,7 +43,7 @@ internal fun ClassicBluetoothTab(
     state: DevicePickerUiState,
     onEvent: (DevicePickerEvents) -> Unit,
 ) {
-    if (state.classicScanState == ScanState.Unavailable) {
+    if (state.scanState.classic == ScanState.Unavailable) {
         ClassicUnavailableContent(modifier = modifier)
         return
     }
@@ -61,7 +61,10 @@ internal fun ClassicBluetoothTab(
                 SectionHeader(text = stringResource(Res.string.section_paired_devices))
             }
 
-            items(state.pairedDevices, key = { it.id }) { device ->
+            items(
+                items = state.devices.paired,
+                key = { it.id },
+            ) { device ->
                 BluetoothDeviceItemUi(
                     modifier = Modifier.fillMaxWidth(),
                     device = device,
@@ -78,7 +81,10 @@ internal fun ClassicBluetoothTab(
                 }
             }
 
-            items(state.discoveredClassicDevices, key = { it.id }) { device ->
+            items(
+                items = state.devices.discoveredClassic,
+                key = { it.id },
+            ) { device ->
                 BluetoothDeviceItemUi(
                     modifier = Modifier.fillMaxWidth(),
                     device = device,
@@ -93,7 +99,7 @@ internal fun ClassicBluetoothTab(
                 Modifier
                     .align(Alignment.BottomEnd)
                     .padding(CoreDimens.current.standardContentPadding),
-            scanState = state.classicScanState,
+            scanState = state.scanState.classic,
             durationSeconds = CLASSIC_SCAN_DURATION,
             onStartScan = { onEvent(DevicePickerEvents.StartClassicScan) },
         )
