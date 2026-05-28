@@ -50,7 +50,8 @@ internal class BluetoothManagerImpl : BluetoothManager {
 
     // Always empty on iOS — CoreBluetooth does not expose Classic discovery.
     private val _discoveredClassicDevices = MutableStateFlow<List<BluetoothDevice>>(emptyList())
-    override val discoveredClassicDevices: StateFlow<List<BluetoothDevice>> = _discoveredClassicDevices
+    override val discoveredClassicDevices: StateFlow<List<BluetoothDevice>> =
+        _discoveredClassicDevices
 
     private val _bleDevices = MutableStateFlow<List<BluetoothDevice>>(emptyList())
     override val bleDevices: StateFlow<List<BluetoothDevice>> = _bleDevices
@@ -65,7 +66,8 @@ internal class BluetoothManagerImpl : BluetoothManager {
     private val _connectedDevice = MutableStateFlow<BluetoothDevice?>(null)
     override val connectedDevice: StateFlow<BluetoothDevice?> = _connectedDevice
 
-    private val _connectionState = MutableStateFlow<DeviceConnectionState>(DeviceConnectionState.Idle)
+    private val _connectionState =
+        MutableStateFlow<DeviceConnectionState>(DeviceConnectionState.Idle)
     override val connectionState: StateFlow<DeviceConnectionState> = _connectionState
 
     // endregion
@@ -81,8 +83,6 @@ internal class BluetoothManagerImpl : BluetoothManager {
     // CentralManagerDelegate skips the automatic reconnect path.
     @Volatile
     private var isIntentionalDisconnect = false
-
-    private var lastConnectedDevice: BluetoothDevice? = null
 
     // endregion
 
@@ -126,7 +126,7 @@ internal class BluetoothManagerImpl : BluetoothManager {
                     _connectionState.value = DeviceConnectionState.Reconnecting(attempt = 1)
                     centralManager.connectPeripheral(peripheral, options = null)
                 } else {
-                    _connectedDevice.value = null
+                    // Keep _connectedDevice intact so the UI can show which device was lost.
                     _connectionState.value =
                         DeviceConnectionState.Error(
                             error?.localizedDescription ?: "Disconnected",
@@ -177,21 +177,32 @@ internal class BluetoothManagerImpl : BluetoothManager {
         // serviceUUIDs=null scans for all nearby peripherals.
         centralManager.scanForPeripheralsWithServices(serviceUUIDs = null, options = null)
         bleCountdownJob =
-            scope.launch {
-                for (remaining in (BLE_SCAN_DURATION - 1) downTo 0) {
-                    delay(1_000)
-                    if (_bleScanState.value is ScanState.Scanning) {
-                        _bleScanState.value = ScanState.Scanning(remaining)
-                    } else {
-                        return@launch
-                    }
-                }
-                if (_bleScanState.value is ScanState.Scanning) {
-                    centralManager.stopScan()
-                    _bleScanState.value = ScanState.Finished
+            launchScanCountdown(
+                duration = BLE_SCAN_DURATION,
+                scanState = _bleScanState,
+                onExpired = { centralManager.stopScan() },
+            )
+    }
+
+    private fun launchScanCountdown(
+        duration: Int,
+        scanState: MutableStateFlow<ScanState>,
+        onExpired: () -> Unit,
+    ): Job =
+        scope.launch {
+            for (remaining in (duration - 1) downTo 0) {
+                delay(1_000)
+                if (scanState.value is ScanState.Scanning) {
+                    scanState.value = ScanState.Scanning(remaining)
+                } else {
+                    return@launch
                 }
             }
-    }
+            if (scanState.value is ScanState.Scanning) {
+                onExpired()
+                scanState.value = ScanState.Finished
+            }
+        }
 
     override fun stopBleScan() {
         centralManager.stopScan()
@@ -206,8 +217,11 @@ internal class BluetoothManagerImpl : BluetoothManager {
     // region Connection
 
     override fun connectToDevice(device: BluetoothDevice) {
+        if (_connectedDevice.value?.id == device.id) {
+            disconnect()
+            return
+        }
         isIntentionalDisconnect = false
-        lastConnectedDevice = device
         _connectionState.value = DeviceConnectionState.Connecting
         _connectedDevice.value = device
         // On iOS, peripherals are identified by a system-assigned UUID (not a MAC address).
@@ -231,7 +245,6 @@ internal class BluetoothManagerImpl : BluetoothManager {
 
     override fun disconnect() {
         isIntentionalDisconnect = true
-        lastConnectedDevice = null
         _connectionState.value = DeviceConnectionState.Disconnecting
         peripheralDelegate.writableCharacteristic = null
         centralDelegate.currentPeripheral?.let { centralManager.cancelPeripheralConnection(it) }
