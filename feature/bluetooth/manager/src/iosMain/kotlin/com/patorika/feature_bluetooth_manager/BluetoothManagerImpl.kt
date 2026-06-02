@@ -33,14 +33,22 @@ import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUUID
 import platform.Foundation.dataUsingEncoding
 import platform.darwin.NSObject
+import kotlin.concurrent.Volatile
 
+// iOS supports BLE only — Classic Bluetooth is not exposed by CoreBluetooth.
+// The manager bridges CoreBluetooth's delegate callbacks into StateFlows via two
+// helper classes: CentralManagerDelegate (scanning / connection events) and
+// PeripheralDelegate (service/characteristic discovery and writes).
 internal class BluetoothManagerImpl : BluetoothManager {
+    // region State flows
+
     private val _isBluetoothEnabled = MutableStateFlow(false)
     override val isBluetoothEnabled: StateFlow<Boolean> = _isBluetoothEnabled
 
     private val _pairedDevices = MutableStateFlow<List<BluetoothDevice>>(emptyList())
     override val pairedDevices: StateFlow<List<BluetoothDevice>> = _pairedDevices
 
+    // Always empty on iOS — CoreBluetooth does not expose Classic discovery.
     private val _discoveredClassicDevices = MutableStateFlow<List<BluetoothDevice>>(emptyList())
     override val discoveredClassicDevices: StateFlow<List<BluetoothDevice>> =
         _discoveredClassicDevices
@@ -48,6 +56,7 @@ internal class BluetoothManagerImpl : BluetoothManager {
     private val _bleDevices = MutableStateFlow<List<BluetoothDevice>>(emptyList())
     override val bleDevices: StateFlow<List<BluetoothDevice>> = _bleDevices
 
+    // Classic scan is unavailable on iOS; BLE scan starts in Idle.
     private val _classicScanState = MutableStateFlow<ScanState>(ScanState.Unavailable)
     override val classicScanState: StateFlow<ScanState> = _classicScanState
 
@@ -61,14 +70,31 @@ internal class BluetoothManagerImpl : BluetoothManager {
         MutableStateFlow<DeviceConnectionState>(DeviceConnectionState.Idle)
     override val connectionState: StateFlow<DeviceConnectionState> = _connectionState
 
+    // endregion
+
+    // region Internal state
+
+    // CoreBluetooth callbacks fire on the main thread, so the scope must use Main to avoid
+    // cross-thread StateFlow mutations from a background dispatcher.
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var bleCountdownJob: Job? = null
+
+    // Distinguishes a user-initiated disconnect() from an unexpected radio drop. When true the
+    // CentralManagerDelegate skips the automatic reconnect path.
+    @Volatile
     private var isIntentionalDisconnect = false
-    private var lastConnectedDevice: BluetoothDevice? = null
+
+    // endregion
+
+    // region CoreBluetooth delegates
 
     private val peripheralDelegate = PeripheralDelegate()
     private val centralDelegate = CentralManagerDelegate()
+
+    // queue=null means CoreBluetooth dispatches its callbacks on the main thread.
     private val centralManager = CBCentralManager(delegate = centralDelegate, queue = null)
+
+    // endregion
 
     init {
         centralDelegate.onDeviceDiscovered = { device ->
@@ -76,14 +102,18 @@ internal class BluetoothManagerImpl : BluetoothManager {
                 if (current.none { it.id == device.id }) current + device else current
             }
         }
+
         centralDelegate.onConnected = {
             val peripheral = centralDelegate.currentPeripheral
             if (peripheral != null) {
                 peripheral.delegate = peripheralDelegate
+                // Service discovery must complete before sendSignal() can resolve a writable
+                // characteristic. Result arrives in PeripheralDelegate.
                 peripheral.discoverServices(null)
             }
             _connectionState.value = DeviceConnectionState.Connected
         }
+
         centralDelegate.onDisconnected = { error ->
             if (isIntentionalDisconnect) {
                 peripheralDelegate.writableCharacteristic = null
@@ -92,10 +122,11 @@ internal class BluetoothManagerImpl : BluetoothManager {
             } else {
                 val peripheral = centralDelegate.currentPeripheral
                 if (peripheral != null) {
+                    // Re-use the same peripheral reference — CoreBluetooth handles the retry.
                     _connectionState.value = DeviceConnectionState.Reconnecting(attempt = 1)
                     centralManager.connectPeripheral(peripheral, options = null)
                 } else {
-                    _connectedDevice.value = null
+                    // Keep _connectedDevice intact so the UI can show which device was lost.
                     _connectionState.value =
                         DeviceConnectionState.Error(
                             error?.localizedDescription ?: "Disconnected",
@@ -103,20 +134,37 @@ internal class BluetoothManagerImpl : BluetoothManager {
                 }
             }
         }
+
         centralDelegate.onError = { message ->
             _connectedDevice.value = null
             _connectionState.value = DeviceConnectionState.Error(message)
         }
+
         centralDelegate.onBluetoothStateChanged = { enabled ->
             _isBluetoothEnabled.value = enabled
         }
     }
+
+    // region Lifecycle
+
+    override fun close() {
+        clearDiscoveredDevices()
+        centralDelegate.currentPeripheral?.let { centralManager.cancelPeripheralConnection(it) }
+    }
+
+    // endregion
+
+    // region Classic stubs — not supported on iOS
 
     override fun loadPairedDevices() = Unit
 
     override fun startClassicScan() = Unit
 
     override fun stopClassicScan() = Unit
+
+    // endregion
+
+    // region BLE scanning
 
     override fun startBleScan() {
         bleCountdownJob?.cancel()
@@ -126,23 +174,35 @@ internal class BluetoothManagerImpl : BluetoothManager {
             return
         }
         _bleScanState.value = ScanState.Scanning(BLE_SCAN_DURATION)
+        // serviceUUIDs=null scans for all nearby peripherals.
         centralManager.scanForPeripheralsWithServices(serviceUUIDs = null, options = null)
         bleCountdownJob =
-            scope.launch {
-                for (remaining in (BLE_SCAN_DURATION - 1) downTo 0) {
-                    delay(1_000)
-                    if (_bleScanState.value is ScanState.Scanning) {
-                        _bleScanState.value = ScanState.Scanning(remaining)
-                    } else {
-                        break
-                    }
-                }
-                if (_bleScanState.value is ScanState.Scanning) {
-                    centralManager.stopScan()
-                    _bleScanState.value = ScanState.Finished
+            launchScanCountdown(
+                duration = BLE_SCAN_DURATION,
+                scanState = _bleScanState,
+                onExpired = { centralManager.stopScan() },
+            )
+    }
+
+    private fun launchScanCountdown(
+        duration: Int,
+        scanState: MutableStateFlow<ScanState>,
+        onExpired: () -> Unit,
+    ): Job =
+        scope.launch {
+            for (remaining in (duration - 1) downTo 0) {
+                delay(1_000)
+                if (scanState.value is ScanState.Scanning) {
+                    scanState.value = ScanState.Scanning(remaining)
+                } else {
+                    return@launch
                 }
             }
-    }
+            if (scanState.value is ScanState.Scanning) {
+                onExpired()
+                scanState.value = ScanState.Finished
+            }
+        }
 
     override fun stopBleScan() {
         centralManager.stopScan()
@@ -152,11 +212,19 @@ internal class BluetoothManagerImpl : BluetoothManager {
         }
     }
 
+    // endregion
+
+    // region Connection
+
     override fun connectToDevice(device: BluetoothDevice) {
+        if (_connectedDevice.value?.id == device.id) {
+            disconnect()
+            return
+        }
         isIntentionalDisconnect = false
-        lastConnectedDevice = device
         _connectionState.value = DeviceConnectionState.Connecting
         _connectedDevice.value = device
+        // On iOS, peripherals are identified by a system-assigned UUID (not a MAC address).
         val uuid =
             NSUUID(uUIDString = device.id) ?: run {
                 _connectedDevice.value = null
@@ -177,7 +245,6 @@ internal class BluetoothManagerImpl : BluetoothManager {
 
     override fun disconnect() {
         isIntentionalDisconnect = true
-        lastConnectedDevice = null
         _connectionState.value = DeviceConnectionState.Disconnecting
         peripheralDelegate.writableCharacteristic = null
         centralDelegate.currentPeripheral?.let { centralManager.cancelPeripheralConnection(it) }
@@ -194,6 +261,10 @@ internal class BluetoothManagerImpl : BluetoothManager {
         stopBleScan()
     }
 
+    // endregion
+
+    // region Signal transmission
+
     override fun sendSignal(signal: String) {
         val peripheral = centralDelegate.currentPeripheral ?: return
         val characteristic = peripheralDelegate.writableCharacteristic ?: return
@@ -206,8 +277,11 @@ internal class BluetoothManagerImpl : BluetoothManager {
             }
         peripheral.writeValue(data, forCharacteristic = characteristic, type = writeType)
     }
+
+    // endregion
 }
 
+// Handles characteristic discovery and write operations for a connected peripheral.
 private class PeripheralDelegate :
     NSObject(),
     CBPeripheralDelegateProtocol {
@@ -228,6 +302,7 @@ private class PeripheralDelegate :
         error: NSError?,
     ) {
         if (writableCharacteristic != null) return
+        // Pick the first writable characteristic — used by sendSignal().
         writableCharacteristic =
             didDiscoverCharacteristicsForService.characteristics
                 ?.filterIsInstance<CBCharacteristic>()
@@ -238,6 +313,7 @@ private class PeripheralDelegate :
     }
 }
 
+// Bridges CBCentralManager delegate callbacks into lambdas consumed by BluetoothManagerImpl.
 private class CentralManagerDelegate :
     NSObject(),
     CBCentralManagerDelegateProtocol {

@@ -4,16 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_bluetooth_manager.BluetoothManager
-import com.patorika.feature_bluetooth_manager.model.BluetoothDevice
-import com.patorika.feature_bluetooth_manager.model.DeviceConnectionState
 import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.presentation.model.ControllerModel
+import com.patorika.feature_playground_presentation.model.BluetoothState
 import com.patorika.feature_playground_presentation.model.PlaygroundNavigationEvent
 import com.patorika.feature_playground_presentation.model.PlaygroundScreenState
 import com.patorika.feature_playground_presentation.model.PlaygroundUserEvent
 import com.patorika.feature_playground_presentation.useCase.GetControllerByIdUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -27,10 +28,10 @@ class PlaygroundViewModel(
     private val bluetoothManager: BluetoothManager,
 ) : ViewModel() {
     private val _state = MutableStateFlow(PlaygroundScreenState())
-    val state = _state.asStateFlow()
+    val state: StateFlow<PlaygroundScreenState> = _state.asStateFlow()
 
     private val _event = MutableSharedFlow<PlaygroundNavigationEvent>()
-    val event = _event.asSharedFlow()
+    val event: SharedFlow<PlaygroundNavigationEvent> = _event.asSharedFlow()
 
     init {
         loadControllerDetails()
@@ -53,18 +54,11 @@ class PlaygroundViewModel(
         viewModelScope.launch {
             combine(
                 bluetoothManager.isBluetoothEnabled,
-                bluetoothManager.connectionState,
                 bluetoothManager.connectedDevice,
-            ) { args ->
-                args
-            }.collectLatest { args ->
-                _state.update {
-                    it.copy(
-                        isBluetoothEnabled = args[0] as Boolean,
-                        connectionState = args[1] as DeviceConnectionState,
-                        connectedDevice = args[2] as BluetoothDevice?,
-                    )
-                }
+                bluetoothManager.connectionState,
+                ::BluetoothState,
+            ).collectLatest { bluetoothState ->
+                _state.update { it.copy(bluetoothState = bluetoothState) }
             }
         }
     }

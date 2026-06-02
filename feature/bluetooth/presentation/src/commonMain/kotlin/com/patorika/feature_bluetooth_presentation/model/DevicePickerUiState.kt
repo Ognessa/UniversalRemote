@@ -6,18 +6,30 @@ import com.patorika.feature_bluetooth_manager.model.ScanState
 
 data class DevicePickerUiState(
     val isBluetoothEnabled: Boolean = false,
-    val pairedDevices: List<BluetoothDevice> = emptyList(),
-    val discoveredClassicDevices: List<BluetoothDevice> = emptyList(),
-    val bleDevices: List<BluetoothDevice> = emptyList(),
-    val classicScanState: ScanState = ScanState.Idle,
-    val bleScanState: ScanState = ScanState.Idle,
-    val connectedDevice: BluetoothDevice? = null,
-    val connectionState: DeviceConnectionState = DeviceConnectionState.Idle,
+    val devices: DeviceListState = DeviceListState(),
+    val scanState: ScanStateModel = ScanStateModel(),
+    val connectionState: ConnectionState = ConnectionState(),
 ) {
     fun checkDeviceConnectionState(device: BluetoothDevice): DeviceConnectionState =
-        if (device.id == connectedDevice?.id) {
-            connectionState
+        if (device.id == connectionState.device?.id) {
+            connectionState.state
         } else {
             DeviceConnectionState.Idle
         }
 }
+
+data class DeviceListState(
+    val paired: List<BluetoothDevice> = emptyList(),
+    val discoveredClassic: List<BluetoothDevice> = emptyList(),
+    val ble: List<BluetoothDevice> = emptyList(),
+)
+
+data class ScanStateModel(
+    val classic: ScanState = ScanState.Idle,
+    val ble: ScanState = ScanState.Idle,
+)
+
+data class ConnectionState(
+    val device: BluetoothDevice? = null,
+    val state: DeviceConnectionState = DeviceConnectionState.Idle,
+)

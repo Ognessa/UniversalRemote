@@ -5,5 +5,5 @@
     <!--Bluetooth Errors-->
     <string name="bluetooth_disabled_banner">Bluetooth is off. Please enable it to use the controller.</string>
     <string name="bluetooth_device_disconnected">Device disconnected.</string>
-    <string name="bluetooth_connection_error">Error:\n%s</string>
+    <string name="bluetooth_connection_error">Error:\n%1$s</string>
 </resources>

@@ -36,10 +36,16 @@ import java.util.UUID
 internal class BluetoothManagerImpl(
     private val context: Context,
 ) : BluetoothManager {
+    // region Hardware handles
+
     private val btManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as android.bluetooth.BluetoothManager
     private val adapter: BluetoothAdapter? = btManager.adapter
     private val leScanner get() = adapter?.bluetoothLeScanner
+
+    // endregion
+
+    // region State flows
 
     private val _isBluetoothEnabled = MutableStateFlow(adapter?.isEnabled ?: false)
     override val isBluetoothEnabled: StateFlow<Boolean> = _isBluetoothEnabled
@@ -67,16 +73,30 @@ internal class BluetoothManagerImpl(
         MutableStateFlow<DeviceConnectionState>(DeviceConnectionState.Idle)
     override val connectionState: StateFlow<DeviceConnectionState> = _connectionState
 
+    // endregion
+
+    // region Internal state
+
+    // SupervisorJob: a failure in one child coroutine (e.g. a socket write error) does not
+    // cancel the other active children.
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     private var classicCountdownJob: Job? = null
     private var bleCountdownJob: Job? = null
     private var classicSocket: BluetoothSocket? = null
     private var currentGatt: BluetoothGatt? = null
     private var writableCharacteristic: BluetoothGattCharacteristic? = null
-    private var currentConnectionType: DeviceType? = null
+
+    // Distinguishes a user-initiated disconnect() from an unexpected radio drop. When true the
+    // broadcast receiver and GATT callback skip the automatic reconnect path.
+    @Volatile
     private var isIntentionalDisconnect = false
-    private var lastConnectedDevice: BluetoothDevice? = null
+
     private var reconnectJob: Job? = null
+
+    // endregion
+
+    // region BroadcastReceiver — adapter state, Classic discovery, ACL events
 
     private val discoveryReceiver =
         object : BroadcastReceiver() {
@@ -92,26 +112,20 @@ internal class BluetoothManagerImpl(
                     }
 
                     android.bluetooth.BluetoothDevice.ACTION_FOUND -> {
-                        val btDevice: android.bluetooth.BluetoothDevice? =
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                intent.getParcelableExtra(
-                                    android.bluetooth.BluetoothDevice.EXTRA_DEVICE,
-                                    android.bluetooth.BluetoothDevice::class.java,
-                                )
-                            } else {
-                                intent.getParcelableExtra(android.bluetooth.BluetoothDevice.EXTRA_DEVICE)
-                            }
-                        btDevice?.let { device ->
+                        intent.bluetoothDevice()?.let { device ->
                             val model =
                                 BluetoothDevice(
                                     id = device.address,
                                     name = if (hasConnectPermission()) device.name else null,
                                     type = DeviceType.CLASSIC,
                                 )
+                            // Snapshot paired list before the lambda to avoid reading a separate
+                            // StateFlow from inside update {}, which could be a stale snapshot.
+                            val paired = _pairedDevices.value
+                            // Skip devices already present in paired or discovered lists.
                             _discoveredClassicDevices.update { current ->
-                                if (
-                                    current.none { it.id == model.id } &&
-                                    _pairedDevices.value.none { it.id == model.id }
+                                if (current.none { it.id == model.id } &&
+                                    paired.none { it.id == model.id }
                                 ) {
                                     current + model
                                 } else {
@@ -128,13 +142,20 @@ internal class BluetoothManagerImpl(
 
                     android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
                         if (isIntentionalDisconnect) return
-                        val device = lastConnectedDevice ?: return
-                        if (device.type != DeviceType.CLASSIC) return
-                        retryClassicConnection(device)
+                        val target = _connectedDevice.value ?: return
+                        if (target.type != DeviceType.CLASSIC) return
+                        // Compare the disconnecting device's address with the current target to
+                        // ignore stale broadcasts that arrive after the user switched devices.
+                        if (intent.bluetoothDevice()?.address != target.id) return
+                        retryClassicConnection(target)
                     }
                 }
             }
         }
+
+    // endregion
+
+    // region BLE scan callback
 
     private val bleScanCallback =
         object : ScanCallback() {
@@ -160,6 +181,10 @@ internal class BluetoothManagerImpl(
             }
         }
 
+    // endregion
+
+    // region GATT callback — BLE connection lifecycle
+
     private val gattCallback: BluetoothGattCallback =
         object : BluetoothGattCallback() {
             override fun onConnectionStateChange(
@@ -170,36 +195,33 @@ internal class BluetoothManagerImpl(
                 when (newState) {
                     BluetoothProfile.STATE_CONNECTED -> {
                         _connectionState.value = DeviceConnectionState.Connected
+                        // Service discovery must complete before sendSignal() can resolve a writable
+                        // characteristic. Result arrives in onServicesDiscovered().
                         if (hasConnectPermission()) gatt.discoverServices()
                     }
 
                     BluetoothProfile.STATE_DISCONNECTED -> {
+                        // Ignore callbacks from a GATT object that has already been replaced
+                        // (e.g. when the user switched to a different BLE device).
+                        if (gatt !== currentGatt) return
                         if (isIntentionalDisconnect) {
-                            writableCharacteristic = null
-                            _connectedDevice.value = null
-                            _connectionState.value = DeviceConnectionState.Idle
-                            currentGatt?.close()
-                            currentGatt = null
-                            currentConnectionType = null
+                            cleanupGatt()
                         } else {
-                            val device = lastConnectedDevice
+                            val device = _connectedDevice.value
                             if (device != null) {
                                 writableCharacteristic = null
                                 currentGatt?.close()
                                 currentGatt = null
                                 _connectionState.value =
                                     DeviceConnectionState.Reconnecting(attempt = 1)
+                                // autoConnect=true lets the system retry in the background, which is
+                                // more battery-efficient than spinning our own retry loop.
                                 val btDevice = adapter?.getRemoteDevice(device.id) ?: return
                                 if (hasConnectPermission()) {
                                     currentGatt = btDevice.connectGatt(context, true, gattCallback)
                                 }
                             } else {
-                                writableCharacteristic = null
-                                _connectedDevice.value = null
-                                _connectionState.value = DeviceConnectionState.Idle
-                                currentGatt?.close()
-                                currentGatt = null
-                                currentConnectionType = null
+                                cleanupGatt()
                             }
                         }
                     }
@@ -211,6 +233,7 @@ internal class BluetoothManagerImpl(
                 status: Int,
             ) {
                 if (status != BluetoothGatt.GATT_SUCCESS) return
+                // Pick the first writable characteristic across all services — used by sendSignal().
                 writableCharacteristic =
                     gatt.services
                         .flatMap { it.characteristics }
@@ -221,6 +244,10 @@ internal class BluetoothManagerImpl(
             }
         }
 
+    // endregion
+
+    // region Lifecycle
+
     init {
         val filter =
             IntentFilter().apply {
@@ -229,21 +256,30 @@ internal class BluetoothManagerImpl(
                 addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
                 addAction(android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED)
             }
+        // applicationContext prevents a short-lived Activity from being captured by the receiver.
         context.applicationContext.registerReceiver(discoveryReceiver, filter)
         loadPairedDevices()
     }
 
+    override fun close() {
+        clearDiscoveredDevices()
+        context.applicationContext.unregisterReceiver(discoveryReceiver)
+    }
+
+    // endregion
+
+    // region Device loading & scanning
+
     override fun loadPairedDevices() {
         if (!hasConnectPermission()) return
-        _pairedDevices.value =
-            adapter?.bondedDevices?.map { device ->
-                val type =
-                    when (device.type) {
-                        android.bluetooth.BluetoothDevice.DEVICE_TYPE_LE -> DeviceType.BLE
-                        else -> DeviceType.CLASSIC
-                    }
-                BluetoothDevice(id = device.address, name = device.name, type = type)
-            } ?: emptyList()
+        _pairedDevices.value = adapter?.bondedDevices?.map { device ->
+            val type =
+                when (device.type) {
+                    android.bluetooth.BluetoothDevice.DEVICE_TYPE_LE -> DeviceType.BLE
+                    else -> DeviceType.CLASSIC
+                }
+            BluetoothDevice(id = device.address, name = device.name, type = type)
+        } ?: emptyList()
     }
 
     override fun startClassicScan() {
@@ -252,20 +288,14 @@ internal class BluetoothManagerImpl(
         _classicScanState.value = ScanState.Scanning(CLASSIC_SCAN_DURATION)
         adapter?.startDiscovery()
         classicCountdownJob?.cancel()
+        // ACTION_DISCOVERY_FINISHED will also end the scan; the countdown just keeps the
+        // displayed remaining-seconds timer accurate.
         classicCountdownJob =
-            scope.launch {
-                for (remaining in (CLASSIC_SCAN_DURATION - 1) downTo 0) {
-                    delay(1_000)
-                    if (_classicScanState.value is ScanState.Scanning) {
-                        _classicScanState.value = ScanState.Scanning(remaining)
-                    } else {
-                        break
-                    }
-                }
-                if (_classicScanState.value is ScanState.Scanning) {
-                    _classicScanState.value = ScanState.Finished
-                }
-            }
+            launchScanCountdown(
+                duration = CLASSIC_SCAN_DURATION,
+                scanState = _classicScanState,
+                onExpired = { /* adapter fires ACTION_DISCOVERY_FINISHED on its own */ },
+            )
     }
 
     override fun stopClassicScan() {
@@ -291,20 +321,11 @@ internal class BluetoothManagerImpl(
         scanner.startScan(bleScanCallback)
         bleCountdownJob?.cancel()
         bleCountdownJob =
-            scope.launch {
-                for (remaining in (BLE_SCAN_DURATION - 1) downTo 0) {
-                    delay(1_000)
-                    if (_bleScanState.value is ScanState.Scanning) {
-                        _bleScanState.value = ScanState.Scanning(remaining)
-                    } else {
-                        break
-                    }
-                }
-                if (_bleScanState.value is ScanState.Scanning) {
-                    if (hasScanPermission()) scanner.stopScan(bleScanCallback)
-                    _bleScanState.value = ScanState.Finished
-                }
-            }
+            launchScanCountdown(
+                duration = BLE_SCAN_DURATION,
+                scanState = _bleScanState,
+                onExpired = { if (hasScanPermission()) scanner.stopScan(bleScanCallback) },
+            )
     }
 
     override fun stopBleScan() {
@@ -315,9 +336,48 @@ internal class BluetoothManagerImpl(
         }
     }
 
+    // Ticks the remaining-seconds counter shown in the scan UI. Calls onExpired() and sets
+    // Finished when time runs out. Cancelling the returned Job stops the tick without touching
+    // the state — the caller handles the state transition itself.
+    private fun launchScanCountdown(
+        duration: Int,
+        scanState: MutableStateFlow<ScanState>,
+        onExpired: () -> Unit,
+    ): Job =
+        scope.launch {
+            for (remaining in (duration - 1) downTo 0) {
+                delay(1_000)
+                if (scanState.value is ScanState.Scanning) {
+                    scanState.value = ScanState.Scanning(remaining)
+                } else {
+                    return@launch
+                }
+            }
+            if (scanState.value is ScanState.Scanning) {
+                onExpired()
+                scanState.value = ScanState.Finished
+            }
+        }
+
+    // endregion
+
+    // region Connection
+
     override fun connectToDevice(device: BluetoothDevice) {
+        if (_connectedDevice.value?.id == device.id) {
+            disconnect()
+            return
+        }
         isIntentionalDisconnect = false
-        lastConnectedDevice = device
+        reconnectJob?.cancel()
+        reconnectJob = null
+        // Close any open Classic socket so switching from one device to another
+        // does not leave an orphaned connection. BLE cleanup is done inside connectBle().
+        try {
+            classicSocket?.close()
+        } catch (_: IOException) {
+        }
+        classicSocket = null
         _connectionState.value = DeviceConnectionState.Connecting
         _connectedDevice.value = device
         when (device.type) {
@@ -329,47 +389,36 @@ internal class BluetoothManagerImpl(
     private fun connectClassic(device: BluetoothDevice) {
         scope.launch {
             try {
+                // Discovery uses the same radio — cancel it first to speed up the handshake.
                 if (hasScanPermission()) adapter?.cancelDiscovery()
                 val btDevice =
-                    adapter?.getRemoteDevice(device.id) ?: run {
-                        _connectedDevice.value = null
-                        _connectionState.value = DeviceConnectionState.Error("Device not found")
-                        return@launch
-                    }
+                    adapter?.getRemoteDevice(device.id)
+                        ?: return@launch failConnection("Device not found")
+                // SPP (Serial Port Profile) UUID is the standard for byte-stream communication
+                // over Classic Bluetooth — used by most Arduino / ESP32 serial firmware.
                 val socket = btDevice.createRfcommSocketToServiceRecord(SPP_UUID)
                 socket.connect()
                 classicSocket = socket
-                currentConnectionType = DeviceType.CLASSIC
                 _connectionState.value = DeviceConnectionState.Connected
             } catch (e: IOException) {
-                _connectedDevice.value = null
-                _connectionState.value =
-                    DeviceConnectionState.Error(e.message ?: "Connection failed")
+                failConnection(e.message ?: "Connection failed")
             }
         }
     }
 
     private fun connectBle(device: BluetoothDevice) {
-        if (!hasConnectPermission()) {
-            _connectedDevice.value = null
-            _connectionState.value =
-                DeviceConnectionState.Error("Bluetooth connect permission not granted")
-            return
-        }
+        if (!hasConnectPermission()) return failConnection("Bluetooth connect permission not granted")
         val btDevice =
-            adapter?.getRemoteDevice(device.id) ?: run {
-                _connectedDevice.value = null
-                _connectionState.value = DeviceConnectionState.Error("Device not found")
-                return
-            }
+            adapter?.getRemoteDevice(device.id)
+                ?: return failConnection("Device not found")
         currentGatt?.close()
-        currentConnectionType = DeviceType.BLE
+        // autoConnect=false for the initial attempt gives a faster connection; unexpected drops
+        // are handled by the GATT callback which reconnects with autoConnect=true.
         currentGatt = btDevice.connectGatt(context, false, gattCallback)
     }
 
     override fun disconnect() {
         isIntentionalDisconnect = true
-        lastConnectedDevice = null
         reconnectJob?.cancel()
         reconnectJob = null
         _connectionState.value = DeviceConnectionState.Disconnecting
@@ -379,12 +428,22 @@ internal class BluetoothManagerImpl(
         }
         classicSocket = null
         if (hasConnectPermission()) currentGatt?.disconnect()
+        cleanupGatt()
+    }
+
+    // Closes the GATT client and resets all connection-related state to idle.
+    private fun cleanupGatt() {
+        writableCharacteristic = null
         currentGatt?.close()
         currentGatt = null
-        writableCharacteristic = null
-        currentConnectionType = null
         _connectedDevice.value = null
         _connectionState.value = DeviceConnectionState.Idle
+    }
+
+    // Sets the connection to a failed state and clears the connected device.
+    // Only for initial connection failures — reconnect paths keep _connectedDevice intact.
+    private fun failConnection(message: String) {
+        _connectionState.value = DeviceConnectionState.Error(message)
     }
 
     override fun clearDiscoveredDevices() {
@@ -395,11 +454,15 @@ internal class BluetoothManagerImpl(
         stopBleScan()
     }
 
-    override fun sendSignal(signal: String) {
-        when (currentConnectionType) {
-            DeviceType.CLASSIC -> {
-                val bytes = "$signal\n".toByteArray(Charsets.UTF_8)
+    // endregion
 
+    // region Signal transmission
+
+    override fun sendSignal(signal: String) {
+        when (_connectedDevice.value?.type) {
+            DeviceType.CLASSIC -> {
+                // Newline delimiter lets the firmware use readline() to separate messages.
+                val bytes = "$signal\n".toByteArray(Charsets.UTF_8)
                 scope.launch {
                     try {
                         classicSocket?.outputStream?.write(bytes)
@@ -410,26 +473,18 @@ internal class BluetoothManagerImpl(
 
             DeviceType.BLE -> {
                 val bytes = signal.toByteArray(Charsets.UTF_8)
-
                 val gatt = currentGatt ?: return
                 val characteristic = writableCharacteristic ?: return
                 if (!hasConnectPermission()) return
+                val writeType = resolveWriteType(characteristic)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    val writeType =
-                        if ((characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0) {
-                            BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
-                        } else {
-                            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-                        }
                     gatt.writeCharacteristic(characteristic, bytes, writeType)
                 } else {
+                    @Suppress("DEPRECATION")
                     characteristic.value = bytes
-                    characteristic.writeType =
-                        if ((characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0) {
-                            BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
-                        } else {
-                            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-                        }
+                    @Suppress("DEPRECATION")
+                    characteristic.writeType = writeType
+                    @Suppress("DEPRECATION")
                     gatt.writeCharacteristic(characteristic)
                 }
             }
@@ -437,6 +492,19 @@ internal class BluetoothManagerImpl(
             null -> {}
         }
     }
+
+    // Prefers WRITE_NO_RESPONSE when the characteristic supports it — lower latency for frequent
+    // button presses. Falls back to acknowledged writes for reliability.
+    private fun resolveWriteType(characteristic: BluetoothGattCharacteristic): Int =
+        if ((characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0) {
+            BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+        } else {
+            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+        }
+
+    // endregion
+
+    // region Classic reconnect
 
     private fun retryClassicConnection(device: BluetoothDevice) {
         reconnectJob?.cancel()
@@ -451,18 +519,20 @@ internal class BluetoothManagerImpl(
                         val socket = btDevice.createRfcommSocketToServiceRecord(SPP_UUID)
                         socket.connect()
                         classicSocket = socket
-                        currentConnectionType = DeviceType.CLASSIC
                         _connectionState.value = DeviceConnectionState.Connected
                         return@launch
                     } catch (_: IOException) {
                     }
                     delay(CLASSIC_RECONNECT_DELAY_MS)
                 }
+                // Keep _connectedDevice intact so the UI can show which device was lost.
                 _connectionState.value = DeviceConnectionState.Error("Device lost")
-                _connectedDevice.value = null
-                lastConnectedDevice = null
             }
     }
+
+    // endregion
+
+    // region Permissions
 
     private fun hasScanPermission(): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -481,9 +551,24 @@ internal class BluetoothManagerImpl(
     private fun hasLocationPermission(): Boolean =
         context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
+    // endregion
+
     companion object {
         private const val CLASSIC_RECONNECT_MAX_ATTEMPTS = 5
         private const val CLASSIC_RECONNECT_DELAY_MS = 3_000L
+
+        // Standard Serial Port Profile UUID — compatible with HC-05, HC-06, ESP32 SPP, etc.
         private val SPP_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     }
 }
+
+private fun Intent.bluetoothDevice(): android.bluetooth.BluetoothDevice? =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getParcelableExtra(
+            android.bluetooth.BluetoothDevice.EXTRA_DEVICE,
+            android.bluetooth.BluetoothDevice::class.java,
+        )
+    } else {
+        @Suppress("DEPRECATION")
+        getParcelableExtra(android.bluetooth.BluetoothDevice.EXTRA_DEVICE)
+    }
