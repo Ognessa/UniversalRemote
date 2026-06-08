@@ -374,10 +374,5 @@ String resources live in `src/commonMain/composeResources/values/strings.xml` of
 - **Don't create a new element type without updating `controllerModelModule`** — the polymorphic serializer will throw at runtime without the `subclass(...)` registration.
 - **Don't call `Dispatchers.Main` directly in production `commonMain` code without test setup** — ViewModel tests must call `Dispatchers.setMain(UnconfinedTestDispatcher())` first.
 - **Don't add MockK, Hilt, Room, or Retrofit** — none of these are present or intended; the stack is Mokkery + Koin + SQLDelight + platform Bluetooth APIs.
-
----
-
-## Open questions
-
-- Does `initKoinIos()` get called from Swift (e.g. `AppDelegate.swift`)? The Kotlin `AppDelegate.kt` in `iosMain` defines `initKoinIos()` but the call site in Swift was not verified.
-- There are no SQLDelight migration files (`.sqm`). If the schema changes, a migration strategy will be needed.
+- **Don't change the SQLDelight schema without adding a versioned migration file** — the schema is at version 1 with no `.sqm` files; any schema change requires a numbered migration or existing user data will be lost on upgrade.
+- **Don't persist element changes made in the playground** — `ElementModified` events update in-memory state only; element modifications during play are intentionally ephemeral (e.g. slider positions) and must not be written back to the database.
