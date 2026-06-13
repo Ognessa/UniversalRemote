@@ -1,35 +1,103 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Universal Remote
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A Kotlin Multiplatform app for Android and iOS that lets users design custom Bluetooth remote controllers. You build a controller layout with buttons and sliders, assign signals to each element, then connect to a Bluetooth device and use the controller in the playground.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Tech stack
 
-### Build and Run Android Application
+| Area | Library / Tool |
+|---|---|
+| Language | Kotlin 2.3 |
+| UI | Compose Multiplatform 1.10 |
+| Platforms | Android (minSdk 24), iOS (arm64, simulatorArm64) |
+| DI | Koin 4.2 |
+| Navigation | Jetbrains Navigation Compose 2.9 |
+| Database | SQLDelight 2.3 |
+| Serialization | kotlinx.serialization |
+| Bluetooth | Platform APIs via expect/actual in `:feature-bluetooth-manager` |
+| Testing | kotlin.test, Mokkery, kotlinx-coroutines-test |
+| Linting | ktlint 1.2, detekt 1.23 |
+| Crash reporting | Firebase Crashlytics |
+| Distribution | Firebase App Distribution |
+| CI | GitHub Actions |
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## Modules
 
-### Build and Run iOS Application
+| Module | Responsibility | Depends on |
+|---|---|---|
+| `:androidApp` | Android entry point, Activity, Koin/Firebase init | `:composeApp`, `:feature-controller`, `:feature-bluetooth-manager` |
+| `:composeApp` | KMP shared app layer, navigation graph, DI wiring | all feature modules, `:core` |
+| `:core` | Shared UI primitives, navigation abstractions, design tokens | — |
+| `:feature-controller` | Domain models, SQLDelight DB, `ControllerRepository`, canvas rendering | `:core` |
+| `:feature-list-api` | `ControlsListScreenBuilder` contract | `:core` |
+| `:feature-list-presentation` | Screen: list of saved controllers | `:core`, `:feature-controller`, `:feature-list-api` |
+| `:feature-editor-api` | `ControllerEditorScreenBuilder` + `EditorSharedState` contracts | `:core` |
+| `:feature-editor-presentation` | Screen: drag-and-drop canvas editor for building a controller layout | `:core`, `:feature-controller`, `:feature-editor-api`, `:feature-library-api`, `:feature-signal-api`, `:feature-title-api` |
+| `:feature-library-api` | `EditorLibraryScreenBuilder` contract | `:core` |
+| `:feature-library-presentation` | Screen: element library picker (buttons, sliders, etc.) | `:core`, `:feature-controller`, `:feature-library-api`, `:feature-editor-api` |
+| `:feature-signal-api` | `SignalEditorScreenBuilder` contract | `:core` |
+| `:feature-signal-presentation` | Screen: configure the signal emitted by a controller element | `:core`, `:feature-controller`, `:feature-signal-api` |
+| `:feature-title-api` | `TitleEditorDialogBuilder` contract | `:core` |
+| `:feature-title-presentation` | Dialog: rename a controller | `:core`, `:feature-controller`, `:feature-title-api` |
+| `:feature-playground-api` | `PlaygroundScreenBuilder` contract | `:core` |
+| `:feature-playground-presentation` | Screen: run a controller and send signals over Bluetooth | `:core`, `:feature-controller`, `:feature-playground-api`, `:feature-bluetooth-api`, `:feature-bluetooth-manager` |
+| `:feature-bluetooth-api` | `DevicePickerScreenBuilder` contract | `:core` |
+| `:feature-bluetooth-presentation` | Screen: scan and pick a Bluetooth device | `:core`, `:feature-bluetooth-api` |
+| `:feature-bluetooth-manager` | Platform Bluetooth scanning and connection (expect/actual) | Koin core |
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+## Build
 
----
+### Prerequisites
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+- JDK 17
+- Android SDK (compileSdk 37)
+- `secrets.properties` in the project root (see CI workflow for required keys)
+- `composeApp/src/google-services.json` (Firebase Android config)
+- `keystore/release_key.jks` + `keystore/keystore.properties` for release signing
+
+### Android
+
+```shell
+# Debug APK
+./gradlew assembleDebug
+
+# Release APK
+./gradlew assembleRelease
+```
+
+### iOS
+
+Open `iosApp/iosApp.xcodeproj` in Xcode and run the `iosApp` scheme, or build from the command line:
+
+```shell
+xcodebuild \
+  -project iosApp/iosApp.xcodeproj \
+  -scheme iosApp \
+  -configuration Debug \
+  -destination 'generic/platform=iOS Simulator' \
+  build
+```
+
+Xcode drives the Gradle build for the shared KMP framework automatically.
+
+## Tests
+
+```shell
+# Common + Android unit tests
+./gradlew test
+
+# iOS tests (requires Apple Silicon or an arm64 simulator)
+./gradlew iosSimulatorArm64Test
+```
+
+### Linting
+
+```shell
+./gradlew ktlintCheck detekt
+```
+
+## CI
+
+GitHub Actions runs on push/PR to `main` and `develop`:
+
+- **Android job** (`ubuntu-latest`): ktlint + detekt + tests → debug APK → Firebase App Distribution upload
+- **iOS job** (`macos-latest`): iOS simulator tests → Xcode debug build

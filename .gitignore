@@ -25,3 +25,4 @@ secrets.properties
 /iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 /keystore/
 /composeApp/release/
+.claude
