@@ -18,7 +18,7 @@ Gradle modules are defined in `settings.gradle.kts`. Physical paths are in `feat
 |---|---|---|
 | `:androidApp` | `androidApp/` | Android `Application` + `MainActivity`; starts Koin with platform modules |
 | `:composeApp` | `composeApp/` | KMP shared root: `App()` composable, `NavHost`, `appModule` Koin aggregator |
-| `:core` | `core/` | `ScreenBuilder`, `AppNotificationManager`, `TextProvider`, `LoggerUtil`, shared UI primitives |
+| `:core` | `core/` | `ScreenBuilder`, `AppNotificationManager`, `TextProvider`, shared UI primitives |
 | `:feature-controller` | `feature/controller/` | Domain + data: `ControllerRepository`, SQLDelight DB, element models, canvas rendering, serialization |
 | `:feature-list-api` | `feature/list/api/` | `ControlsListScreenBuilder` interface |
 | `:feature-list-presentation` | `feature/list/presentation/` | Controller list screen; CRUD use cases |
@@ -116,6 +116,7 @@ Live in `feature/*-presentation/src/commonMain/.../usecase/`. Single `execute()`
 | Database | SQLDelight | 2.3.2 |
 | Serialization | `kotlinx-serialization-json` | 1.11.0 |
 | Coroutines | `kotlinx-coroutines-core` | 1.10.2 |
+| Logging | Kermit (`co.touchlab:kermit`) | 2.1.0 |
 | Mocking (tests) | Mokkery | 3.3.0 |
 | Linting | ktlint 1.2.1, detekt 1.23.8 | — |
 | Firebase | BOM 34.13.0 (Analytics, Crashlytics, AppDistribution) | — |
@@ -184,7 +185,6 @@ All `expect` declarations and their source-set layout:
 
 | Symbol | commonMain | androidMain | iosMain |
 |---|---|---|---|
-| `expect object LoggerUtil` | `core/util/LoggerUtil.kt` | `LoggerUtil.android.kt` | `LoggerUtil.ios.kt` |
 | `expect fun getPlatform(): Platform` | `core/util/Platform.kt` | `Platform.android.kt` | `Platform.ios.kt` |
 | `expect class DatabaseDriverFactory` | `feature/controller/data/database/DatabaseDriverFactory.kt` | ← Android JDBC | ← iOS native |
 | `expect class BluetoothManagerFactory` | `feature/bluetooth/manager/data/BluetoothManagerFactory.kt` | ← Android impl | ← iOS CoreBluetooth impl |
@@ -291,7 +291,6 @@ everySuspend { repo.insertController(any()) } returns Result.success(Unit)
 ```kotlin
 @BeforeTest fun setup() {
     Dispatchers.setMain(UnconfinedTestDispatcher())
-    LoggerUtil.isEnabled = false
 }
 @AfterTest fun teardown() {
     Dispatchers.resetMain()
