@@ -1,7 +1,7 @@
 package com.patorika.feature_controller.data.repository
 
 import app.cash.sqldelight.db.SqlDriver
-import com.patorika.core.util.LoggerUtil
+import co.touchlab.kermit.Logger
 import com.patorika.feature_controller.data.database.Database
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_controller.presentation.model.ControllerModel
@@ -22,7 +22,7 @@ class ControllerRepositoryImpl(
             .getAllControllers()
             .map { Result.success(it) }
             .catch { error ->
-                LoggerUtil.d(TAG, "Failed to get all controllers\n$error")
+                Logger.d(tag = TAG) { "Failed to get all controllers\n$error" }
                 emit(Result.failure(error))
             }
 
@@ -34,7 +34,7 @@ class ControllerRepositoryImpl(
                 } ?: Result.failure(NullPointerException("Failed to get a controller by id $id"))
             }
         }.getOrElse { error ->
-            LoggerUtil.d(TAG, "Failed to get a controller by id $id\n$error")
+            Logger.d(tag = TAG) { "Failed to get a controller by id $id\n$error" }
             Result.failure(error)
         }
 
@@ -45,12 +45,11 @@ class ControllerRepositoryImpl(
                 Result.success(Unit)
             }
         }.getOrElse { error ->
-            LoggerUtil.d(
-                TAG,
+            Logger.d(tag = TAG) {
                 "Failed to inserd controller\n" +
                     "Model: $model\n" +
-                    "Error: $error",
-            )
+                    "Error: $error"
+            }
             Result.failure(error)
         }
 
@@ -61,7 +60,7 @@ class ControllerRepositoryImpl(
                 Result.success(Unit)
             }
         }.getOrElse { error ->
-            LoggerUtil.d(TAG, "Failed to remove controller by id $id\n$error")
+            Logger.d(tag = TAG) { "Failed to remove controller by id $id\n$error" }
             Result.failure(error)
         }
 

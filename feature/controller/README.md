@@ -25,7 +25,7 @@ Data and domain layer for controllers, plus the shared element model hierarchy a
 
 | Module | Why |
 |---|---|
-| `:core` | `LoggerUtil`, shared utilities |
+| `:core` | Shared utilities |
 
 ## External dependencies
 
@@ -33,6 +33,7 @@ Data and domain layer for controllers, plus the shared element model hierarchy a
 |---|---|
 | SQLDelight (`android-driver`, `native-driver`, `coroutines-extensions`) | Persistence; `asFlow().mapToList()` for reactive queries |
 | `kotlinx-serialization-json` | Polymorphic element serialization to/from JSON strings stored in the DB |
+| Kermit (`co.touchlab:kermit`) | KMP logging inside `ControllerRepositoryImpl` |
 
 ## Database schema
 

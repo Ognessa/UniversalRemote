@@ -4,10 +4,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.model.AppNotification
 import com.patorika.core.provider.text.TextProvider
-import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.presentation.ext.generateControllerId
 import com.patorika.feature_controller.presentation.model.ControllerModel
@@ -206,7 +206,7 @@ class ControllerEditorViewModel(
             )
         }
 
-        LoggerUtil.d(TAG, "Controller orientation changed to ${_state.value.orientation}")
+        Logger.d(tag = TAG) { "Controller orientation changed to ${_state.value.orientation}" }
     }
 
     private suspend fun onSaveController() {
@@ -237,7 +237,7 @@ class ControllerEditorViewModel(
     }
 
     private fun onCanvasSizeChanged(size: Size) {
-        LoggerUtil.d(TAG, "Canvas size changed to $size")
+        Logger.d(tag = TAG) { "Canvas size changed to $size" }
         _state.update { it.copy(canvasSizeDp = size) }
     }
 

@@ -104,12 +104,10 @@ Every ViewModel test class follows the same lifecycle boilerplate:
 ```kotlin
 @BeforeTest fun setup() {
     Dispatchers.setMain(UnconfinedTestDispatcher())
-    LoggerUtil.isEnabled = false
 }
 
 @AfterTest fun teardown() {
     Dispatchers.resetMain()
-    LoggerUtil.isEnabled = true
 }
 ```
 

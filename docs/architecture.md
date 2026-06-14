@@ -48,7 +48,7 @@ The shared UI layer is Compose Multiplatform. All business logic, data access, a
 |---|---|---|
 | Platform shell | `:androidApp`, `iosApp/` | Entry point only; starts Koin with platform modules, launches `App()` |
 | App shell | `:composeApp` | `NavHost`, global notification UI, `appModule` DI aggregator, code-generation Gradle tasks |
-| Core | `:core` | `ScreenBuilder` nav contract, `AppNotificationManager`, `TextProvider`, shared UI primitives, `LoggerUtil`, `Platform` expect |
+| Core | `:core` | `ScreenBuilder` nav contract, `AppNotificationManager`, `TextProvider`, shared UI primitives, `Platform` expect |
 | Feature API | `:feature-*-api` | `ScreenBuilder`/`DialogBuilder` interface + nav arg types — no Compose, no sibling-feature dependencies |
 | Feature Presentation | `:feature-*-presentation` | ViewModel, Screen composable, use cases, Koin module, `ScreenBuilderImpl` |
 | Domain + Data | `:feature-controller` | `ControllerRepository` interface, `ControllerRepositoryImpl`, SQLDelight `Database`, all `ControllerElementModel` types, `ControllerCanvas` composable |

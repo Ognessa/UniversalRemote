@@ -2,7 +2,7 @@ package com.patorika.feature_playground_presentation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patorika.core.util.LoggerUtil
+import co.touchlab.kermit.Logger
 import com.patorika.feature_bluetooth_manager.BluetoothManager
 import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.presentation.model.ControllerModel
@@ -98,7 +98,7 @@ class PlaygroundViewModel(
 
     private fun onElementActionActivated(action: String) {
         bluetoothManager.sendSignal(action)
-        LoggerUtil.d(TAG, "Element action called: $action")
+        Logger.d(tag = TAG) { "Element action called: $action" }
     }
 
     private fun onElementModified(element: ControllerElementModel) {

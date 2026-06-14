@@ -2,7 +2,6 @@ package com.patorika.feature_title_presentation.ui
 
 import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.manager.AppNotificationManagerImpl
-import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.model.ControllerModel
@@ -40,7 +39,6 @@ class TitleEditorViewModelTest {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        LoggerUtil.isEnabled = false
         repository = mock<ControllerRepository>()
         notificationManager = AppNotificationManagerImpl()
     }
@@ -48,7 +46,6 @@ class TitleEditorViewModelTest {
     @AfterTest
     fun teardown() {
         Dispatchers.resetMain()
-        LoggerUtil.isEnabled = true
     }
 
     @Test

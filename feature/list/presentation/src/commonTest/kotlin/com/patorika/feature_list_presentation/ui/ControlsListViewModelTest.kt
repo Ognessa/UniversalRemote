@@ -2,7 +2,6 @@ package com.patorika.feature_list_presentation.ui
 
 import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.manager.AppNotificationManagerImpl
-import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_controller.presentation.elements.defaultControllerElementsList
 import com.patorika.feature_controller.presentation.model.ControllerModel
@@ -42,7 +41,6 @@ class ControlsListViewModelTest {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        LoggerUtil.isEnabled = false
         notificationManager = AppNotificationManagerImpl()
         repository = mock<ControllerRepository>()
     }
@@ -50,7 +48,6 @@ class ControlsListViewModelTest {
     @AfterTest
     fun teardown() {
         Dispatchers.resetMain()
-        LoggerUtil.isEnabled = true
     }
 
     // region Init
