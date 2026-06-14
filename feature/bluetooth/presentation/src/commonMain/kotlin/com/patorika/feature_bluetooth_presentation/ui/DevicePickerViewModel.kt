@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patorika.feature_bluetooth_manager.BluetoothManager
 import com.patorika.feature_bluetooth_manager.model.BluetoothDevice
+import com.patorika.feature_bluetooth_manager.model.DeviceType
 import com.patorika.feature_bluetooth_presentation.model.BluetoothDevicesNavigation
 import com.patorika.feature_bluetooth_presentation.model.ConnectionState
 import com.patorika.feature_bluetooth_presentation.model.DeviceListState
@@ -61,6 +62,12 @@ class DevicePickerViewModel(
     private val _events = MutableSharedFlow<BluetoothDevicesNavigation>()
     val events: SharedFlow<BluetoothDevicesNavigation> = _events.asSharedFlow()
 
+    init {
+        bluetoothManager.loadPairedDevices()
+        bluetoothManager.startClassicScan()
+        bluetoothManager.startBleScan()
+    }
+
     fun onEvent(event: DevicePickerEvents) {
         when (event) {
             is DevicePickerEvents.Close -> {
@@ -104,22 +111,45 @@ class DevicePickerViewModel(
         scanState: ScanStateModel,
         connectionState: ConnectionState,
     ): DevicePickerUiState {
-        val connectedId = connectionState.device?.id
+        val connectedDevice = connectionState.device
+        val connectedId = connectedDevice?.id
 
         fun List<BluetoothDevice>.withConnectedFirst(): List<BluetoothDevice> =
-            if (connectedId == null) {
-                this
+            if (connectedId == null) this else sortedByDescending { it.id == connectedId }
+
+        // Android's bondedDevices returns both Classic and BLE bonded devices under pairedDevices.
+        // Split by type so each device appears only in its correct tab.
+        val (classicPaired, blePaired) = devices.paired.partition { it.type == DeviceType.CLASSIC }
+        val typeSeparated =
+            devices.copy(
+                paired = classicPaired,
+                ble = (blePaired + devices.ble).distinctBy { it.id },
+            )
+
+        // If the connected device was cleared from all lists (e.g. on screen reopen after
+        // closing the picker), inject it back so the user can see and disconnect it.
+        val effectiveDevices =
+            if (
+                connectedDevice != null &&
+                typeSeparated.paired.none { it.id == connectedId } &&
+                typeSeparated.discoveredClassic.none { it.id == connectedId } &&
+                typeSeparated.ble.none { it.id == connectedId }
+            ) {
+                when (connectedDevice.type) {
+                    DeviceType.CLASSIC -> typeSeparated.copy(paired = listOf(connectedDevice) + typeSeparated.paired)
+                    DeviceType.BLE -> typeSeparated.copy(ble = listOf(connectedDevice) + typeSeparated.ble)
+                }
             } else {
-                sortedByDescending { it.id == connectedId }
+                typeSeparated
             }
 
         return DevicePickerUiState(
             isBluetoothEnabled = isBluetoothEnabled,
             devices =
-                devices.copy(
-                    paired = devices.paired.withConnectedFirst(),
-                    discoveredClassic = devices.discoveredClassic.withConnectedFirst(),
-                    ble = devices.ble.withConnectedFirst(),
+                effectiveDevices.copy(
+                    paired = effectiveDevices.paired.withConnectedFirst(),
+                    discoveredClassic = effectiveDevices.discoveredClassic.withConnectedFirst(),
+                    ble = effectiveDevices.ble.withConnectedFirst(),
                 ),
             scanState = scanState,
             connectionState = connectionState,
