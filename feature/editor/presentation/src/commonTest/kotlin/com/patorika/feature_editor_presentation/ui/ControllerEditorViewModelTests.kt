@@ -2,7 +2,6 @@ package com.patorika.feature_editor_presentation.ui
 
 import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.manager.AppNotificationManagerImpl
-import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
 import com.patorika.feature_controller.presentation.elements.buttons.xbox.model.XboxButtonClusterModel
@@ -48,8 +47,6 @@ class ControllerEditorViewModelTests {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        LoggerUtil.isEnabled = false
-
         notificationManager = AppNotificationManagerImpl()
         fakeRepository = mock<ControllerRepository>()
         fakeGetControllerByIdUseCase = GetControllerByIdUseCase(repository = fakeRepository)
@@ -284,7 +281,6 @@ class ControllerEditorViewModelTests {
     @AfterTest
     fun destroy() {
         Dispatchers.resetMain()
-        LoggerUtil.isEnabled = true
     }
 
     private fun createViewModel(id: String? = null): ControllerEditorViewModel {

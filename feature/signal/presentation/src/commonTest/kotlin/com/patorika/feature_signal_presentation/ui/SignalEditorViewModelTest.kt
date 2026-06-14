@@ -1,6 +1,5 @@
 package com.patorika.feature_signal_presentation.ui
 
-import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
 import com.patorika.feature_editor_api.state.EditorSharedState
 import com.patorika.feature_signal_presentation.model.SignalEditorScreenEvent
@@ -33,14 +32,12 @@ class SignalEditorViewModelTest {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        LoggerUtil.isEnabled = false
         editorSharedState = mock<EditorSharedState>()
     }
 
     @AfterTest
     fun teardown() {
         Dispatchers.resetMain()
-        LoggerUtil.isEnabled = true
     }
 
     @Test

@@ -50,6 +50,8 @@ kotlin {
                 implementation(libs.androidx.lifecycle.runtimeCompose)
                 implementation(libs.compose.navigation)
 
+                implementation(libs.kermit)
+
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)

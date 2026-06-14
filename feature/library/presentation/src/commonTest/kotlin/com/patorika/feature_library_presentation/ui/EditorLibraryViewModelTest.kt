@@ -1,6 +1,5 @@
 package com.patorika.feature_library_presentation.ui
 
-import com.patorika.core.util.LoggerUtil
 import com.patorika.feature_controller.presentation.elements.basic.model.ControllerElementModel
 import com.patorika.feature_controller.presentation.elements.buttons.square.model.SquareButtonModel
 import com.patorika.feature_editor_api.state.EditorSharedState
@@ -33,7 +32,6 @@ class EditorLibraryViewModelTest {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        LoggerUtil.isEnabled = false
 
         fakeEditorSharedState = mock<EditorSharedState>()
         viewModel = EditorLibraryViewModel(
@@ -74,6 +72,5 @@ class EditorLibraryViewModelTest {
     @AfterTest
     fun destroy() {
         Dispatchers.resetMain()
-        LoggerUtil.isEnabled = true
     }
 }

@@ -97,6 +97,9 @@ sqldelight-native = { group = "app.cash.sqldelight", name = "native-driver", ver
 sqldelight-coroutinesExt = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
 sqldelight = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
 
+#Testing
+kermit = { group = "co.touchlab", name = "kermit", version = "2.1.0" }
+
 
 [plugins]
 #BASE
