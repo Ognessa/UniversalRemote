@@ -16,9 +16,9 @@ data class ButtonConfigModel(
     companion object {
         fun initBasic(text: String): ButtonConfigModel =
             ButtonConfigModel(
-                onPress = text,
-                onHold = text,
-                onRelease = text,
+                onPress = "$text pressed",
+                onHold = "",
+                onRelease = "$text released",
             )
     }
 }
