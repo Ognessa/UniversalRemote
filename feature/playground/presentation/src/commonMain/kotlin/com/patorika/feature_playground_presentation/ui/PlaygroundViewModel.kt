@@ -76,6 +76,11 @@ class PlaygroundViewModel(
         _state.update { it.copy(isLoading = false) }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        bluetoothManager.disconnect()
+    }
+
     fun onEvent(event: PlaygroundUserEvent) {
         when (event) {
             is PlaygroundUserEvent.Close -> {
