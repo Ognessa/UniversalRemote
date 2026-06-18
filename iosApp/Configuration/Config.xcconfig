@@ -1,6 +1,6 @@
 TEAM_ID=
 
-PRODUCT_NAME=UniversalRemote
+PRODUCT_NAME=Kermo
 PRODUCT_BUNDLE_IDENTIFIER=com.patorika.universalremote.UniversalRemote$(TEAM_ID)
 
 CURRENT_PROJECT_VERSION=1

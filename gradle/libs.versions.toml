@@ -1,7 +1,7 @@
 [versions]
 #Application
 app-name = "1.0"
-app-version = "3"
+app-version = "4"
 
 #SDK
 android-compileSdk = "37"
