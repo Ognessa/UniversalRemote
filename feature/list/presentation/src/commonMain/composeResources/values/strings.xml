@@ -1,6 +1,6 @@
 <resources>
-    <string name="controls_list_screen_title">Controllers</string>
-    <string name="controls_list_empty_label">You don’t  have any controllers right now</string>
+    <string name="controls_list_screen_title">Remotes</string>
+    <string name="controls_list_empty_label">You don’t  have any remotes right now</string>
 
     <!--Context Menu-->
     <string name="control_item_rename">Rename</string>
@@ -11,11 +11,11 @@
     <!--Messages-->
     <string name="controls_list_fetching_error">Couldn't load data. Please try again.</string>
 
-    <string name="controller_duplicate_success_message">Controller duplicated successfully</string>
-    <string name="controller_duplicate_failure_message">Controller duplication failed</string>
+    <string name="controller_duplicate_success_message">Remote duplicated successfully</string>
+    <string name="controller_duplicate_failure_message">Remote duplication failed</string>
 
-    <string name="controller_delete_success_message">Controller deleted successfully</string>
-    <string name="controller_delete_failure_message">Controller deletion failed</string>
+    <string name="controller_delete_success_message">Remote deleted successfully</string>
+    <string name="controller_delete_failure_message">Remote deletion failed</string>
 
-    <string name="controller_not_exists_message">Can't find selected controller</string>
+    <string name="controller_not_exists_message">Can't find selected remote</string>
 </resources>
