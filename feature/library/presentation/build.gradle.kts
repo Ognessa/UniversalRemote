@@ -13,7 +13,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.patorika.feature_library_presentation"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
