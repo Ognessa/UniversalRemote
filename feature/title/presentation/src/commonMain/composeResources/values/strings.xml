@@ -1,5 +1,5 @@
 <resources>
-    <string name="editor_title">Controller title</string>
+    <string name="editor_title">Remote title</string>
     <string name="editor_save_label">Save</string>
     <string name="editor_cancel_label">Cancel</string>
 

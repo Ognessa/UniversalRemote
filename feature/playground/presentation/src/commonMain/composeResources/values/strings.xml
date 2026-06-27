@@ -1,9 +1,9 @@
 <resources>
     <!--Controller Errors-->
-    <string name="controller_loading_error">Unable to load controller</string>
+    <string name="controller_loading_error">Unable to load a remote</string>
 
     <!--Bluetooth Errors-->
-    <string name="bluetooth_disabled_banner">Bluetooth is off. Please enable it to use the controller.</string>
+    <string name="bluetooth_disabled_banner">Bluetooth is off. Please enable it to use the remote.</string>
     <string name="bluetooth_device_disconnected">Device disconnected.</string>
     <string name="bluetooth_connection_error">Error:\n%1$s</string>
 </resources>
