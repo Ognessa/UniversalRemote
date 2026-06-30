@@ -4,7 +4,7 @@
 
 Universal Remote is a Kotlin Multiplatform app targeting **Android** (minSdk 24, compileSdk 37) and **iOS** (iosArm64, iosSimulatorArm64). It lets users design custom Bluetooth remote controllers: build a canvas layout of buttons and sliders, assign signal strings to each element, connect to a Bluetooth device (Classic or BLE), then operate the controller live in a playground screen.
 
-The shared UI layer is Compose Multiplatform. All business logic, data access, and navigation live in shared `commonMain` source sets. Platform-specific code is limited to `DatabaseDriverFactory` and `BluetoothManagerFactory`, both provided through Koin platform modules.
+The shared UI layer is Compose Multiplatform. All business logic, data access, and navigation live in shared `commonMain` source sets. Platform-specific code is limited to `DatabaseDriverFactory`, `BluetoothManagerFactory`, and `EmailLauncher` (each provided through a Koin platform module) plus the `openInAppBrowser` expect/actual.
 
 ---
 
@@ -76,6 +76,7 @@ Arrows point from dependent → dependency.
     ├─► :feature-title-api + :feature-title-presentation               │
     ├─► :feature-playground-api + :feature-playground-presentation     │
     ├─► :feature-bluetooth-api + :feature-bluetooth-presentation       │
+    ├─► :feature-general-menu-api + :feature-general-menu-presentation  │
     └─► :feature-bluetooth-manager                                     │
                                                                        │
 :feature-*-presentation ──────────────────────────────────────────────┘
@@ -135,6 +136,17 @@ This makes the dependency graph acyclic and keeps compile scope minimal.
 ### Global notification bus
 
 `AppNotificationManager` is a zero-replay `SharedFlow` singleton. ViewModels post `AppNotification.SnackBar` or `AppNotification.Dialog`; `App.kt` observes and renders them in a single `Scaffold`. Features never own their own snackbar infrastructure.
+
+### App-shell navigation & platform-action bus
+
+`AppNavigationManager` mirrors the notification bus for actions that belong to the app shell rather than the `NavHost`: opening/closing the navigation drawer and launching platform integrations (in-app browser, mail composer). Screen builders post an `AppNavigationEvent` — `OpenNavDrawer`, `CloseNavDrawer`, `OpenBrowser(url)`, `OpenEmail(recipient, subject?, body?)` — and `rememberAppNavigationState` in `:composeApp` collects them inside `repeatOnLifecycle(STARTED)`.
+
+Platform integrations stay out of the ViewModel/builder layer:
+
+- **In-app browser** — `openInAppBrowser(url)` is a `@Composable expect fun` (Android Custom Tabs, iOS `SFSafariViewController`), invoked from the collector.
+- **Mail composer** — `EmailLauncher.openEmail(...)` is a plain interface injected via a Koin platform module (`AndroidEmailLauncher` / `IosEmailLauncher`). It returns `Boolean`; when no mail client can handle the intent the collector falls back to an `AppNotification.SnackBar` showing the support address. The recipient and links are parameterized in `AppConstants`, never hardcoded in the launcher.
+
+The General Menu drawer panel (`:feature-general-menu-presentation`, implementing `NavDrawerScreenBuilder`) is the first consumer: its three items map to `OpenBrowser`/`OpenEmail` events.
 
 ### Polymorphic element serialization
 

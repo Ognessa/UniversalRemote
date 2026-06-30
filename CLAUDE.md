@@ -18,7 +18,7 @@ Gradle modules are defined in `settings.gradle.kts`. Physical paths are in `feat
 |---|---|---|
 | `:androidApp` | `androidApp/` | Android `Application` + `MainActivity`; starts Koin with platform modules |
 | `:composeApp` | `composeApp/` | KMP shared root: `App()` composable, `NavHost`, `appModule` Koin aggregator |
-| `:core` | `core/` | `ScreenBuilder`, `AppNotificationManager`, `TextProvider`, shared UI primitives |
+| `:core` | `core/` | `ScreenBuilder`, `NavDrawerScreenBuilder`, `AppNotificationManager`, `AppNavigationManager`, `EmailLauncher`, `openInAppBrowser`, `TextProvider`, shared UI primitives |
 | `:feature-controller` | `feature/controller/` | Domain + data: `ControllerRepository`, SQLDelight DB, element models, canvas rendering, serialization |
 | `:feature-list-api` | `feature/list/api/` | `ControlsListScreenBuilder` interface |
 | `:feature-list-presentation` | `feature/list/presentation/` | Controller list screen; CRUD use cases |
@@ -35,6 +35,8 @@ Gradle modules are defined in `settings.gradle.kts`. Physical paths are in `feat
 | `:feature-bluetooth-api` | `feature/bluetooth/api/` | `DevicePickerScreenBuilder` interface |
 | `:feature-bluetooth-presentation` | `feature/bluetooth/presentation/` | Bluetooth device picker screen (Classic + BLE tabs) |
 | `:feature-bluetooth-manager` | `feature/bluetooth/manager/` | Platform Bluetooth scanning and connection; no Compose dependency |
+| `:feature-general-menu-api` | `feature/general/api/` | `GeneralMenuScreenBuilder` interface (extends `NavDrawerScreenBuilder`) |
+| `:feature-general-menu-presentation` | `feature/general/presentation/` | General Menu drawer panel: how-to / support email / privacy links |
 
 ---
 
@@ -94,6 +96,14 @@ Every presentation module registers its `ScreenBuilderImpl` in Koin with `bind S
 
 Route naming: plain `String` constants (e.g. `"SignalEditor"`, `"ControlsList"`). Path-segment nav args: `navController.navigate("${route}/${id}")`. Complex objects are Base64-URL-encoded JSON strings (see `ControllerElementModel.toNavArg()`).
 
+**Drawer screens** implement `NavDrawerScreenBuilder` (a `@Composable Content(navController)`) instead of `ScreenBuilder`, and are bound with `bind NavDrawerScreenBuilder::class`. They render in the `ModalNavigationDrawer` rather than the `NavHost`. The General Menu is the only one today.
+
+**App-shell actions** (open/close drawer, in-app browser, mail composer) go through `AppNavigationManager` (`:core`) — a `SharedFlow` singleton mirroring the notification bus. Screen builders `send(AppNavigationEvent)`; `rememberAppNavigationState` in `:composeApp` collects and dispatches:
+- `OpenBrowser(url)` → `openInAppBrowser(url)`
+- `OpenEmail(recipient, subject?, body?)` → `EmailLauncher.openEmail(...)`, falling back to a snackbar when it returns `false`
+
+Do **not** call platform launchers (`openInAppBrowser`, `EmailLauncher`) directly from a ViewModel or screen builder — emit an `AppNavigationEvent` and let the shell collector invoke them.
+
 ### Use cases
 
 Live in `feature/*-presentation/src/commonMain/.../usecase/`. Single `execute()` method, no base class. They are thin wrappers around the repository and are tested via the ViewModel test (real use case + mocked repository).
@@ -150,7 +160,7 @@ val appModule = module {
 
 ### Platform-specific modules
 
-`DatabaseDriverFactory` and `BluetoothManagerFactory` require platform context. They are provided by separate platform modules and must be loaded **before** `appModule`:
+`DatabaseDriverFactory`, `BluetoothManagerFactory`, and `EmailLauncher` require platform context. They are provided by separate platform modules and must be loaded **before** `appModule`:
 
 | Module val | Source set | Provides |
 |---|---|---|
@@ -158,15 +168,17 @@ val appModule = module {
 | `iosControllerModule` | `feature/controller/iosMain` | `DatabaseDriverFactory()` |
 | `androidBluetoothModule` | `feature/bluetooth/manager/androidMain` | `BluetoothManagerFactory(context)` |
 | `iosBluetoothModule` | `feature/bluetooth/manager/iosMain` | `BluetoothManagerFactory()` |
+| `androidCoreModule` | `core/androidMain` | `EmailLauncher` → `AndroidEmailLauncher(context)` |
+| `iosCoreModule` | `core/iosMain` | `EmailLauncher` → `IosEmailLauncher()` |
 
 **Android** (`AndroidApplication.kt`):
 ```kotlin
-startKoin { androidContext(this); modules(androidControllerModule, androidBluetoothModule, appModule) }
+startKoin { androidContext(this); modules(androidCoreModule, androidControllerModule, androidBluetoothModule, appModule) }
 ```
 
 **iOS** (`AppDelegate.kt`):
 ```kotlin
-fun initKoinIos() { startKoin { modules(iosControllerModule, iosBluetoothModule, appModule) } }
+fun initKoinIos() { startKoin { modules(iosCoreModule, iosControllerModule, iosBluetoothModule, appModule) } }
 ```
 `initKoinIos()` is called from Swift before the Compose window is created.
 
@@ -186,8 +198,11 @@ All `expect` declarations and their source-set layout:
 | Symbol | commonMain | androidMain | iosMain |
 |---|---|---|---|
 | `expect fun getPlatform(): Platform` | `core/util/Platform.kt` | `Platform.android.kt` | `Platform.ios.kt` |
+| `@Composable expect fun openInAppBrowser(url)` | `core/navigation/InAppBrowserExt.kt` | ← Custom Tabs | ← `SFSafariViewController` |
 | `expect class DatabaseDriverFactory` | `feature/controller/data/database/DatabaseDriverFactory.kt` | ← Android JDBC | ← iOS native |
 | `expect class BluetoothManagerFactory` | `feature/bluetooth/manager/data/BluetoothManagerFactory.kt` | ← Android impl | ← iOS CoreBluetooth impl |
+
+`EmailLauncher` is **not** expect/actual — it is a plain `commonMain` interface with per-platform implementations (`AndroidEmailLauncher` / `IosEmailLauncher`) provided through the Koin platform modules above (same pattern as `BluetoothManager`).
 
 Test-only:
 
@@ -369,7 +384,8 @@ String resources live in `src/commonMain/composeResources/values/strings.xml` of
 - **Don't use `@AndroidEntryPoint` or Hilt** — DI is Koin throughout.
 - **Don't inject `android.content.Context` in `commonMain`** — provide it through a platform-specific Koin module (`androidMain`).
 - **Don't add new features to `App.kt` or `appModule` manually** — add the feature's Koin module to `appModule.includes()` and bind its `ScreenBuilder` with `bind ScreenBuilder::class`; `App.kt` auto-discovers all registered `ScreenBuilder` instances.
-- **Don't load `appModule` without the platform modules first** — `DatabaseDriverFactory` and `BluetoothManagerFactory` are platform-specific `expect` classes and must be provided before `appModule` starts.
+- **Don't load `appModule` without the platform modules first** — `DatabaseDriverFactory`, `BluetoothManagerFactory`, and `EmailLauncher` are platform-specific and must be provided (via `androidControllerModule`/`androidBluetoothModule`/`androidCoreModule` and their iOS counterparts) before `appModule` starts.
+- **Don't call platform launchers directly from a ViewModel/screen builder** — emit an `AppNavigationEvent` (`OpenBrowser` / `OpenEmail`) and let the `:composeApp` shell collector invoke `openInAppBrowser` / `EmailLauncher`. Keep `INSTRUCTION_URL` / `PRIVACY_POLICY` / `SUPPORT_EMAIL` in `AppConstants`, not hardcoded at the call site.
 - **Don't create a new element type without updating `controllerModelModule`** — the polymorphic serializer will throw at runtime without the `subclass(...)` registration.
 - **Don't call `Dispatchers.Main` directly in production `commonMain` code without test setup** — ViewModel tests must call `Dispatchers.setMain(UnconfinedTestDispatcher())` first.
 - **Don't add MockK, Hilt, Room, or Retrofit** — none of these are present or intended; the stack is Mokkery + Koin + SQLDelight + platform Bluetooth APIs.

@@ -43,6 +43,8 @@ A Kotlin Multiplatform app for Android and iOS that lets users design custom Blu
 | `:feature-bluetooth-api` | `DevicePickerScreenBuilder` contract | `:core` |
 | `:feature-bluetooth-presentation` | Screen: scan and pick a Bluetooth device | `:core`, `:feature-bluetooth-api` |
 | `:feature-bluetooth-manager` | Platform Bluetooth scanning and connection (expect/actual) | Koin core |
+| `:feature-general-menu-api` | `GeneralMenuScreenBuilder` contract (navigation-drawer panel) | `:core` |
+| `:feature-general-menu-presentation` | Navigation-drawer panel: how-to / support email / privacy links | `:core`, `:feature-general-menu-api` |
 
 ## Build
 
