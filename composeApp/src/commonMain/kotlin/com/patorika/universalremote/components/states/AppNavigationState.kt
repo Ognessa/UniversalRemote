@@ -1,11 +1,9 @@
 package com.patorika.universalremote.components.states
 
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,14 +21,6 @@ import com.patorika.core.provider.notification.model.AppNotification
 import com.patorika.core.provider.text.TextProvider
 import org.koin.compose.getKoin
 import org.koin.compose.koinInject
-
-@Stable
-class AppDrawerState(
-    val drawerState: DrawerState,
-    val navDrawerScreensList: Map<String, NavDrawerScreenBuilder>,
-) {
-    var currentDrawerRouteName: String by mutableStateOf("")
-}
 
 @Composable
 fun rememberAppNavigationState(

@@ -46,10 +46,11 @@ fun rememberAppNotificationState(notificationManager: AppNotificationManager): A
         val message = snackbar.message.getString()
         val actionLabel = snackbar.actionLabel?.getString()
         LaunchedEffect(snackbar) {
-            val result = snackbarHostState.showSnackbar(
-                message = message,
-                actionLabel = actionLabel,
-            )
+            val result =
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    actionLabel = actionLabel,
+                )
             if (result == SnackbarResult.ActionPerformed) {
                 snackbar.onAction?.invoke()
             }
