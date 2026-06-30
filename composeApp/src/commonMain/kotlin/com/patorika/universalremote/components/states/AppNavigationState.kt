@@ -51,6 +51,7 @@ fun rememberAppNavigationState(
             navigationManager.event.collect { event ->
                 when (event) {
                     is AppNavigationEvent.OpenNavDrawer -> {
+                        drawerState.close()
                         state.currentDrawerRouteName = event.routeName
                         drawerState.open()
                     }
