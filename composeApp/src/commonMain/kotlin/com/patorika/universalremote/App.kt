@@ -28,9 +28,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import com.patorika.core.navigation.NavDrawerScreenBuilder
 import com.patorika.core.navigation.ScreenBuilder
 import com.patorika.core.navigation.openInAppBrowser
@@ -40,6 +44,7 @@ import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.core.provider.notification.model.AppNotification
 import com.patorika.core.provider.text.getString
 import com.patorika.feature_list_api.ControlsListScreenBuilder
+import kotlinx.coroutines.launch
 import org.koin.compose.getKoin
 import org.koin.compose.koinInject
 
@@ -91,6 +96,7 @@ fun App() {
     val navigationManager: AppNavigationManager = koinInject()
 
     // navigation drawer
+    val scope = LocalLifecycleOwner.current.lifecycleScope
     val navDrawerScreensList: Map<String, NavDrawerScreenBuilder> =
         getKoin().getAll<NavDrawerScreenBuilder>().associateBy { it.routeName }
     var currentDrawerRouteName by remember { mutableStateOf("") }
@@ -127,9 +133,18 @@ fun App() {
         }
     }
 
+    NavigationBackHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = drawerState.isOpen,
+        onBackCompleted = {
+            scope.launch {
+                navigationManager.send(AppNavigationEvent.CloseNavDrawer)
+            }
+        },
+    )
+
     // UI setup
     MaterialTheme {
-        // TODO handle back button to close the drawer
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
