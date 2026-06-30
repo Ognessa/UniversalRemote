@@ -79,3 +79,9 @@ project(":feature-bluetooth-presentation").projectDir = file("feature/bluetooth/
 
 include(":feature-bluetooth-manager")
 project(":feature-bluetooth-manager").projectDir = file("feature/bluetooth/manager")
+
+include(":feature-general-menu-api")
+project(":feature-general-menu-api").projectDir = file("feature/general/api")
+
+include(":feature-general-menu-presentation")
+project(":feature-general-menu-presentation").projectDir = file("feature/general/presentation")

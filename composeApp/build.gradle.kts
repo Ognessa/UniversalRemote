@@ -75,6 +75,9 @@ kotlin {
             implementation(projects.featureBluetoothApi)
             implementation(projects.featureBluetoothPresentation)
             implementation(projects.featureBluetoothManager)
+
+            implementation(projects.featureGeneralMenuApi)
+            implementation(projects.featureGeneralMenuPresentation)
         }
 
         commonTest.dependencies {

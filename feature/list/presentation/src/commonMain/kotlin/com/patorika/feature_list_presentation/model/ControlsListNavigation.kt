@@ -14,4 +14,6 @@ sealed interface ControlsListNavigation {
     data class OpenPlayground(
         val id: String,
     ) : ControlsListNavigation
+
+    data object OpenGeneralMenu : ControlsListNavigation
 }

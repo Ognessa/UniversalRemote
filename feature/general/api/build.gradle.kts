@@ -13,7 +13,7 @@ plugins {
 
 kotlin {
     android {
-        namespace = "com.patorika.core"
+        namespace = "com.patorika.feature_general_menu_api"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
         compilerOptions {
@@ -29,7 +29,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "coreKit"
+            baseName = "feature-general-menu-apiKit"
             isStatic = true
         }
     }
@@ -52,19 +52,19 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
+
+                implementation(projects.core)
             }
         }
 
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
-                implementation(libs.kotlinx.coroutines.test)
             }
         }
 
         androidMain {
             dependencies {
-                implementation(libs.androidx.browser)
             }
         }
 
@@ -72,11 +72,5 @@ kotlin {
             dependencies {
             }
         }
-    }
-}
-
-compose {
-    resources {
-        publicResClass = true
     }
 }

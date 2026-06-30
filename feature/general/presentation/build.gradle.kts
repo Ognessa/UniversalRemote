@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -9,11 +10,21 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.mokkery)
+    alias(libs.plugins.buildkonfig)
+}
+
+buildkonfig {
+    packageName = "com.patorika.feature_general_menu_presentation"
+    defaultConfigs {
+        buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", libs.versions.app.name.get())
+        buildConfigField(FieldSpec.Type.STRING, "VERSION_CODE", libs.versions.app.version.get())
+    }
 }
 
 kotlin {
     android {
-        namespace = "com.patorika.core"
+        namespace = "com.patorika.feature_general_menu_presentation"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
         compilerOptions {
@@ -29,7 +40,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "coreKit"
+            baseName = "feature-general-menu-presentationKit"
             isStatic = true
         }
     }
@@ -49,9 +60,14 @@ kotlin {
                 implementation(libs.androidx.lifecycle.runtimeCompose)
                 implementation(libs.compose.navigation)
 
+                implementation(libs.kermit)
+
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
+
+                implementation(projects.core)
+                implementation(projects.featureGeneralMenuApi)
             }
         }
 
@@ -64,7 +80,6 @@ kotlin {
 
         androidMain {
             dependencies {
-                implementation(libs.androidx.browser)
             }
         }
 
@@ -72,11 +87,5 @@ kotlin {
             dependencies {
             }
         }
-    }
-}
-
-compose {
-    resources {
-        publicResClass = true
     }
 }

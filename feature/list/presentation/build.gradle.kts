@@ -62,6 +62,7 @@ kotlin {
                 implementation(projects.featureEditorApi)
                 implementation(projects.featureTitleApi)
                 implementation(projects.featurePlaygroundApi)
+                implementation(projects.featureGeneralMenuApi)
             }
         }
 
