@@ -21,9 +21,11 @@ import org.jetbrains.compose.resources.stringResource
 import universalremote.feature_general_menu_presentation.generated.resources.Res
 import universalremote.feature_general_menu_presentation.generated.resources.general_menu_screen_title
 import universalremote.feature_general_menu_presentation.generated.resources.ic_book
+import universalremote.feature_general_menu_presentation.generated.resources.ic_headphones
 import universalremote.feature_general_menu_presentation.generated.resources.ic_question
 import universalremote.feature_general_menu_presentation.generated.resources.instruction_label
 import universalremote.feature_general_menu_presentation.generated.resources.privacy_policy_label
+import universalremote.feature_general_menu_presentation.generated.resources.support_label
 
 @Composable
 fun GeneralMenuScreen(navigate: (scope: CoroutineScope, GeneralMenuNavigation) -> Unit) {
@@ -52,17 +54,16 @@ fun GeneralMenuScreen(navigate: (scope: CoroutineScope, GeneralMenuNavigation) -
             },
         )
 
-        // TODO add support button
-//        MenuItem(
-//            icon = painterResource(Res.drawable.ic_headphones),
-//            label = stringResource(Res.string.support_label),
-//            onClick = {
-//                navigate(
-//                    lifecycleOwner.lifecycleScope,
-//                    GeneralMenuNavigation.OpenPrivacyPolicy,
-//                )
-//            },
-//        )
+        MenuItem(
+            icon = painterResource(Res.drawable.ic_headphones),
+            label = stringResource(Res.string.support_label),
+            onClick = {
+                navigate(
+                    lifecycleOwner.lifecycleScope,
+                    GeneralMenuNavigation.Support,
+                )
+            },
+        )
 
         MenuItem(
             icon = painterResource(Res.drawable.ic_book),

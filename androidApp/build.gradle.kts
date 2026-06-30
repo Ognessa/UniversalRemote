@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.firebase.appdistribution)
     debugImplementation(libs.androidx.ui.tooling)
 
+    implementation(projects.core)
     implementation(projects.featureController)
     implementation(projects.featureBluetoothManager)
 }

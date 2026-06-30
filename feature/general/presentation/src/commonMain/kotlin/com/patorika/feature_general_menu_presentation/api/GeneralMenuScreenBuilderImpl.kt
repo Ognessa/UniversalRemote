@@ -34,10 +34,9 @@ class GeneralMenuScreenBuilderImpl(
             }
 
             is GeneralMenuNavigation.Support -> {
-                // TODO add support
-//                scope.launch {
-//                    appNavigationManager.send(AppNavigationEvent.OpenBrowser(AppConstants.INSTRUCTION_URL))
-//                }
+                scope.launch {
+                    appNavigationManager.send(AppNavigationEvent.OpenEmail(AppConstants.SUPPORT_EMAIL))
+                }
             }
 
             is GeneralMenuNavigation.OpenPrivacyPolicy -> {

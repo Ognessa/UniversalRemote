@@ -10,4 +10,10 @@ sealed class AppNavigationEvent {
     data class OpenBrowser(
         val url: String,
     ) : AppNavigationEvent()
+
+    data class OpenEmail(
+        val recipient: String,
+        val subject: String? = null,
+        val body: String? = null,
+    ) : AppNavigationEvent()
 }

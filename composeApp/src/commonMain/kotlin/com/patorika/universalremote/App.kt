@@ -40,7 +40,7 @@ fun App() {
 
     // Internal app's navigation
     val navigationManager: AppNavigationManager = koinInject()
-    val appNavigationState = rememberAppNavigationState(navigationManager)
+    val appNavigationState = rememberAppNavigationState(notificationManager, navigationManager)
 
     // NavHost navigation
     val navController = rememberNavController()
