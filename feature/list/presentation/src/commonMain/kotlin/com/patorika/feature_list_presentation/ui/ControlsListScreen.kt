@@ -19,24 +19,29 @@ import com.patorika.feature_list_presentation.model.ControlsListNavigation
 import com.patorika.feature_list_presentation.ui.components.ControlsListBody
 import com.patorika.feature_list_presentation.ui.components.ControlsListTopBar
 import com.patorika.feature_list_presentation.ui.components.CreateControllerButton
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 internal fun ControlsListScreen(
     viewModel: ControlsListViewModel,
-    navigate: (ControlsListNavigation) -> Unit,
+    navigate: (ControlsListNavigation, CoroutineScope) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.events.collect { event -> navigate(event) }
+            viewModel.events.collect { event -> navigate(event, this@repeatOnLifecycle) }
         }
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { ControlsListTopBar() },
+        topBar = {
+            ControlsListTopBar(
+                event = { event -> viewModel.onEvent(event) },
+            )
+        },
     ) { paddingValues ->
         PullToRefreshBox(
             modifier =

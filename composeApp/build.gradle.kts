@@ -14,7 +14,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.patorika.universalremote.shared"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -46,6 +46,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.compose.navigation)
+            implementation(libs.compose.navigationevent)
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -75,6 +76,9 @@ kotlin {
             implementation(projects.featureBluetoothApi)
             implementation(projects.featureBluetoothPresentation)
             implementation(projects.featureBluetoothManager)
+
+            implementation(projects.featureGeneralMenuApi)
+            implementation(projects.featureGeneralMenuPresentation)
         }
 
         commonTest.dependencies {

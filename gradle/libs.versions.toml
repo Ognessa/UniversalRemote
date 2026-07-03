@@ -23,6 +23,7 @@ kotlinx-coroutines = "1.10.2"
 
 #Navigation
 composeNavigation = "2.9.2"
+composeNavigationEvent = "1.1.0"
 
 #DI
 koin = "4.2.1"
@@ -45,6 +46,7 @@ jetbrainsKotlinJvm = "2.3.21"
 
 #DB
 sqldelight = "2.3.2"
+browser = "1.10.0"
 
 [libraries]
 #BASE
@@ -73,6 +75,8 @@ compose-ui-tooling-preview = { group = "org.jetbrains.compose.ui", name = "ui-to
 
 #Navigation
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
+compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version.ref = "composeNavigationEvent" }
+
 
 #DI
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
@@ -99,6 +103,7 @@ sqldelight = { group = "app.cash.sqldelight", name = "sqlite-driver", version.re
 
 #Testing
 kermit = { group = "co.touchlab", name = "kermit", version = "2.1.0" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
 
 
 [plugins]
@@ -127,3 +132,6 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
 #Test
 mokkery = { id = "dev.mokkery", version = "3.3.0" }
+
+#Configs
+buildkonfig = { id = "com.codingfeline.buildkonfig", version = "0.22.0" }

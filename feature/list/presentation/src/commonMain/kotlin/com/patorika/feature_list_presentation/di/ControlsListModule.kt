@@ -1,9 +1,11 @@
 package com.patorika.feature_list_presentation.di
 
 import com.patorika.core.navigation.ScreenBuilder
+import com.patorika.core.provider.navigation.manager.AppNavigationManager
 import com.patorika.core.provider.notification.manager.AppNotificationManager
 import com.patorika.feature_controller.domain.repository.ControllerRepository
 import com.patorika.feature_editor_api.navigation.ControllerEditorScreenBuilder
+import com.patorika.feature_general_menu_api.GeneralMenuScreenBuilder
 import com.patorika.feature_list_api.ControlsListScreenBuilder
 import com.patorika.feature_list_presentation.api.ControlsListScreenBuilderImpl
 import com.patorika.feature_list_presentation.ui.ControlsListViewModel
@@ -29,9 +31,11 @@ val controlsListModule =
 
         factory<ControlsListScreenBuilder> {
             ControlsListScreenBuilderImpl(
+                appNavigationDrawerManager = get<AppNavigationManager>(),
                 editorScreenBuilder = get<ControllerEditorScreenBuilder>(),
                 titleEditorDialogBuilder = { get<TitleEditorDialogBuilder>() },
                 playgroundScreenBuilder = get<PlaygroundScreenBuilder>(),
+                generalMenuScreenBuilder = get<GeneralMenuScreenBuilder>(),
             )
         } bind ScreenBuilder::class
 

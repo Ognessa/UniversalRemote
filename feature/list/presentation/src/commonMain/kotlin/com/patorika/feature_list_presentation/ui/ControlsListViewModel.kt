@@ -48,6 +48,7 @@ class ControlsListViewModel(
 
     fun onEvent(event: ControlsListEvents) {
         when (event) {
+            is ControlsListEvents.OpenGeneralMenu -> emitNavigationEvent(ControlsListNavigation.OpenGeneralMenu)
             is Refresh -> refreshScreenContent()
             is CreateNew -> emitNavigationEvent(ControlsListNavigation.OpenEditor())
             is Item -> onItemEvent(event)

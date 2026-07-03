@@ -13,7 +13,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.patorika.feature_list_presentation"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -62,6 +62,7 @@ kotlin {
                 implementation(projects.featureEditorApi)
                 implementation(projects.featureTitleApi)
                 implementation(projects.featurePlaygroundApi)
+                implementation(projects.featureGeneralMenuApi)
             }
         }
 

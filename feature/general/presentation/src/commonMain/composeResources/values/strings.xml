@@ -1,0 +1,7 @@
+<resources>
+    <string name="general_menu_screen_title">General Menu</string>
+
+    <string name="instruction_label">How to use</string>
+    <string name="support_label">Ask for help</string>
+    <string name="privacy_policy_label">Privacy policy</string>
+</resources>

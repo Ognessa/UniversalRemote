@@ -3,160 +3,94 @@ package com.patorika.universalremote
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.Lifecycle
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import com.patorika.core.navigation.ScreenBuilder
+import com.patorika.core.provider.navigation.manager.AppNavigationManager
+import com.patorika.core.provider.navigation.model.AppNavigationEvent
 import com.patorika.core.provider.notification.manager.AppNotificationManager
-import com.patorika.core.provider.notification.model.AppNotification
-import com.patorika.core.provider.text.getString
 import com.patorika.feature_list_api.ControlsListScreenBuilder
+import com.patorika.universalremote.components.states.rememberAppNavigationState
+import com.patorika.universalremote.components.states.rememberAppNotificationState
+import kotlinx.coroutines.launch
 import org.koin.compose.getKoin
 import org.koin.compose.koinInject
 
 @Composable
 fun App() {
-    // notification setup
+    // Notifications
     val notificationManager: AppNotificationManager = koinInject()
-    val snackbarHostState = remember { SnackbarHostState() }
-    var pendingSnackBar by remember { mutableStateOf<AppNotification.SnackBar?>(null) }
-    var activeDialog by remember { mutableStateOf<AppNotification.Dialog?>(null) }
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val notificationState = rememberAppNotificationState(notificationManager)
 
-    LaunchedEffect(Unit) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            notificationManager.notifications.collect { notification ->
-                when (notification) {
-                    is AppNotification.SnackBar -> pendingSnackBar = notification
-                    is AppNotification.Dialog -> activeDialog = notification
-                }
-            }
-        }
-    }
+    // Internal app's navigation
+    val navigationManager: AppNavigationManager = koinInject()
+    val appNavigationState = rememberAppNavigationState(notificationManager, navigationManager)
 
-    pendingSnackBar?.let { snackbar ->
-        val message = snackbar.message.getString()
-        val actionLabel = snackbar.actionLabel?.getString()
-
-        LaunchedEffect(snackbar) {
-            val result =
-                snackbarHostState.showSnackbar(
-                    message = message,
-                    actionLabel = actionLabel,
-                )
-            if (result == SnackbarResult.ActionPerformed) {
-                snackbar.onAction?.invoke()
-            }
-            pendingSnackBar = null
-        }
-    }
-
-    // navigation setup
+    // NavHost navigation
     val navController = rememberNavController()
-
     val screensList: List<ScreenBuilder> = getKoin().getAll<ScreenBuilder>()
     val firstScreen: ControlsListScreenBuilder = koinInject()
 
-    // UI setup
+    // Backstack handler
+    val scope = LocalLifecycleOwner.current.lifecycleScope
+    NavigationBackHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = appNavigationState.drawerState.isOpen,
+        onBackCompleted = {
+            scope.launch {
+                navigationManager.send(AppNavigationEvent.CloseNavDrawer)
+            }
+        },
+    )
+
+    // Screen content
     MaterialTheme {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-        ) { screenPaddings ->
-            NavHost(
-                modifier = Modifier.fillMaxSize(),
-                navController = navController,
-                startDestination = firstScreen.routeName,
-            ) {
-                screensList.forEach { it.build(this, navController) }
-            }
+        ModalNavigationDrawer(
+            drawerState = appNavigationState.drawerState,
+            drawerContent = {
+                ModalDrawerSheet(modifier = Modifier.width(280.dp)) {
+                    appNavigationState.navDrawerScreensList[appNavigationState.currentDrawerRouteName]?.Content(
+                        navController,
+                    )
+                }
+            },
+        ) {
+            Scaffold(modifier = Modifier.fillMaxSize()) { screenPaddings ->
+                NavHost(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController,
+                    startDestination = firstScreen.routeName,
+                ) {
+                    screensList.forEach { it.build(this, navController) }
+                }
 
-            activeDialog?.let { dialog ->
-                AppDialog(
-                    dialog = dialog,
-                    onDismiss = {
-                        dialog.onDismiss?.invoke()
-                        activeDialog = null
-                    },
-                    onConfirm = {
-                        dialog.onConfirm()
-                        activeDialog = null
-                    },
-                )
-            }
-
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(screenPaddings)
-                        .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight),
-                contentAlignment = Alignment.TopCenter,
-            ) {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                )
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(screenPaddings)
+                            .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight),
+                    contentAlignment = Alignment.TopCenter,
+                ) {
+                    SnackbarHost(hostState = notificationState.snackbarHostState)
+                }
             }
         }
     }
-}
-
-@Composable
-fun AppDialog(
-    dialog: AppNotification.Dialog,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = dialog.title.getString(),
-                style = MaterialTheme.typography.titleMedium,
-            )
-        },
-        text = {
-            Text(
-                text = dialog.message.getString(),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(
-                    text = dialog.confirmLabel.getString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        },
-        dismissButton =
-            dialog.dismissLabel?.let {
-                {
-                    TextButton(onClick = onDismiss) {
-                        Text(
-                            text = it.getString(),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            },
-    )
 }

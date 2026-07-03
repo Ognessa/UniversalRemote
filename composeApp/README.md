@@ -8,7 +8,8 @@ KMP shared application layer that owns the navigation graph, global UI scaffoldi
 
 | Class | What it does |
 |---|---|
-| `App` | Root `@Composable`; creates the `NavHost`, subscribes to `AppNotificationManager` and renders snackbars and dialogs globally. Auto-discovers all registered `ScreenBuilder` instances via `getKoin().getAll<ScreenBuilder>()` and registers them in one `NavHost`. Start destination is `ControlsListScreenBuilder.routeName`. |
+| `App` | Root `@Composable`. Auto-discovers all registered `ScreenBuilder` instances via `getKoin().getAll<ScreenBuilder>()` and registers them in one `NavHost` (start destination `ControlsListScreenBuilder.routeName`), wraps it in a `ModalNavigationDrawer`, and renders global snackbars/dialogs from `AppNotificationManager`. |
+| `rememberAppNavigationState` | Collects `AppNavigationManager` events and dispatches the app-shell actions: open/close the drawer, `openInAppBrowser(url)` for `OpenBrowser`, and `EmailLauncher.openEmail(...)` for `OpenEmail` (falling back to a snackbar when no mail client is found). |
 | `appModule` | Koin `module { includes(...) }` that aggregates every feature's Koin module into one entry point for the shared app. |
 | `MainViewController` | iOS entry point; returns a `ComposeUIViewController` wrapping `App()`. |
 | `AppDelegate` (iosMain) | Exposes `initKoinIos()` — called from Swift before the window is created to start Koin with iOS platform modules. |
@@ -16,9 +17,18 @@ KMP shared application layer that owns the navigation graph, global UI scaffoldi
 
 ## Dependencies
 
-`:composeApp` depends on all feature modules:
+`:composeApp` depends on `:core` and every feature module — each as an api + presentation pair:
 
-`:core`, `:feature-controller`, `:feature-list-api`, `:feature-list-presentation`, `:feature-editor-api`, `:feature-editor-presentation`, `:feature-library-api`, `:feature-library-presentation`, `:feature-signal-api`, `:feature-signal-presentation`, `:feature-title-api`, `:feature-title-presentation`, `:feature-playground-api`, `:feature-playground-presentation`, `:feature-bluetooth-api`, `:feature-bluetooth-presentation`, `:feature-bluetooth-manager`
+- `:core`, `:feature-controller`
+- `:feature-list-api` + `:feature-list-presentation`
+- `:feature-editor-api` + `:feature-editor-presentation`
+- `:feature-library-api` + `:feature-library-presentation`
+- `:feature-signal-api` + `:feature-signal-presentation`
+- `:feature-title-api` + `:feature-title-presentation`
+- `:feature-playground-api` + `:feature-playground-presentation`
+- `:feature-bluetooth-api` + `:feature-bluetooth-presentation`
+- `:feature-general-menu-api` + `:feature-general-menu-presentation`
+- `:feature-bluetooth-manager`
 
 ## Testing
 

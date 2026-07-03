@@ -8,7 +8,7 @@ Android application entry point that wires together the Koin DI graph and launch
 
 | Class | What it does |
 |---|---|
-| `AndroidApplication` | `Application` subclass; calls `startKoin { androidContext(...); modules(androidControllerModule, androidBluetoothModule, appModule) }` |
+| `AndroidApplication` | `Application` subclass; calls `startKoin { androidContext(...); modules(androidCoreModule, androidControllerModule, androidBluetoothModule, appModule) }` |
 | `MainActivity` | Single `ComponentActivity`; calls `enableEdgeToEdge()` then `setContent { App() }` |
 
 ## Dependencies
@@ -16,6 +16,7 @@ Android application entry point that wires together the Koin DI graph and launch
 | Module | Why |
 |---|---|
 | `:composeApp` | Provides `App()` composable and the shared `appModule` |
+| `:core` | Provides `androidCoreModule` (`EmailLauncher` with `Context`) |
 | `:feature-controller` | Provides `androidControllerModule` (`DatabaseDriverFactory` with `Context`) |
 | `:feature-bluetooth-manager` | Provides `androidBluetoothModule` (`BluetoothManagerFactory` with `Context`) |
 

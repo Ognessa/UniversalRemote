@@ -5,6 +5,7 @@ import com.patorika.feature_bluetooth_manager.di.bluetoothManagerModule
 import com.patorika.feature_bluetooth_presentation.di.bluetoothDevicesModule
 import com.patorika.feature_controller.di.controllerModule
 import com.patorika.feature_editor_presentation.di.controllerEditorModule
+import com.patorika.feature_general_menu_presentation.di.generalMenuModule
 import com.patorika.feature_library_presentation.di.editorLibraryModule
 import com.patorika.feature_list_presentation.di.controlsListModule
 import com.patorika.feature_playground_presentation.di.playgroundModule
@@ -25,5 +26,6 @@ val appModule =
             playgroundModule,
             bluetoothManagerModule,
             bluetoothDevicesModule,
+            generalMenuModule,
         )
     }
